@@ -1,0 +1,14 @@
+#include "WMEStrings.h"
+
+STRINGTABLE
+BEGIN
+IDS_COPYRIGHT,
+        "© Константин Дураев (Уральская Сталь, ЦВТС)|@P3tr0viCh@mail.ru"
+IDS_COPYRIGHT_STATUS,
+        "© Константин Дураев"
+
+IDS_LOG_START_PROGRAM,
+        "<><><><><><><>< START PROGRAM WME %s ><><><><><><><>"
+IDS_LOG_STOP_PROGRAM,
+          "STOP PROGRAM"
+END
