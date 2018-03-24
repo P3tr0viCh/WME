@@ -13,6 +13,7 @@ object Main: TMain
   Font.Name = 'Segoe UI'
   Font.Style = []
   OldCreateOrder = False
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
@@ -74,7 +75,6 @@ object Main: TMain
       item
         Width = 50
       end>
-    ExplicitTop = 192
   end
   object btnOperator: TButton
     Left = 296

@@ -122,6 +122,7 @@
         <TASM_Debugging>None</TASM_Debugging>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <LinkPackageStatics>rtl.lib;vcl.lib</LinkPackageStatics>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Debug>true</VerInfo_Debug>
         <VerInfo_Keys>CompanyName=П3тр0виЧъ;FileDescription=АРМ &quot;Ручной ввод&quot;;FileVersion=1.0.0.0;InternalName=WME;LegalCopyright=© П3тр0виЧъ;LegalTrademarks=П3тр0виЧъ;OriginalFilename=WME.exe;ProductName=АРМ &quot;Ручной ввод&quot;;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
@@ -200,11 +201,26 @@
             <DependentOn>WMEAdd.h</DependentOn>
             <BuildOrder>19</BuildOrder>
         </CppCompile>
+        <None Include="WMEDebug.h">
+            <BuildOrder>23</BuildOrder>
+        </None>
+        <CppCompile Include="WMELogin.cpp">
+            <Form>frmLogin</Form>
+            <FormType>dfm</FormType>
+            <DependentOn>WMELogin.h</DependentOn>
+            <BuildOrder>24</BuildOrder>
+        </CppCompile>
         <CppCompile Include="WMEMain.cpp">
             <Form>Main</Form>
             <FormType>dfm</FormType>
             <DependentOn>WMEMain.h</DependentOn>
             <BuildOrder>2</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="WMEOptions.cpp">
+            <Form>frmOptions</Form>
+            <FormType>dfm</FormType>
+            <DependentOn>WMEOptions.h</DependentOn>
+            <BuildOrder>22</BuildOrder>
         </CppCompile>
         <PCHCompile Include="WMEPCH.h">
             <BuildOrder>1</BuildOrder>
@@ -216,7 +232,23 @@
             <Form>WMEStrings.res</Form>
             <BuildOrder>20</BuildOrder>
         </ResourceCompile>
+        <CppCompile Include="WMETrain.cpp">
+            <Form>frmTrain</Form>
+            <FormType>dfm</FormType>
+            <DependentOn>WMETrain.h</DependentOn>
+            <BuildOrder>25</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="WMETrainList.cpp">
+            <Form>frmTrainList</Form>
+            <FormType>dfm</FormType>
+            <DependentOn>WMETrainList.h</DependentOn>
+            <BuildOrder>26</BuildOrder>
+        </CppCompile>
         <FormResources Include="WMEMain.dfm"/>
+        <FormResources Include="WMEOptions.dfm"/>
+        <FormResources Include="WMELogin.dfm"/>
+        <FormResources Include="WMETrain.dfm"/>
+        <FormResources Include="WMETrainList.dfm"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -261,6 +293,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="..\..\..\Projects.exe\WME\Win32\Debug\WME.tds" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win32">
+                        <RemoteName>WME.tds</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'=='true'" LocalName="$(BDS)\bin\cc32220mt.dll" Class="DependencyModule">
                     <Platform Name="Win32">
                         <Overwrite>true</Overwrite>
@@ -291,13 +329,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="c:\Users\Konstantin\Documents\Embarcadero\Studio\Projects\WME\Win32\Debug\WME.tds" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="Win32">
-                        <RemoteName>WME.tds</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="c:\Users\Konstantin\Documents\Embarcadero\Studio\Projects\WME\Win32\Debug\WME.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\..\..\Projects.exe\WME\Win32\Debug\WME.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>WME.exe</RemoteName>
                         <Overwrite>true</Overwrite>
@@ -684,8 +716,8 @@
                 <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
             </Deployment>
             <Platforms>
                 <Platform value="Win32">True</Platform>

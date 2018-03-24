@@ -3,10 +3,16 @@
 #include <vcl.h>
 #pragma hdrstop
 #include <tchar.h>
-// ---------------------------------------------------------------------------
-USEFORM("WMEMain.cpp", Main);
+
+#include "WMEDebug.h"
 
 // ---------------------------------------------------------------------------
+USEFORM("WMEMain.cpp", Main);
+USEFORM("WMEOptions.cpp", frmOptions);
+USEFORM("WMELogin.cpp", frmLogin);
+USEFORM("WMETrain.cpp", frmTrain);
+USEFORM("WMETrainList.cpp", frmTrainList);
+//---------------------------------------------------------------------------
 int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int) {
 	HANDLE hMutex;
 

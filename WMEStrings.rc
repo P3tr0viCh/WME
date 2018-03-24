@@ -7,8 +7,19 @@ IDS_COPYRIGHT,
 IDS_COPYRIGHT_STATUS,
         "© Константин Дураев"
 
+IDS_QUESTION_CLOSE_PROGRAM,
+        "Закрыть программу?";
+
 IDS_LOG_START_PROGRAM,
         "<><><><><><><>< START PROGRAM WME %s ><><><><><><><>"
 IDS_LOG_STOP_PROGRAM,
           "STOP PROGRAM"
+IDS_LOG_OPTIONS_SAVE,
+          "options: save"
+IDS_LOG_OPTIONS_CANCEL,
+          "options: cancel"
+IDS_LOG_LOGIN_OK,
+          "login: ok"
+IDS_LOG_LOGIN_CANCEL,
+          "login: cancel"
 END
