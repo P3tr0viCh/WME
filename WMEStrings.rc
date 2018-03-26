@@ -10,6 +10,19 @@ IDS_COPYRIGHT_STATUS,
 IDS_QUESTION_CLOSE_PROGRAM,
         "Закрыть программу?";
 
+IDS_ERROR_UNKNOWN,
+        "Неизвестная ошибка";
+IDS_ERROR_MYSQL_CONNECTION,
+        "Не удалось подключиться к базе данных:\n\n%s";
+
+IDS_MSG_MYSQL_CONNECTION_OK
+        "Соединение с базой данных выполнено.\n\nВерсия сервера MySQL: %s";
+
+IDS_MYSQL_CONNECTION,
+        "DRIVER={MySQL ODBC 3.51 Driver};SERVER=%s;PORT=%s;DATABASE=%s;USER=%s;PASSWORD=%s;OPTION=3;";
+IDS_MYSQL_VERSION,
+        "SELECT @@version;";
+
 IDS_LOG_START_PROGRAM,
         "<><><><><><><>< START PROGRAM WME %s ><><><><><><><>"
 IDS_LOG_STOP_PROGRAM,
@@ -22,4 +35,10 @@ IDS_LOG_LOGIN_OK,
           "login: ok"
 IDS_LOG_LOGIN_CANCEL,
           "login: cancel"
+IDS_LOG_MYSQL_CONNECT,
+          "try mysql connect: %s@%s:%s"
+IDS_LOG_MYSQL_CONNECT_OK,
+          "mysql connected, version: %s"
+IDS_LOG_MYSQL_CONNECT_FAIL,
+          "mysql connect fail: %s"
 END

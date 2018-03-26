@@ -1,0 +1,10 @@
+﻿[btnCancel]
+Coordinates=10,10,72,58
+
+[btnOk]
+Coordinates=92,10,49,58
+
+[]
+Coordinates=151,10,85,36
+Visible=True
+

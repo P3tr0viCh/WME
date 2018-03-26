@@ -49,6 +49,9 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 	Caption = Application->Title + " " + GetFileVer(Application->ExeName);
 	StatusBar->Panels->Items[0]->Text = LoadStr(IDS_COPYRIGHT_STATUS);
 
+	Query->SQL->Add("");
+	Query->Connection = Connection;
+
 	WriteToLog(Format(IDS_LOG_START_PROGRAM,
 		ARRAYOFCONST((GetFileVer(Application->ExeName, false)))));
 
@@ -62,7 +65,10 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 
 	if (!TfrmLogin::Show()) {
 		Application->Terminate();
+		return;
 	}
+
+    btnOptions->Click();
 }
 
 // ---------------------------------------------------------------------------

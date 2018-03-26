@@ -8,6 +8,8 @@
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.Forms.hpp>
 #include <Vcl.ComCtrls.hpp>
+#include <Data.DB.hpp>
+#include <Data.Win.ADODB.hpp>
 
 // ---------------------------------------------------------------------------
 class TMain : public TForm {
@@ -20,6 +22,8 @@ __published: // IDE-managed Components
 	TButton *btnDatabase;
 	TStatusBar *StatusBar;
 	TButton *btnOperator;
+	TADOConnection *Connection;
+	TADOQuery *Query;
 
 	void __fastcall btnAboutClick(TObject *Sender);
 	void __fastcall btnCloseClick(TObject *Sender);

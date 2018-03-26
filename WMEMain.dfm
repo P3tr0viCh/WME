@@ -85,4 +85,15 @@ object Main: TMain
     TabOrder = 3
     OnClick = btnOperatorClick
   end
+  object Connection: TADOConnection
+    LoginPrompt = False
+    Mode = cmShareDenyNone
+    Left = 224
+    Top = 32
+  end
+  object Query: TADOQuery
+    Parameters = <>
+    Left = 224
+    Top = 88
+  end
 end

@@ -28,7 +28,11 @@ bool TfrmLogin::Show() {
 
 	TfrmLogin *frmLogin = new TfrmLogin(Application);
 	try {
+#ifndef FORCELOGON
 		Result = frmLogin->ShowModal() == mrOk;
+#else
+		Result = true;
+#endif
 	}
 	__finally {
 		delete frmLogin;
