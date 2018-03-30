@@ -46,11 +46,15 @@ void __fastcall TMain::btnAboutClick(TObject *Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::FormCreate(TObject *Sender) {
+	Settings = new TSettings();
+
+	User = new TUser();
+
 	Caption = Application->Title + " " + GetFileVer(Application->ExeName);
 	StatusBar->Panels->Items[0]->Text = LoadStr(IDS_COPYRIGHT_STATUS);
 
-	Query->SQL->Add("");
-	Query->Connection = Connection;
+	ADOQuery->SQL->Add("");
+	ADOQuery->Connection = ADOConnection;
 
 	WriteToLog(Format(IDS_LOG_START_PROGRAM,
 		ARRAYOFCONST((GetFileVer(Application->ExeName, false)))));
@@ -63,12 +67,24 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 		delete FileIni;
 	}
 
-	if (!TfrmLogin::Show()) {
-		Application->Terminate();
-		return;
-	}
+	Settings->Load();
 
-    btnOptions->Click();
+#ifndef FORCELOGON
+	if (Settings->UserList->Count > 0) {
+		if (TfrmLogin::Show(Settings->UserList, User)) {
+			ChangeUser();
+		}
+		else {
+			Application->Terminate();
+			return;
+		}
+	}
+	else {
+		ChangeUser();
+	}
+#endif
+
+	// btnOptions->Click();
 }
 
 // ---------------------------------------------------------------------------
@@ -80,6 +96,10 @@ void __fastcall TMain::FormDestroy(TObject *Sender) {
 	__finally {
 		delete FileIni;
 	}
+
+	User->Free();
+
+	Settings->Free();
 
 	WriteToLog(IDS_LOG_STOP_PROGRAM);
 }
@@ -96,15 +116,17 @@ void __fastcall TMain::btnDatabaseClick(TObject *Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::btnOperatorClick(TObject *Sender) {
-	bool LoginResult = false;
+	bool Result = false;
+
+	// TODO: Settings->UserList->Count == 0
 
 	Hide();
 	try {
-		LoginResult = TfrmLogin::Show();
+		Result = TfrmLogin::Show(Settings->UserList, User);
 	}
 	__finally {
-		if (LoginResult) {
-			// ChangeUser();
+		if (Result) {
+			ChangeUser();
 			Show();
 		}
 		else {
@@ -114,8 +136,17 @@ void __fastcall TMain::btnOperatorClick(TObject *Sender) {
 }
 
 // ---------------------------------------------------------------------------
+void TMain::ChangeUser() {
+	if (IsEmpty(User->Name)) {
+		User->Name = "Оператор";
+	}
+
+	btnOperator->Caption = User->Name;
+}
+
+// ---------------------------------------------------------------------------
 void __fastcall TMain::btnOptionsClick(TObject *Sender) {
-	TfrmOptions::Show();
+	TfrmOptions::Show(Settings);
 }
 
 // ---------------------------------------------------------------------------
@@ -124,4 +155,63 @@ void __fastcall TMain::FormCloseQuery(TObject *Sender, bool &CanClose) {
 	CanClose = MsgBoxYesNo(LoadStr(IDS_QUESTION_CLOSE_PROGRAM));
 #endif
 }
+
+// ---------------------------------------------------------------------------
+bool TMain::CheckConnection(TConnection *Connection) {
+	String MySqlVersion;
+	return CheckConnection(Connection, MySqlVersion);
+}
+
+// ---------------------------------------------------------------------------
+bool TMain::CheckConnection(TConnection *Connection, String &MySqlVersion) {
+	bool Result = false;
+
+	ShowWaitCursor();
+	try {
+		ADOConnection->ConnectionString =
+			Connection->GetConnectionString(false);
+
+		try {
+			WriteToLog(Format(IDS_LOG_MYSQL_CONNECT,
+				ARRAYOFCONST((Connection->User, Connection->Host,
+				Connection->Port))));
+
+			ADOConnection->Open();
+
+			ADOQuery->SQL->Strings[0] = LoadStr(IDS_MYSQL_VERSION);
+
+			ADOQuery->Open();
+
+			MySqlVersion = ADOQuery->Fields->Fields[0]->AsString;
+
+			Result = true;
+		}
+		catch (Exception *E) {
+			MySqlVersion = E->Message;
+		}
+	}
+	__finally {
+		RestoreCursor();
+	}
+
+	if (ADOConnection->Connected) {
+		ADOConnection->Close();
+	}
+
+	if (Result) {
+		WriteToLog(Format(IDS_LOG_MYSQL_CONNECT_OK, MySqlVersion));
+	}
+	else {
+		if (IsEmpty(MySqlVersion)) {
+			MySqlVersion = LoadStr(IDS_ERROR_UNKNOWN);
+		}
+
+		WriteToLog(Format(IDS_LOG_MYSQL_CONNECT_FAIL,
+			StringReplace(MySqlVersion, "\n", " ",
+			TReplaceFlags() << rfReplaceAll)));
+	}
+
+	return Result;
+}
+
 // ---------------------------------------------------------------------------

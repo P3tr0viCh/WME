@@ -11,9 +11,11 @@
 #include <Data.DB.hpp>
 #include <Data.Win.ADODB.hpp>
 
+#include "WMETSettings.h"
+
 // ---------------------------------------------------------------------------
 class TMain : public TForm {
-__published: // IDE-managed Components
+__published:
 
 	TButton *btnAbout;
 	TButton *btnClose;
@@ -22,8 +24,8 @@ __published: // IDE-managed Components
 	TButton *btnDatabase;
 	TStatusBar *StatusBar;
 	TButton *btnOperator;
-	TADOConnection *Connection;
-	TADOQuery *Query;
+	TADOConnection *ADOConnection;
+	TADOQuery *ADOQuery;
 
 	void __fastcall btnAboutClick(TObject *Sender);
 	void __fastcall btnCloseClick(TObject *Sender);
@@ -35,9 +37,19 @@ __published: // IDE-managed Components
 	void __fastcall btnOptionsClick(TObject *Sender);
 	void __fastcall FormCloseQuery(TObject *Sender, bool &CanClose);
 
-private: // User declarations
-		public : // User declarations
+private:
+
+public:
+	TSettings *Settings;
+
+	TUser *User;
+
 	__fastcall TMain(TComponent* Owner);
+
+	void ChangeUser();
+
+	bool CheckConnection(TConnection *Connection);
+	bool CheckConnection(TConnection *Connection, String &MySqlVersion);
 };
 
 // ---------------------------------------------------------------------------

@@ -23,22 +23,25 @@ __fastcall TfrmLogin::TfrmLogin(TComponent* Owner) : TForm(Owner) {
 }
 
 // ---------------------------------------------------------------------------
-bool TfrmLogin::Show() {
+bool TfrmLogin::Show(TObjList<TUser> *UserList, TUser* User) {
 	bool Result = false;
 
 	TfrmLogin *frmLogin = new TfrmLogin(Application);
 	try {
-#ifndef FORCELOGON
+		frmLogin->UserList->Assign(UserList);
+		frmLogin->UpdateForm();
+
 		Result = frmLogin->ShowModal() == mrOk;
-#else
-		Result = true;
-#endif
+
+		if (Result) {
+			User->Assign(UserList->Items[frmLogin->cboxUser->ItemIndex]);
+		}
 	}
 	__finally {
 		delete frmLogin;
 	}
 
-	WriteToLog(Result ? IDS_LOG_LOGIN_OK : IDS_LOG_LOGIN_CANCEL);
+	WriteToLog(Result != NULL ? IDS_LOG_LOGIN_OK : IDS_LOG_LOGIN_CANCEL);
 
 	return Result;
 }
@@ -46,6 +49,8 @@ bool TfrmLogin::Show() {
 // ---------------------------------------------------------------------------
 void __fastcall TfrmLogin::FormCreate(TObject *Sender) {
 	WriteToLogForm(true, ClassName());
+
+	UserList = new TObjList<TUser>();
 
 	TFileIni* FileIni = TFileIni::GetNewInstance();
 	try {
@@ -66,6 +71,8 @@ void __fastcall TfrmLogin::FormDestroy(TObject *Sender) {
 		delete FileIni;
 	}
 
+	UserList->Free();
+
 	WriteToLogForm(false, ClassName());
 }
 
@@ -79,5 +86,44 @@ void __fastcall TfrmLogin::FormCloseQuery(TObject *Sender, bool &CanClose) {
 		CanClose = MsgBoxYesNo(LoadStr(IDS_QUESTION_CLOSE_PROGRAM));
 	}
 #endif
+}
+
+// ---------------------------------------------------------------------------
+void TfrmLogin::UpdateForm() {
+	for (int i = 0; i < UserList->Count; i++) {
+		cboxUser->Items->Add(UserList->Items[i]->Name);
+	}
+
+}
+
+// ---------------------------------------------------------------------------
+bool TfrmLogin::CheckPass() {
+	bool Result = cboxUser->ItemIndex != -1;
+
+	if (!Result) {
+		cboxUser->Text = "";
+		cboxUser->SetFocus();
+		MsgBoxErr(LoadStr(IDS_ERROR_SELECT_USERNAME));
+
+		return false;
+	}
+
+	// Result = ePass->Text = UsersAndPasswords.ValueFromIndex[cboxNames.ItemIndex];
+	//
+	// if (not Result) and (UsersAndPasswords.ValueFromIndex[0] <> '') then
+	// Result := ePassword.Text = UsersAndPasswords.ValueFromIndex[0];
+	// if not Result then
+	// begin
+	// ePassword.Clear;
+	// ePassword.SetFocus;
+	// MsgBoxErr(rsErrorPassword);
+	// end;
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmLogin::btnOkClick(TObject *Sender) {
+	if (!CheckPass()) {
+		ModalResult = mrNone;
+	}
 }
 // ---------------------------------------------------------------------------

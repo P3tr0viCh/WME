@@ -1,4 +1,4 @@
 #ifdef _DEBUG
 #define FORCECLOSE
-#define FORCELOGON
+#define _FORCELOGON
 #endif

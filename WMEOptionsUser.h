@@ -1,48 +1,38 @@
 // ---------------------------------------------------------------------------
 
-#ifndef WMELoginH
-#define WMELoginH
+#ifndef WMEOptionsUserH
+#define WMEOptionsUserH
 // ---------------------------------------------------------------------------
 #include <System.Classes.hpp>
 #include <Vcl.Controls.hpp>
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.Forms.hpp>
-
-#include <ObjList.h>
+#include <Vcl.ExtCtrls.hpp>
 
 #include "WMETUser.h"
 
 // ---------------------------------------------------------------------------
-class TfrmLogin : public TForm {
+class TfrmOptionsUser : public TForm {
 __published:
 
-	TButton *btnOk;
 	TButton *btnCancel;
-	TEdit *ePass;
-	TLabel *lblPass;
-	TLabel *lblUser;
-	TComboBox *cboxUser;
+	TButton *btnOk;
+	TLabeledEdit *eName;
+	TLabeledEdit *ePass;
+	TLabeledEdit *eTabNum;
+	TLabeledEdit *eShiftNum;
 
-	void __fastcall FormCreate(TObject *Sender);
-	void __fastcall FormDestroy(TObject *Sender);
-	void __fastcall FormCloseQuery(TObject *Sender, bool &CanClose);
 	void __fastcall btnOkClick(TObject *Sender);
 
 private:
-	TObjList<TUser> *UserList;
-
 public:
 
-	__fastcall TfrmLogin(TComponent* Owner);
+	__fastcall TfrmOptionsUser(TComponent* Owner);
 
-	static bool Show(TObjList<TUser> *UserList, TUser* User);
-
-	void UpdateForm();
-
-	bool CheckPass();
+	static bool Show(TComponent* Owner, TUser *User);
 };
 
 // ---------------------------------------------------------------------------
-extern PACKAGE TfrmLogin *frmLogin;
+extern PACKAGE TfrmOptionsUser *frmOptionsUser;
 // ---------------------------------------------------------------------------
 #endif

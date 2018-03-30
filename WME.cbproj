@@ -56,7 +56,7 @@
         <ILINK_LibraryPath>..\!UtilsAndComps\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
         <Multithreaded>true</Multithreaded>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-        <AllPackageLibs>rtl.lib;vcl.lib;dbrtl.lib;adortl.lib</AllPackageLibs>
+        <AllPackageLibs>rtl.lib;vcl.lib;dbrtl.lib;adortl.lib;IndySystem.lib;IndyProtocols.lib;IndyCore.lib</AllPackageLibs>
         <SanitizedProjectName>WME</SanitizedProjectName>
         <IncludePath>..\!UtilsAndComps\;$(IncludePath)</IncludePath>
         <ProjectType>CppVCLApplication</ProjectType>
@@ -111,7 +111,7 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <LinkPackageStatics>rtl.lib;vcl.lib;dbrtl.lib;adortl.lib</LinkPackageStatics>
+        <LinkPackageStatics>rtl.lib;vcl.lib;dbrtl.lib;adortl.lib;IndySystem.lib;IndyProtocols.lib;IndyCore.lib</LinkPackageStatics>
         <VerInfo_Debug>true</VerInfo_Debug>
         <VerInfo_PreRelease>true</VerInfo_PreRelease>
         <VerInfo_Locale>1033</VerInfo_Locale>
@@ -148,6 +148,9 @@
             <DependentOn>..\!UtilsAndComps\GradientPanel.h</DependentOn>
             <BuildOrder>4</BuildOrder>
         </CppCompile>
+        <None Include="..\!UtilsAndComps\ObjList.h">
+            <BuildOrder>31</BuildOrder>
+        </None>
         <CppCompile Include="..\!UtilsAndComps\UtilsCPUSpeed.cpp">
             <DependentOn>..\!UtilsAndComps\UtilsCPUSpeed.h</DependentOn>
             <BuildOrder>5</BuildOrder>
@@ -222,6 +225,12 @@
             <DependentOn>WMEOptions.h</DependentOn>
             <BuildOrder>22</BuildOrder>
         </CppCompile>
+        <CppCompile Include="WMEOptionsUser.cpp">
+            <Form>frmOptionsUser</Form>
+            <FormType>dfm</FormType>
+            <DependentOn>WMEOptionsUser.h</DependentOn>
+            <BuildOrder>29</BuildOrder>
+        </CppCompile>
         <PCHCompile Include="WMEPCH.h">
             <BuildOrder>1</BuildOrder>
         </PCHCompile>
@@ -232,6 +241,10 @@
             <Form>WMEStrings.res</Form>
             <BuildOrder>20</BuildOrder>
         </ResourceCompile>
+        <CppCompile Include="WMETConnection.cpp">
+            <DependentOn>WMETConnection.h</DependentOn>
+            <BuildOrder>28</BuildOrder>
+        </CppCompile>
         <CppCompile Include="WMETrain.cpp">
             <Form>frmTrain</Form>
             <FormType>dfm</FormType>
@@ -244,11 +257,20 @@
             <DependentOn>WMETrainList.h</DependentOn>
             <BuildOrder>26</BuildOrder>
         </CppCompile>
+        <CppCompile Include="WMETSettings.cpp">
+            <DependentOn>WMETSettings.h</DependentOn>
+            <BuildOrder>27</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="WMETUser.cpp">
+            <DependentOn>WMETUser.h</DependentOn>
+            <BuildOrder>30</BuildOrder>
+        </CppCompile>
         <FormResources Include="WMELogin.dfm"/>
-        <FormResources Include="WMEMain.dfm"/>
-        <FormResources Include="WMETrain.dfm"/>
-        <FormResources Include="WMETrainList.dfm"/>
         <FormResources Include="WMEOptions.dfm"/>
+        <FormResources Include="WMEMain.dfm"/>
+        <FormResources Include="WMEOptionsUser.dfm"/>
+        <FormResources Include="WMETrainList.dfm"/>
+        <FormResources Include="WMETrain.dfm"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -711,12 +733,12 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
             </Deployment>
             <Platforms>

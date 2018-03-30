@@ -4,12 +4,11 @@
 #define WMEAddH
 
 #include <System.Classes.hpp>
+#include <Vcl.Grids.hpp>
 
-#define sDefaultMySqlHost "localhost"
-#define sDefaultMySqlPort "3306"
-#define sDefaultMySqlUser "root"
+bool StringGridIsEmpty(TStringGrid *Grid);
+void StringGridUpdateOrderNum(TStringGrid *Grid);
+void StringGridDeleteRow(TStringGrid *Grid, int ARow, int AColCount = -1);
 
-String GetMySqlConnectionString(String Server, String Port, String Database,
-	String User, String Password);
 // ---------------------------------------------------------------------------
 #endif
