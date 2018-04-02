@@ -38,6 +38,8 @@ __published:
 	void __fastcall FormCloseQuery(TObject *Sender, bool &CanClose);
 
 private:
+	void SetQuerySQL(String Text);
+	void SetQuerySQL(NativeUInt Ident);
 
 public:
 	TSettings *Settings;
@@ -50,6 +52,9 @@ public:
 
 	bool CheckConnection(TConnection *Connection);
 	bool CheckConnection(TConnection *Connection, String &MySqlVersion);
+
+	bool DatabaseDrop(TConnection *Connection);
+	bool DatabaseCreate(TConnection *Connection);
 };
 
 // ---------------------------------------------------------------------------

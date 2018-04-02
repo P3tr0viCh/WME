@@ -8,28 +8,50 @@ IDS_COPYRIGHT_STATUS,
         "© Константин Дураев"
 
 IDS_QUESTION_CLOSE_PROGRAM,
-        "Закрыть программу?";
+        "Закрыть программу?"
 IDS_QUESTION_SETTINGS_CHANGED,
-        "Настройки были изменены.\n\nСохранить?";
+        "Настройки были изменены.\n\nСохранить?"
+IDS_QUESTION_DB_DROP,
+        "Внимание.\n\nБаза данных будет полностью удалена.\nДанное действие необратимо.\n\nПродолжить?"
+IDS_QUESTION_DB_CREATE,
+        "Внимание.\n\nПеред созданием новой текущая база данных, если она существует, будет полностью удалена.\nДанное действие необратимо.\n\nПродолжить?"
 
 IDS_ERROR_UNKNOWN,
-        "Неизвестная ошибка";
+        "Неизвестная ошибка"
 IDS_ERROR_MYSQL_CONNECTION,
-        "Не удалось подключиться к базе данных:\n\n%s";
+        "Не удалось подключиться к базе данных:\n\n%s"
 IDS_ERROR_SETTINGS_SAVE,
-        "Не удалось сохранить настройки.\n\nПроверьте разрешение на запись для каталога \"%s\" в папке программы.";
+        "Не удалось сохранить настройки.\n\nПроверьте разрешение на запись для каталога \"%s\" в папке программы."
 IDS_ERROR_NEED_USERNAME,
-        "Необходимо указать ФИО пользователя";
+        "Необходимо указать ФИО пользователя"
 IDS_ERROR_SELECT_USERNAME,
-        "Выберите пользователя";
+        "Выберите пользователя"
+IDS_ERROR_USERS_EMPTY,
+        "Список пользователей пуст"
+IDS_ERROR_MYSQL_DB_DROP,
+        "Во время удаления базы данных произошла ошибка"
+IDS_ERROR_MYSQL_DB_CREATE,
+        "Во время создания базы данных произошла ошибка"
 
-IDS_MSG_MYSQL_CONNECTION_OK
-        "Соединение с базой данных выполнено.\n\nВерсия сервера MySQL: %s";
+IDS_MSG_MYSQL_CONNECTION_OK,
+        "Соединение с базой данных выполнено.\n\nВерсия сервера MySQL: %s"
+IDS_MSG_MYSQL_DB_DROP_OK,
+        "База данных удалена"
+IDS_MSG_MYSQL_DB_CREATE_OK ,
+        "База данных создана"
 
 IDS_MYSQL_CONNECTION,
-        "DRIVER={MySQL ODBC 3.51 Driver};SERVER=%s;PORT=%s;DATABASE=%s;USER=%s;PASSWORD=%s;OPTION=3;";
+        "DRIVER={MySQL ODBC 3.51 Driver};SERVER=%s;PORT=%s;DATABASE=%s;USER=%s;PASSWORD=%s;OPTION=3;"
 IDS_MYSQL_VERSION,
-        "SELECT @@version;";
+        "SELECT @@version;"
+IDS_MYSQL_DATABASE_DROP,
+        "DROP DATABASE IF EXISTS wme;"
+IDS_MYSQL_DATABASE_CREATE,
+        "CREATE DATABASE wme;"
+IDS_MYSQL_TEMP_CREATE,
+        "MYSQL_TEMP_CREATE"
+IDS_MYSQL_TEMP2_CREATE,
+        "MYSQL_TEMP2_CREATE"
 
 IDS_LOG_START_PROGRAM,
         "---------- START PROGRAM WME %s"

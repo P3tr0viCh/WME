@@ -29,26 +29,18 @@ object frmOptions: TfrmOptions
     Align = alClient
     BevelOuter = bvLowered
     TabOrder = 0
-    ExplicitLeft = 0
-    ExplicitTop = 0
-    ExplicitWidth = 640
-    ExplicitHeight = 384
     object PageControl: TPageControl
       Left = 1
       Top = 1
       Width = 606
       Height = 366
-      ActivePage = tsUsers
+      ActivePage = tsDatabase
       Align = alClient
       MultiLine = True
       TabOrder = 0
       StyleElements = [seFont, seClient]
       object tsDatabase: TTabSheet
         Caption = #1041#1072#1079#1072' '#1076#1072#1085#1085#1099#1093
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         DesignSize = (
           598
           330)
@@ -139,9 +131,8 @@ object frmOptions: TfrmOptions
           Width = 168
           Height = 32
           Caption = #1057#1086#1079#1076#1072#1090#1100' '#1073#1072#1079#1091' '#1076#1072#1085#1085#1099#1093
-          Enabled = False
           TabOrder = 6
-          OnClick = btnDBConnectionDefaultClick
+          OnClick = btnDBCreateClick
         end
         object btnDBDelete: TButton
           Left = 196
@@ -149,18 +140,13 @@ object frmOptions: TfrmOptions
           Width = 168
           Height = 32
           Caption = #1059#1076#1072#1083#1080#1090#1100' '#1073#1072#1079#1091' '#1076#1072#1085#1085#1099#1093
-          Enabled = False
           TabOrder = 7
-          OnClick = btnDBConnectionDefaultClick
+          OnClick = btnDBDeleteClick
         end
       end
       object tsUsers: TTabSheet
         Caption = #1055#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1080
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 630
-        ExplicitHeight = 346
         object sgUsers: TStringGrid
           Left = 16
           Top = 16

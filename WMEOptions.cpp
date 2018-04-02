@@ -150,31 +150,93 @@ void TfrmOptions::UpdateSettings() {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmOptions::btnDBConnectionCheckClick(TObject *Sender) {
+TConnection* TfrmOptions::GetConnection() {
+	TConnection *Connection = new TConnection();
+
+	Connection->Host = eDBHost->Text;
+	Connection->Port = eDBPort->Text;
+	Connection->User = eDBUser->Text;
+	Connection->Password = eDBPass->Text;
+
+	return Connection;
+}
+
+// ---------------------------------------------------------------------------
+void TfrmOptions::DatabaseAction(int Action) {
+	switch (Action) {
+	case DB_ACTION_CREATE:
+		if (!MsgBoxYesNo(LoadStr(IDS_QUESTION_DB_CREATE))) {
+			return;
+		}
+		break;
+	case DB_ACTION_DROP:
+		if (!MsgBoxYesNo(LoadStr(IDS_QUESTION_DB_DROP))) {
+			return;
+		}
+		break;
+	}
+
 	bool Result = false;
 
 	String MySqlVersion;
 
-	TConnection *Connection = new TConnection();
+	String SActionResultOK, SActionResultFail;
+
+	TConnection *Connection = GetConnection();
 
 	try {
-		Connection->Host = eDBHost->Text;
-		Connection->Port = eDBPort->Text;
-		Connection->User = eDBUser->Text;
-		Connection->Password = eDBPass->Text;
+		switch (Action) {
+		case DB_ACTION_CHECK:
+			Result = Main->CheckConnection(Connection, MySqlVersion);
 
-		Result = Main->CheckConnection(Connection, MySqlVersion);
+			SActionResultOK = Format(IDS_MSG_MYSQL_CONNECTION_OK, MySqlVersion);
+			SActionResultFail = Format(IDS_ERROR_MYSQL_CONNECTION,
+				MySqlVersion);
+
+			break;
+		case DB_ACTION_CREATE:
+			Result = Main->DatabaseCreate(Connection);
+
+			SActionResultOK = LoadStr(IDS_MSG_MYSQL_DB_CREATE_OK);
+			SActionResultFail = LoadStr(IDS_ERROR_MYSQL_DB_CREATE);
+
+			break;
+		case DB_ACTION_DROP:
+			Result = Main->DatabaseDrop(Connection);
+
+			SActionResultOK = LoadStr(IDS_MSG_MYSQL_DB_DROP_OK);
+			SActionResultFail = LoadStr(IDS_ERROR_MYSQL_DB_DROP);
+
+			break;
+		default:
+			throw EActionError("DatabaseAction: unknown Action");
+		}
 	}
 	__finally {
 		Connection->Free();
 	}
 
 	if (Result) {
-		MsgBox(Format(IDS_MSG_MYSQL_CONNECTION_OK, MySqlVersion));
+		MsgBox(SActionResultOK);
 	}
 	else {
-		MsgBoxErr(Format(IDS_ERROR_MYSQL_CONNECTION, MySqlVersion));
+		MsgBoxErr(SActionResultFail);
 	}
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmOptions::btnDBConnectionCheckClick(TObject *Sender) {
+	DatabaseAction(DB_ACTION_CHECK);
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmOptions::btnDBCreateClick(TObject *Sender) {
+	DatabaseAction(DB_ACTION_CREATE);
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmOptions::btnDBDeleteClick(TObject *Sender) {
+	DatabaseAction(DB_ACTION_DROP);
 }
 
 // ---------------------------------------------------------------------------
@@ -254,7 +316,9 @@ int TfrmOptions::SetUser(int Index, TUser *User) {
 // ---------------------------------------------------------------------------
 void __fastcall TfrmOptions::btnUsersAddClick(TObject * Sender) {
 	TUser *User = new TUser();
-	User->Name = IntToStr(rand());
+#ifdef _DEBUG
+	User->Name = "Name " + IntToStr(rand());
+#endif
 
 	if (TfrmOptionsUser::Show(this, User)) {
 		sgUsers->Row = SetUser(-1, User);

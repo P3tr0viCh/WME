@@ -52,6 +52,8 @@ __published:
 	void __fastcall btnUsersDeleteClick(TObject *Sender);
 	void __fastcall sgUsersDblClick(TObject *Sender);
 	void __fastcall sgUsersFixedCellClick(TObject *Sender, int ACol, int ARow);
+	void __fastcall btnDBCreateClick(TObject *Sender);
+	void __fastcall btnDBDeleteClick(TObject *Sender);
 
 private:
 	TSettings *Settings;
@@ -64,6 +66,14 @@ private:
 	void UpdateSettings();
 
 	int SetUser(int Index, TUser *User);
+
+	TConnection* GetConnection();
+
+	static const int DB_ACTION_CHECK = 100;
+	static const int DB_ACTION_CREATE = 101;
+	static const int DB_ACTION_DROP = 102;
+
+	void DatabaseAction(int Action);
 
 public:
 	__fastcall TfrmOptions(TComponent* Owner);

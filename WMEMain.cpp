@@ -46,6 +46,10 @@ void __fastcall TMain::btnAboutClick(TObject *Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::FormCreate(TObject *Sender) {
+#ifdef _DEBUG
+	randomize();
+#endif
+
 	Settings = new TSettings();
 
 	User = new TUser();
@@ -53,7 +57,6 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 	Caption = Application->Title + " " + GetFileVer(Application->ExeName);
 	StatusBar->Panels->Items[0]->Text = LoadStr(IDS_COPYRIGHT_STATUS);
 
-	ADOQuery->SQL->Add("");
 	ADOQuery->Connection = ADOConnection;
 
 	WriteToLog(Format(IDS_LOG_START_PROGRAM,
@@ -116,10 +119,18 @@ void __fastcall TMain::btnDatabaseClick(TObject *Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::btnOperatorClick(TObject *Sender) {
+	if (Settings->UserList->Count == 0) {
+		User->Free();
+		User = new TUser();
+
+		ChangeUser();
+
+		MsgBoxErr(LoadStr(IDS_ERROR_USERS_EMPTY));
+
+		return;
+	}
+
 	bool Result = false;
-
-	// TODO: Settings->UserList->Count == 0
-
 	Hide();
 	try {
 		Result = TfrmLogin::Show(Settings->UserList, User);
@@ -157,6 +168,24 @@ void __fastcall TMain::FormCloseQuery(TObject *Sender, bool &CanClose) {
 }
 
 // ---------------------------------------------------------------------------
+void TMain::SetQuerySQL(String Text) {
+	ADOQuery->SQL->Text = Text;
+}
+
+// ---------------------------------------------------------------------------
+void TMain::SetQuerySQL(NativeUInt Ident) {
+	TResourceStream *Stream = new TResourceStream((int)HInstance,
+		LoadStr(Ident), RT_RCDATA);
+
+	try {
+		ADOQuery->SQL->LoadFromStream(Stream);
+	}
+	__finally {
+		Stream->Free();
+	}
+}
+
+// ---------------------------------------------------------------------------
 bool TMain::CheckConnection(TConnection *Connection) {
 	String MySqlVersion;
 	return CheckConnection(Connection, MySqlVersion);
@@ -178,7 +207,7 @@ bool TMain::CheckConnection(TConnection *Connection, String &MySqlVersion) {
 
 			ADOConnection->Open();
 
-			ADOQuery->SQL->Strings[0] = LoadStr(IDS_MYSQL_VERSION);
+			SetQuerySQL(LoadStr(IDS_MYSQL_VERSION));
 
 			ADOQuery->Open();
 
@@ -207,8 +236,119 @@ bool TMain::CheckConnection(TConnection *Connection, String &MySqlVersion) {
 		}
 
 		WriteToLog(Format(IDS_LOG_MYSQL_CONNECT_FAIL,
-			StringReplace(MySqlVersion, "\n", " ",
+			StringReplace(MySqlVersion, sLineBreak, " ",
 			TReplaceFlags() << rfReplaceAll)));
+	}
+
+	return Result;
+}
+
+// ---------------------------------------------------------------------------
+bool TMain::DatabaseDrop(TConnection *Connection) {
+	bool Result = false;
+	String Error;
+
+	ShowWaitCursor();
+	try {
+		ADOConnection->ConnectionString =
+			Connection->GetConnectionString(false);
+
+		try {
+			ADOConnection->Open();
+
+			SetQuerySQL(LoadStr(IDS_MYSQL_DATABASE_DROP));
+
+			ADOQuery->ExecSQL();
+
+			Result = true;
+		}
+		catch (Exception *E) {
+			Error = E->Message;
+		}
+	}
+	__finally {
+		RestoreCursor();
+	}
+
+	if (ADOConnection->Connected) {
+		ADOConnection->Close();
+	}
+
+	if (Result) {
+		WriteToLog("DROP OK");
+	}
+	else {
+		if (IsEmpty(Error)) {
+			Error = LoadStr(IDS_ERROR_UNKNOWN);
+		}
+
+		WriteToLog(Format(IDS_LOG_MYSQL_CONNECT_FAIL, StringReplace(Error,
+			sLineBreak, " ", TReplaceFlags() << rfReplaceAll)));
+	}
+
+	return Result;
+}
+
+// ---------------------------------------------------------------------------
+bool TMain::DatabaseCreate(TConnection *Connection) {
+	bool Result = false;
+	String Error;
+
+	ShowWaitCursor();
+	try {
+		ADOConnection->ConnectionString =
+			Connection->GetConnectionString(false);
+
+		try {
+			ADOConnection->Open();
+
+			SetQuerySQL(LoadStr(IDS_MYSQL_DATABASE_DROP));
+
+			ADOQuery->ExecSQL();
+
+			SetQuerySQL(LoadStr(IDS_MYSQL_DATABASE_CREATE));
+
+			ADOQuery->ExecSQL();
+
+			ADOConnection->Close();
+
+			ADOConnection->ConnectionString =
+				Connection->GetConnectionString(true);
+
+			ADOConnection->Open();
+
+			SetQuerySQL(IDS_MYSQL_TEMP_CREATE);
+
+			ADOQuery->ExecSQL();
+
+			SetQuerySQL(IDS_MYSQL_TEMP2_CREATE);
+
+			ADOQuery->ExecSQL();
+
+			Result = true;
+		}
+		catch (Exception *E) {
+			Error = E->Message;
+		}
+	}
+	__finally {
+		RestoreCursor();
+	}
+
+	if (ADOConnection->Connected) {
+		ADOConnection->Close();
+	}
+
+	if (Result) {
+		WriteToLog("CREATE OK");
+	}
+	else {
+		if (IsEmpty(Error)) {
+			Error = LoadStr(IDS_ERROR_UNKNOWN);
+		}
+
+		WriteToLog(Format(IDS_LOG_MYSQL_CONNECT_FAIL, StringReplace(Error,
+			sLineBreak, " ", TReplaceFlags() << rfReplaceAll)));
 	}
 
 	return Result;
