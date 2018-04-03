@@ -197,15 +197,15 @@
             <DependentOn>..\!UtilsAndComps\UtilsStr.h</DependentOn>
             <BuildOrder>11</BuildOrder>
         </CppCompile>
-        <RcItem Include="sql\table temp.sql">
+        <RcItem Include="sql\table trains.sql">
             <ContainerId>ResourceItem</ContainerId>
             <ResourceType>RCDATA</ResourceType>
-            <ResourceId>MYSQL_TEMP_CREATE</ResourceId>
+            <ResourceId>MYSQL_TBL_TRAINS</ResourceId>
         </RcItem>
-        <RcItem Include="sql\table temp2.sql">
+        <RcItem Include="sql\table vans.sql">
             <ContainerId>ResourceItem</ContainerId>
             <ResourceType>RCDATA</ResourceType>
-            <ResourceId>MYSQL_TEMP2_CREATE</ResourceId>
+            <ResourceId>MYSQL_TBL_VANS</ResourceId>
         </RcItem>
         <CppCompile Include="WME.cpp">
             <BuildOrder>0</BuildOrder>
@@ -315,12 +315,6 @@
                 </Excluded_Packages>
             </CPlusPlusBuilder.Personality>
             <Deployment Version="2">
-                <DeployFile LocalName="sql\table temp2.sql" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile Condition="'$(UsingDelphiRTL)'=='true'" LocalName="$(BDS)\bin64\borlndmm.dll" Class="DependencyModule">
                     <Platform Name="Win64">
                         <Overwrite>true</Overwrite>
@@ -373,7 +367,13 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="sql\table temp.sql" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="sql\table trains.sql" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="sql\table vans.sql" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>

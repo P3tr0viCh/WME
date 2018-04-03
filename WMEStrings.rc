@@ -18,16 +18,18 @@ IDS_QUESTION_DB_CREATE,
 
 IDS_ERROR_UNKNOWN,
         "Неизвестная ошибка"
-IDS_ERROR_MYSQL_CONNECTION,
-        "Не удалось подключиться к базе данных:\n\n%s"
 IDS_ERROR_SETTINGS_SAVE,
         "Не удалось сохранить настройки.\n\nПроверьте разрешение на запись для каталога \"%s\" в папке программы."
 IDS_ERROR_NEED_USERNAME,
         "Необходимо указать ФИО пользователя"
 IDS_ERROR_SELECT_USERNAME,
         "Выберите пользователя"
-IDS_ERROR_USERS_EMPTY,
-        "Список пользователей пуст"
+IDS_ERROR_PASS_WRONG,
+        "Неправильный пароль.\n\nПопробуйте ещё раз"
+IDS_ERROR_USERS_LAST_ADMIN,
+        "В списке пользователей должен присутствовать как минимум один Администратор"
+IDS_ERROR_MYSQL_CONNECTION,
+        "Не удалось подключиться к базе данных:\n\n%s"
 IDS_ERROR_MYSQL_DB_DROP,
         "Во время удаления базы данных произошла ошибка"
 IDS_ERROR_MYSQL_DB_CREATE,
@@ -37,8 +39,11 @@ IDS_MSG_MYSQL_CONNECTION_OK,
         "Соединение с базой данных выполнено.\n\nВерсия сервера MySQL: %s"
 IDS_MSG_MYSQL_DB_DROP_OK,
         "База данных удалена"
-IDS_MSG_MYSQL_DB_CREATE_OK ,
+IDS_MSG_MYSQL_DB_CREATE_OK,
         "База данных создана"
+
+IDS_TXT_ADMIN_DEFAULT_NAME,
+        "Администратор"
 
 IDS_MYSQL_CONNECTION,
         "DRIVER={MySQL ODBC 3.51 Driver};SERVER=%s;PORT=%s;DATABASE=%s;USER=%s;PASSWORD=%s;OPTION=3;"
@@ -48,33 +53,42 @@ IDS_MYSQL_DATABASE_DROP,
         "DROP DATABASE IF EXISTS wme;"
 IDS_MYSQL_DATABASE_CREATE,
         "CREATE DATABASE wme;"
-IDS_MYSQL_TEMP_CREATE,
-        "MYSQL_TEMP_CREATE"
-IDS_MYSQL_TEMP2_CREATE,
-        "MYSQL_TEMP2_CREATE"
+IDS_MYSQL_TBL_TRAINS_CREATE,
+        "MYSQL_TBL_TRAINS"
+IDS_MYSQL_TBL_VANS_CREATE,
+        "MYSQL_TBL_VANS"
 
 IDS_LOG_START_PROGRAM,
-        "---------- START PROGRAM WME %s"
+        ">>>>>>> START PROGRAM WME %s"
 IDS_LOG_STOP_PROGRAM,
-          "---------- STOP PROGRAM"
+        "<<<<<<< STOP PROGRAM"
 IDS_LOG_OPTIONS_SAVE,
-          "options: save"
+        "options: save"
 IDS_LOG_OPTIONS_CANCEL,
-          "options: cancel"
+        "options: cancel"
 IDS_LOG_LOGIN_OK,
-          "login: ok"
+        "login: ok"
 IDS_LOG_LOGIN_CANCEL,
-          "login: cancel"
-IDS_LOG_MYSQL_CONNECT,
-          "try mysql connect: %s@%s:%s"
-IDS_LOG_MYSQL_CONNECT_OK,
-          "mysql connected, version: %s"
-IDS_LOG_MYSQL_CONNECT_FAIL,
-          "mysql connect fail: %s"
+        "login: cancel"
 IDS_LOG_CREATE_DIR_FAIL,
-          "create dir fail: %s"
+        "create dir fail: %s"
 IDS_LOG_WRITE_FILE_FAIL,
-          "write file fail: %s; e = %s"
+        "write file fail: %s; e = %s"
 IDS_LOG_READ_FILE_FAIL,
-          "read file fail: %s; e = %s"
+        "read file fail: %s; e = %s"
+IDS_LOG_MYSQL_CONNECT,
+        "try mysql connect: %s@%s:%s"
+IDS_LOG_MYSQL_CONNECT_OK,
+        "mysql connected, version: %s"
+IDS_LOG_MYSQL_CONNECT_FAIL,
+        "mysql connect fail: %s"
+IDS_LOG_MYSQL_DB_DROP_OK,
+        "mysql database drop ok"
+IDS_LOG_MYSQL_DB_DROP_FAIL,
+        "mysql database drop fail: %s"
+IDS_LOG_MYSQL_DB_CREATE_OK,
+        "mysql database create ok"
+IDS_LOG_MYSQL_DB_CREATE_FAIL,
+        "mysql database create fail: %s"
+
 END

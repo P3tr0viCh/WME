@@ -58,14 +58,21 @@ __published:
 private:
 	TSettings *Settings;
 
+	bool IsReadOnly;
+
 	bool PerformSave;
 
-	void UpdateUsersColumns();
+	void CreateUsersColumns();
+
+	void SetReadOnly(TComponent *Parent, bool ReadOnly);
 
 	void UpdateForm();
 	void UpdateSettings();
 
+	TUser* GetUser(int Index);
 	int SetUser(int Index, TUser *User);
+
+	bool IsUserAdmin(int Index);
 
 	TConnection* GetConnection();
 
@@ -78,7 +85,9 @@ private:
 public:
 	__fastcall TfrmOptions(TComponent* Owner);
 
-	static bool Show(TSettings *Settings);
+	static bool Show(TSettings *Settings, bool ReadOnly);
+
+	int AdminCount();
 };
 
 // ---------------------------------------------------------------------------

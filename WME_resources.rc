@@ -1,2 +1,2 @@
-MYSQL_TEMP_CREATE RCDATA "sql\\table temp.sql"
-MYSQL_TEMP2_CREATE RCDATA "sql\\table temp2.sql"
+MYSQL_TBL_TRAINS RCDATA "sql\\table trains.sql"
+MYSQL_TBL_VANS RCDATA "sql\\table vans.sql"

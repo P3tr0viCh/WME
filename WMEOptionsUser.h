@@ -21,6 +21,7 @@ __published:
 	TLabeledEdit *ePass;
 	TLabeledEdit *eTabNum;
 	TLabeledEdit *eShiftNum;
+	TCheckBox *cboxAdmin;
 
 	void __fastcall btnOkClick(TObject *Sender);
 
@@ -29,7 +30,7 @@ public:
 
 	__fastcall TfrmOptionsUser(TComponent* Owner);
 
-	static bool Show(TComponent* Owner, TUser *User);
+	static bool Show(TComponent* Owner, TUser *User, int AdminCount);
 };
 
 // ---------------------------------------------------------------------------

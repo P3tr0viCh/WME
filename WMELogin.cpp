@@ -98,26 +98,25 @@ void TfrmLogin::UpdateForm() {
 
 // ---------------------------------------------------------------------------
 bool TfrmLogin::CheckPass() {
-	bool Result = cboxUser->ItemIndex != -1;
-
-	if (!Result) {
+	if (cboxUser->ItemIndex == -1) {
 		cboxUser->Text = "";
 		cboxUser->SetFocus();
+
 		MsgBoxErr(LoadStr(IDS_ERROR_SELECT_USERNAME));
 
 		return false;
 	}
 
-	// Result = ePass->Text = UsersAndPasswords.ValueFromIndex[cboxNames.ItemIndex];
-	//
-	// if (not Result) and (UsersAndPasswords.ValueFromIndex[0] <> '') then
-	// Result := ePassword.Text = UsersAndPasswords.ValueFromIndex[0];
-	// if not Result then
-	// begin
-	// ePassword.Clear;
-	// ePassword.SetFocus;
-	// MsgBoxErr(rsErrorPassword);
-	// end;
+	if (!AnsiSameStr(ePass->Text, UserList->Items[cboxUser->ItemIndex]->Pass)) {
+		ePass->Clear();
+		ePass->SetFocus();
+
+		MsgBoxErr(LoadStr(IDS_ERROR_PASS_WRONG));
+
+		return false;
+	}
+
+	return true;
 }
 
 // ---------------------------------------------------------------------------

@@ -53,3 +53,10 @@ void StringGridDeleteRow(TStringGrid *Grid, int ARow, int AColCount) {
 }
 
 // ---------------------------------------------------------------------------
+void StringGridSetHeader(TStringGrid *Grid, int Col, String ColName,
+	int ColWidth) {
+	Grid->Cells[Col][0] = ColName;
+	Grid->ColWidths[Col] = ColWidth;
+}
+
+// ---------------------------------------------------------------------------

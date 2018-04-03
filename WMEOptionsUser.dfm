@@ -2,9 +2,9 @@ object frmOptionsUser: TfrmOptionsUser
   Left = 0
   Top = 0
   BorderIcons = [biSystemMenu, biMaximize]
-  BorderStyle = bsDialog
+  BorderStyle = bsToolWindow
   Caption = #1055#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1100
-  ClientHeight = 208
+  ClientHeight = 240
   ClientWidth = 336
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -18,22 +18,22 @@ object frmOptionsUser: TfrmOptionsUser
   TextHeight = 21
   object btnCancel: TButton
     Left = 224
-    Top = 160
+    Top = 192
     Width = 96
     Height = 32
     Cancel = True
     Caption = #1054#1090#1084#1077#1085#1072
     ModalResult = 2
-    TabOrder = 5
+    TabOrder = 6
   end
   object btnOk: TButton
     Left = 112
-    Top = 160
+    Top = 192
     Width = 96
     Height = 32
     Caption = 'OK'
     Default = True
-    TabOrder = 4
+    TabOrder = 5
     OnClick = btnOkClick
   end
   object eName: TLabeledEdit
@@ -79,5 +79,13 @@ object frmOptionsUser: TfrmOptionsUser
     EditLabel.Caption = #1057#1084#1077#1085#1072
     MaxLength = 4
     TabOrder = 3
+  end
+  object cboxAdmin: TCheckBox
+    Left = 16
+    Top = 144
+    Width = 304
+    Height = 18
+    Caption = #1040#1076#1084#1080#1085#1080#1089#1090#1088#1072#1090#1086#1088
+    TabOrder = 4
   end
 end

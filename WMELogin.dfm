@@ -4,7 +4,7 @@ object frmLogin: TfrmLogin
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = #1042#1093#1086#1076
-  ClientHeight = 240
+  ClientHeight = 232
   ClientWidth = 352
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -16,14 +16,11 @@ object frmLogin: TfrmLogin
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  DesignSize = (
-    352
-    240)
   PixelsPerInch = 96
   TextHeight = 21
   object lblPass: TLabel
     Left = 16
-    Top = 104
+    Top = 96
     Width = 53
     Height = 21
     Caption = #1055#1072#1088#1086#1083#1100
@@ -38,10 +35,9 @@ object frmLogin: TfrmLogin
   end
   object btnOk: TButton
     Left = 128
-    Top = 192
+    Top = 184
     Width = 96
     Height = 32
-    Anchors = [akRight, akBottom]
     Caption = 'OK'
     Default = True
     ModalResult = 1
@@ -50,10 +46,9 @@ object frmLogin: TfrmLogin
   end
   object btnCancel: TButton
     Left = 240
-    Top = 192
+    Top = 184
     Width = 96
     Height = 32
-    Anchors = [akRight, akBottom]
     Cancel = True
     Caption = #1047#1072#1082#1088#1099#1090#1100
     ModalResult = 2
@@ -61,7 +56,7 @@ object frmLogin: TfrmLogin
   end
   object ePass: TEdit
     Left = 16
-    Top = 136
+    Top = 128
     Width = 320
     Height = 29
     PasswordChar = '#'
@@ -69,7 +64,7 @@ object frmLogin: TfrmLogin
   end
   object cboxUser: TComboBox
     Left = 16
-    Top = 56
+    Top = 48
     Width = 320
     Height = 29
     Style = csDropDownList

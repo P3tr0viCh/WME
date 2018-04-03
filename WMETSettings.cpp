@@ -73,6 +73,22 @@ String __fastcall TSettings::ToString() {
 }
 
 // ---------------------------------------------------------------------------
+int __fastcall UserListSort(void* Item1, void* Item2) {
+	TUser* User1 = (TUser*)Item1;
+	TUser* User2 = (TUser*)Item2;
+
+	if (User1->IsAdmin && !User2->IsAdmin) {
+		return -1;
+	}
+
+	if (!User1->IsAdmin && User2->IsAdmin) {
+		return 1;
+	}
+
+	return AnsiCompareStr(User1->Name, User2->Name);
+}
+
+// ---------------------------------------------------------------------------
 String TSettings::GetConfigDir() {
 	return IncludeTrailingBackslash(FileInAppDir(CFG_DIR_NAME));
 }
@@ -157,6 +173,17 @@ bool TSettings::Load() {
 				User->TabNum = IniFile->ReadString(Section, "TabNum", "");
 				User->ShiftNum = IniFile->ReadString(Section, "ShiftNum", "");
 
+				User->IsAdmin = IniFile->ReadBool(Section, "IsAdmin", false);
+
+				FUserList->Add(User);
+			}
+
+			if (FUserList->Count == 0) {
+				User = new TUser();
+
+				User->Name = LoadStr(IDS_TXT_ADMIN_DEFAULT_NAME);
+				User->IsAdmin = true;
+
 				FUserList->Add(User);
 			}
 		}
@@ -210,12 +237,14 @@ bool TSettings::Save() {
 		// ---------------------
 		ConfigFileName = GetConfigFileName("Users");
 
-		if (!DeleteFile(ConfigFileName)) {
+		if (FileExists(ConfigFileName) && !DeleteFile(ConfigFileName)) {
 			throw Exception("error delete file");
 		}
 
 		IniFile = new TIniFile(ConfigFileName);
 		try {
+			UserList->Sort(UserListSort);
+
 			IniFile->WriteInteger("Users", "Count", UserList->Count);
 
 			for (int i = 0; i < UserList->Count; i++) {
@@ -228,6 +257,9 @@ bool TSettings::Save() {
 					UserList->Items[i]->TabNum);
 				IniFile->WriteString(Section, "ShiftNum",
 					UserList->Items[i]->ShiftNum);
+
+				IniFile->WriteBool(Section, "IsAdmin",
+					UserList->Items[i]->IsAdmin);
 			}
 		}
 		__finally {

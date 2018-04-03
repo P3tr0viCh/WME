@@ -19,7 +19,7 @@ __fastcall TfrmOptionsUser::TfrmOptionsUser(TComponent* Owner) : TForm(Owner) {
 }
 
 // ---------------------------------------------------------------------------
-bool TfrmOptionsUser::Show(TComponent* Owner, TUser *User) {
+bool TfrmOptionsUser::Show(TComponent* Owner, TUser *User, int AdminCount) {
 	bool Result = false;
 
 	TfrmOptionsUser *frmOptionsUser = new TfrmOptionsUser(Owner);
@@ -28,6 +28,11 @@ bool TfrmOptionsUser::Show(TComponent* Owner, TUser *User) {
 		frmOptionsUser->ePass->Text = User->Pass;
 		frmOptionsUser->eTabNum->Text = User->TabNum;
 		frmOptionsUser->eShiftNum->Text = User->ShiftNum;
+		frmOptionsUser->cboxAdmin->Checked = User->IsAdmin;
+
+		if (User->IsAdmin && AdminCount <= 1) {
+			frmOptionsUser->cboxAdmin->Enabled = false;
+		}
 
 		Result = frmOptionsUser->ShowModal() == mrOk;
 
@@ -36,6 +41,8 @@ bool TfrmOptionsUser::Show(TComponent* Owner, TUser *User) {
 			User->Pass = frmOptionsUser->ePass->Text;
 			User->TabNum = frmOptionsUser->eTabNum->Text;
 			User->ShiftNum = frmOptionsUser->eShiftNum->Text;
+
+			User->IsAdmin = frmOptionsUser->cboxAdmin->Checked;
 		}
 	}
 	__finally {

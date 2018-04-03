@@ -73,21 +73,20 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 	Settings->Load();
 
 #ifndef FORCELOGON
-	if (Settings->UserList->Count > 0) {
-		if (TfrmLogin::Show(Settings->UserList, User)) {
-			ChangeUser();
-		}
-		else {
-			Application->Terminate();
-			return;
-		}
-	}
-	else {
+	if (TfrmLogin::Show(Settings->UserList, User)) {
 		ChangeUser();
 	}
+	else {
+		Application->Terminate();
+		return;
+	}
+#else
+	User->Assign(Settings->UserList->Items[0]);
+	ChangeUser();
 #endif
 
-	// btnOptions->Click();
+//	btnOptions->Click();
+	btnManual->Click();
 }
 
 // ---------------------------------------------------------------------------
@@ -119,18 +118,8 @@ void __fastcall TMain::btnDatabaseClick(TObject *Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::btnOperatorClick(TObject *Sender) {
-	if (Settings->UserList->Count == 0) {
-		User->Free();
-		User = new TUser();
-
-		ChangeUser();
-
-		MsgBoxErr(LoadStr(IDS_ERROR_USERS_EMPTY));
-
-		return;
-	}
-
 	bool Result = false;
+
 	Hide();
 	try {
 		Result = TfrmLogin::Show(Settings->UserList, User);
@@ -148,16 +137,12 @@ void __fastcall TMain::btnOperatorClick(TObject *Sender) {
 
 // ---------------------------------------------------------------------------
 void TMain::ChangeUser() {
-	if (IsEmpty(User->Name)) {
-		User->Name = "Оператор";
-	}
-
 	btnOperator->Caption = User->Name;
 }
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::btnOptionsClick(TObject *Sender) {
-	TfrmOptions::Show(Settings);
+	TfrmOptions::Show(Settings, !User->IsAdmin);
 }
 
 // ---------------------------------------------------------------------------
@@ -275,14 +260,14 @@ bool TMain::DatabaseDrop(TConnection *Connection) {
 	}
 
 	if (Result) {
-		WriteToLog("DROP OK");
+		WriteToLog(LoadStr(IDS_LOG_MYSQL_DB_DROP_OK));
 	}
 	else {
 		if (IsEmpty(Error)) {
 			Error = LoadStr(IDS_ERROR_UNKNOWN);
 		}
 
-		WriteToLog(Format(IDS_LOG_MYSQL_CONNECT_FAIL, StringReplace(Error,
+		WriteToLog(Format(IDS_LOG_MYSQL_DB_DROP_FAIL, StringReplace(Error,
 			sLineBreak, " ", TReplaceFlags() << rfReplaceAll)));
 	}
 
@@ -317,11 +302,11 @@ bool TMain::DatabaseCreate(TConnection *Connection) {
 
 			ADOConnection->Open();
 
-			SetQuerySQL(IDS_MYSQL_TEMP_CREATE);
+			SetQuerySQL(IDS_MYSQL_TBL_TRAINS_CREATE);
 
 			ADOQuery->ExecSQL();
 
-			SetQuerySQL(IDS_MYSQL_TEMP2_CREATE);
+			SetQuerySQL(IDS_MYSQL_TBL_VANS_CREATE);
 
 			ADOQuery->ExecSQL();
 
@@ -340,14 +325,14 @@ bool TMain::DatabaseCreate(TConnection *Connection) {
 	}
 
 	if (Result) {
-		WriteToLog("CREATE OK");
+		WriteToLog(LoadStr(IDS_LOG_MYSQL_DB_CREATE_OK));
 	}
 	else {
 		if (IsEmpty(Error)) {
 			Error = LoadStr(IDS_ERROR_UNKNOWN);
 		}
 
-		WriteToLog(Format(IDS_LOG_MYSQL_CONNECT_FAIL, StringReplace(Error,
+		WriteToLog(Format(IDS_LOG_MYSQL_DB_CREATE_FAIL, StringReplace(Error,
 			sLineBreak, " ", TReplaceFlags() << rfReplaceAll)));
 	}
 

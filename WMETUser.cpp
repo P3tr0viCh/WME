@@ -19,7 +19,8 @@ bool __fastcall TUser::Equals(TObject* Obj) {
 	TUser *User = (TUser*) Obj;
 
 	if (Name != User->Name || Pass != User->Pass ||
-		TabNum != User->TabNum || ShiftNum != User->ShiftNum)
+		TabNum != User->TabNum || ShiftNum != User->ShiftNum ||
+		IsAdmin != User->IsAdmin)
 		return false;
 
 	return true;
@@ -31,6 +32,7 @@ void __fastcall TUser::Assign(TUser* Source) {
 	Pass = Source->Pass;
 	TabNum = Source->TabNum;
 	ShiftNum = Source->ShiftNum;
+	IsAdmin = Source->IsAdmin;
 }
 
 // ---------------------------------------------------------------------------

@@ -21,31 +21,44 @@
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 
-const COLUMN_USERS_NUM = 0;
-const COLUMN_USERS_NAME = 1;
-const COLUMN_USERS_IS_PASS = 2;
-const COLUMN_USERS_TABNUM = 3;
-const COLUMN_USERS_SHIFTNUM = 4;
-const COLUMN_USERS_PASS = 5;
-const COLUMN_USERS_COUNT = 6;
+// ---------------------------------------------------------------------------
+struct {
+	static const NUM = 0;
+	static const NAME = 1;
+	static const HAS_PASS = 2;
+	static const IS_ADMIN = 3;
+	static const TABNUM = 4;
+	static const SHIFTNUM = 5;
+	static const PASS = 6;
+
+	static const VISIBLE_COUNT = 6;
+
+	static const COUNT = 7;
+} UsersColumns;
 
 // ---------------------------------------------------------------------------
 __fastcall TfrmOptions::TfrmOptions(TComponent* Owner) : TForm(Owner) {
 }
 
 // ---------------------------------------------------------------------------
-bool TfrmOptions::Show(TSettings *Settings) {
+bool TfrmOptions::Show(TSettings *Settings, bool ReadOnly) {
 	bool Result = false;
 
 	TfrmOptions *frmOptions = new TfrmOptions(Application);
 	try {
+		frmOptions->IsReadOnly = ReadOnly;
+		if (ReadOnly) {
+			frmOptions->SetReadOnly(frmOptions, true);
+		}
+		frmOptions->btnCancel->Enabled = true;
+
 		frmOptions->Settings->Assign(Settings);
 
 		frmOptions->UpdateForm();
 
 		Result = frmOptions->ShowModal() == mrOk;
 
-		if (Result) {
+		if (!ReadOnly && Result) {
 			Settings->Assign(frmOptions->Settings);
 		}
 	}
@@ -74,7 +87,7 @@ void __fastcall TfrmOptions::FormCreate(TObject *Sender) {
 		delete FileIni;
 	}
 
-	UpdateUsersColumns();
+	CreateUsersColumns();
 }
 
 // ---------------------------------------------------------------------------
@@ -93,17 +106,37 @@ void __fastcall TfrmOptions::FormDestroy(TObject *Sender) {
 }
 
 // ---------------------------------------------------------------------------
-void TfrmOptions::UpdateUsersColumns() {
-	sgUsers->Cells[COLUMN_USERS_NUM][0] = "№";
-	sgUsers->ColWidths[COLUMN_USERS_NUM] = 50;
-	sgUsers->Cells[COLUMN_USERS_NAME][0] = "ФИО";
-	sgUsers->ColWidths[COLUMN_USERS_NAME] = 200;
-	sgUsers->Cells[COLUMN_USERS_IS_PASS][0] = "Пароль";
-	sgUsers->ColWidths[COLUMN_USERS_IS_PASS] = 70;
-	sgUsers->Cells[COLUMN_USERS_TABNUM][0] = "Таб. номер";
-	sgUsers->ColWidths[COLUMN_USERS_TABNUM] = 120;
-	sgUsers->Cells[COLUMN_USERS_SHIFTNUM][0] = "Смена";
-	sgUsers->ColWidths[COLUMN_USERS_SHIFTNUM] = 60;
+void TfrmOptions::CreateUsersColumns() {
+	sgUsers->ColCount = UsersColumns.VISIBLE_COUNT;
+
+	StringGridSetHeader(sgUsers, UsersColumns.NUM, "№", 50);
+	StringGridSetHeader(sgUsers, UsersColumns.NAME, "ФИО", 190);
+	StringGridSetHeader(sgUsers, UsersColumns.HAS_PASS, "Пароль", 70);
+	StringGridSetHeader(sgUsers, UsersColumns.IS_ADMIN, "Админ", 60);
+	StringGridSetHeader(sgUsers, UsersColumns.TABNUM, "Таб. номер", 100);
+	StringGridSetHeader(sgUsers, UsersColumns.SHIFTNUM, "Смена", 60);
+}
+
+// ---------------------------------------------------------------------------
+void TfrmOptions::SetReadOnly(TComponent *Parent, bool ReadOnly) {
+	TWinControl *Child;
+
+	for (int i = 0; i < ((TWinControl*)Parent)->ControlCount; i++) {
+		try {
+			Child = dynamic_cast<TWinControl*>
+				(((TWinControl*)Parent)->Controls[i]);
+
+			if (Child->ClassNameIs("TButton") || Child->ClassNameIs
+				("TLabeledEdit")) {
+				Child->Enabled = !ReadOnly;
+			}
+			else {
+				SetReadOnly(Child, ReadOnly);
+			}
+		}
+		catch (...) {
+		}
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -139,10 +172,12 @@ void TfrmOptions::UpdateSettings() {
 		for (int i = 1; i < sgUsers->RowCount; i++) {
 			User = new TUser();
 
-			User->Name = sgUsers->Cells[COLUMN_USERS_NAME][i];
-			User->Pass = sgUsers->Cells[COLUMN_USERS_PASS][i];
-			User->TabNum = sgUsers->Cells[COLUMN_USERS_TABNUM][i];
-			User->ShiftNum = sgUsers->Cells[COLUMN_USERS_SHIFTNUM][i];
+			User->Name = sgUsers->Cells[UsersColumns.NAME][i];
+			User->Pass = sgUsers->Cells[UsersColumns.PASS][i];
+			User->TabNum = sgUsers->Cells[UsersColumns.TABNUM][i];
+			User->ShiftNum = sgUsers->Cells[UsersColumns.SHIFTNUM][i];
+
+			User->IsAdmin = !IsEmpty(sgUsers->Cells[UsersColumns.IS_ADMIN][i]);
 
 			Settings->UserList->Add(User);
 		}
@@ -251,6 +286,11 @@ void __fastcall TfrmOptions::btnDBConnectionDefaultClick(TObject * Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmOptions::FormCloseQuery(TObject *Sender, bool &CanClose) {
+	if (IsReadOnly) {
+		CanClose = true;
+		return;
+	}
+
 	UpdateSettings();
 
 	if (!PerformSave) {
@@ -294,6 +334,20 @@ void __fastcall TfrmOptions::btnOkClick(TObject *Sender) {
 }
 
 // ---------------------------------------------------------------------------
+TUser* TfrmOptions::GetUser(int Index) {
+	TUser *User = new TUser();
+
+	User->Name = sgUsers->Cells[UsersColumns.NAME][Index];
+	User->Pass = sgUsers->Cells[UsersColumns.PASS][Index];
+	User->TabNum = sgUsers->Cells[UsersColumns.TABNUM][Index];
+	User->ShiftNum = sgUsers->Cells[UsersColumns.SHIFTNUM][Index];
+
+	User->IsAdmin = IsUserAdmin(Index);
+
+	return User;
+}
+
+// ---------------------------------------------------------------------------
 int TfrmOptions::SetUser(int Index, TUser *User) {
 	if (Index < 0) {
 		if (!StringGridIsEmpty(sgUsers)) {
@@ -302,15 +356,21 @@ int TfrmOptions::SetUser(int Index, TUser *User) {
 		Index = sgUsers->RowCount - 1;
 	}
 
-	sgUsers->Cells[COLUMN_USERS_NUM][Index] = IntToStr(Index);
-	sgUsers->Cells[COLUMN_USERS_NAME][Index] = User->Name;
-	sgUsers->Cells[COLUMN_USERS_IS_PASS][Index] = IsEmpty(User->Pass) ?
+	sgUsers->Cells[UsersColumns.NUM][Index] = IntToStr(Index);
+	sgUsers->Cells[UsersColumns.NAME][Index] = User->Name;
+	sgUsers->Cells[UsersColumns.HAS_PASS][Index] = IsEmpty(User->Pass) ?
 		"" : "###";
-	sgUsers->Cells[COLUMN_USERS_TABNUM][Index] = User->TabNum;
-	sgUsers->Cells[COLUMN_USERS_SHIFTNUM][Index] = User->ShiftNum;
-	sgUsers->Cells[COLUMN_USERS_PASS][Index] = User->Pass;
+	sgUsers->Cells[UsersColumns.IS_ADMIN][Index] = User->IsAdmin ? "Да" : "";
+	sgUsers->Cells[UsersColumns.TABNUM][Index] = User->TabNum;
+	sgUsers->Cells[UsersColumns.SHIFTNUM][Index] = User->ShiftNum;
+	sgUsers->Cells[UsersColumns.PASS][Index] = User->Pass;
 
 	return Index;
+}
+
+// ---------------------------------------------------------------------------
+bool TfrmOptions::IsUserAdmin(int Index) {
+	return !IsEmpty(sgUsers->Cells[UsersColumns.IS_ADMIN][Index]);
 }
 
 // ---------------------------------------------------------------------------
@@ -320,7 +380,7 @@ void __fastcall TfrmOptions::btnUsersAddClick(TObject * Sender) {
 	User->Name = "Name " + IntToStr(rand());
 #endif
 
-	if (TfrmOptionsUser::Show(this, User)) {
+	if (TfrmOptionsUser::Show(this, User, AdminCount())) {
 		sgUsers->Row = SetUser(-1, User);
 	}
 
@@ -329,14 +389,9 @@ void __fastcall TfrmOptions::btnUsersAddClick(TObject * Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmOptions::btnUsersChangeClick(TObject * Sender) {
-	TUser *User = new TUser();
+	TUser *User = GetUser(sgUsers->Row);
 
-	User->Name = sgUsers->Cells[COLUMN_USERS_NAME][sgUsers->Row];
-	User->Pass = sgUsers->Cells[COLUMN_USERS_PASS][sgUsers->Row];
-	User->TabNum = sgUsers->Cells[COLUMN_USERS_TABNUM][sgUsers->Row];
-	User->ShiftNum = sgUsers->Cells[COLUMN_USERS_SHIFTNUM][sgUsers->Row];
-
-	if (TfrmOptionsUser::Show(this, User)) {
+	if (TfrmOptionsUser::Show(this, User, AdminCount())) {
 		SetUser(sgUsers->Row, User);
 	}
 
@@ -345,15 +400,23 @@ void __fastcall TfrmOptions::btnUsersChangeClick(TObject * Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmOptions::btnUsersDeleteClick(TObject *Sender) {
-	StringGridDeleteRow(sgUsers, sgUsers->Row, COLUMN_USERS_COUNT);
+	if (IsUserAdmin(sgUsers->Row) && (AdminCount() == 1)) {
+		MsgBoxErr(LoadStr(IDS_ERROR_USERS_LAST_ADMIN));
 
-	if (!StringGridIsEmpty(sgUsers)) {
-		StringGridUpdateOrderNum(sgUsers);
+		return;
 	}
+
+	StringGridDeleteRow(sgUsers, sgUsers->Row, UsersColumns.COUNT);
+
+	StringGridUpdateOrderNum(sgUsers);
 }
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmOptions::sgUsersDblClick(TObject *Sender) {
+	if (!btnUsersAdd->Enabled) {
+		return;
+	}
+
 	if (StringGridIsEmpty(sgUsers)) {
 		btnUsersAdd->Click();
 		return;
@@ -386,6 +449,19 @@ void __fastcall TfrmOptions::sgUsersFixedCellClick(TObject *Sender, int ACol,
 	}
 
 	sgUsers->Row = ARow;
+}
+
+// ---------------------------------------------------------------------------
+int TfrmOptions::AdminCount() {
+	int Count = 0;
+
+	for (int i = 1; i < sgUsers->RowCount; i++) {
+		if (IsUserAdmin(i)) {
+			Count++;
+		}
+	}
+
+	return Count;
 }
 
 // ---------------------------------------------------------------------------
