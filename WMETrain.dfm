@@ -41,7 +41,7 @@ object frmTrain: TfrmTrain
       Height = 29
       AutoSize = True
       ButtonHeight = 29
-      ButtonWidth = 76
+      ButtonWidth = 83
       Caption = 'ToolBar'
       ShowCaptions = True
       TabOrder = 0
@@ -53,22 +53,35 @@ object frmTrain: TfrmTrain
         OnClick = tbtnAddClick
       end
       object tbtnDelete: TToolButton
-        Left = 76
+        Left = 83
         Top = 0
         Caption = #1059#1076#1072#1083#1080#1090#1100
         ImageIndex = 1
         OnClick = tbtnDeleteClick
       end
-      object ToolButton3: TToolButton
-        Left = 152
+      object tbtnSeparator01: TToolButton
+        Left = 166
         Top = 0
         Width = 4
-        Caption = 'ToolButton3'
+        ImageIndex = 1
+        Style = tbsSeparator
+      end
+      object tbtnSave: TToolButton
+        Left = 170
+        Top = 0
+        Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
+        ImageIndex = 1
+        OnClick = tbtnSaveClick
+      end
+      object tbtnSeparator02: TToolButton
+        Left = 253
+        Top = 0
+        Width = 4
         ImageIndex = 1
         Style = tbsSeparator
       end
       object tbtnClose: TToolButton
-        Left = 156
+        Left = 257
         Top = 0
         Caption = #1047#1072#1082#1088#1099#1090#1100
         ImageIndex = 0
@@ -83,8 +96,10 @@ object frmTrain: TfrmTrain
       Align = alClient
       ColCount = 2
       RowCount = 2
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine]
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goTabs]
       TabOrder = 1
+      OnGetEditMask = sgVansGetEditMask
+      OnKeyDown = sgVansKeyDown
       OnSelectCell = sgVansSelectCell
       OnSetEditText = sgVansSetEditText
     end

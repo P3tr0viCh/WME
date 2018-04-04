@@ -275,6 +275,10 @@
             <DependentOn>WMETUser.h</DependentOn>
             <BuildOrder>30</BuildOrder>
         </CppCompile>
+        <CppCompile Include="WMETVan.cpp">
+            <DependentOn>WMETVan.h</DependentOn>
+            <BuildOrder>34</BuildOrder>
+        </CppCompile>
         <FormResources Include="WMEMain.dfm"/>
         <FormResources Include="WMELogin.dfm"/>
         <FormResources Include="WMEOptionsUser.dfm"/>

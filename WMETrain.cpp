@@ -86,6 +86,8 @@ bool TfrmTrain::Show() {
 void __fastcall TfrmTrain::FormCreate(TObject *Sender) {
 	WriteToLogForm(true, ClassName());
 
+	FVanList = new TObjList<TVan>();
+
 	TFileIni* FileIni = TFileIni::GetNewInstance();
 	try {
 		FileIni->ReadFormBounds(this);
@@ -112,6 +114,8 @@ void __fastcall TfrmTrain::FormDestroy(TObject *Sender) {
 	__finally {
 		delete FileIni;
 	}
+
+	FVanList->Free();
 
 	WriteToLogForm(false, ClassName());
 }
@@ -153,7 +157,7 @@ void TfrmTrain::CreateTrainColumns() {
 void __fastcall TfrmTrain::tbtnCloseClick(TObject * Sender) {
 	Close();
 
-//	Application->Terminate();
+	Application->Terminate();
 }
 
 // ---------------------------------------------------------------------------
@@ -185,14 +189,10 @@ void TfrmTrain::UpdateTrain() {
 	}
 
 	// TODO
-	sgTrain->Cells[TrainColumns.CARRYING][1] = Carrying > 0 ?
-		FloatToStr(Carrying) : String("");
-	sgTrain->Cells[TrainColumns.BRUTTO][1] = Brutto > 0 ? FloatToStr(Brutto) :
-		String("");
-	sgTrain->Cells[TrainColumns.TARE][1] = Tare > 0 ? FloatToStr(Tare) :
-		String("");
-	sgTrain->Cells[TrainColumns.NETTO][1] = Netto > 0 ? FloatToStr(Netto) :
-		String("");
+	sgTrain->Cells[TrainColumns.CARRYING][1] = FloatToStr(Carrying);
+	sgTrain->Cells[TrainColumns.BRUTTO][1] = FloatToStr(Brutto);
+	sgTrain->Cells[TrainColumns.TARE][1] = FloatToStr(Tare);
+	sgTrain->Cells[TrainColumns.NETTO][1] = FloatToStr(Netto);
 	sgTrain->Cells[TrainColumns.OVERLOAD][1] = FloatToStr(Overload);
 }
 
@@ -202,9 +202,16 @@ void __fastcall TfrmTrain::tbtnAddClick(TObject *Sender) {
 		sgVans->RowCount++;
 	}
 
+	TVan *Van = new TVan();
+
+	Van->DateTime = Now();
+
+	FVanList->Add(Van);
+
 	sgVans->Row = sgVans->RowCount - 1;
 
-	sgVans->Cells[VansColumns.DATETIME][sgVans->Row] = DateTimeToStr(Now());
+	sgVans->Cells[VansColumns.DATETIME][sgVans->Row] =
+		DateTimeToStr(Van->DateTime);
 
 	StringGridUpdateOrderNum(sgVans);
 
@@ -213,6 +220,8 @@ void __fastcall TfrmTrain::tbtnAddClick(TObject *Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmTrain::tbtnDeleteClick(TObject *Sender) {
+	FVanList->Delete(sgVans->Row - 1);
+
 	StringGridDeleteRow(sgVans, sgVans->Row, VansColumns.COUNT);
 
 	if (!StringGridIsEmpty(sgVans)) {
@@ -278,6 +287,57 @@ void __fastcall TfrmTrain::sgVansSetEditText(TObject *Sender, int ACol,
 	case VansColumns.NETTO:
 	case VansColumns.OVERLOAD:
 		UpdateTrain();
+	}
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmTrain::sgVansKeyDown(TObject *Sender, WORD &Key,
+	TShiftState Shift) {
+	if (StringGridIsEmpty(sgVans)) {
+		return;
+	}
+
+	if (Shift.Empty() && Key == VK_ESCAPE) {
+		if (sgVans->EditorMode) {
+			sgVans->EditorMode = false;
+			return;
+		}
+	}
+
+	if (Shift == (TShiftState() << ssAlt)) {
+		switch (Key) {
+		case VK_UP:
+			if (sgVans->Row > 1) {
+				sgVans->Cells[sgVans->Col][sgVans->Row - 1] =
+					sgVans->Cells[sgVans->Col][sgVans->Row];
+			};
+			break;
+		case VK_DOWN:
+			if (sgVans->Row < sgVans->RowCount - 1) {
+				sgVans->Cells[sgVans->Col][sgVans->Row + 1] =
+					sgVans->Cells[sgVans->Col][sgVans->Row];
+			};
+			break;
+		}
+	}
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmTrain::tbtnSaveClick(TObject *Sender) {
+	MsgBox(FVanList->ToString());
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmTrain::sgVansGetEditMask(TObject *Sender, int ACol,
+	int ARow, UnicodeString &Value) {
+	if (StringGridIsEmpty(sgVans)) {
+		return;
+	}
+
+	switch (ACol) {
+	case VansColumns.DATETIME:
+		Value = "00/00/0000 00:00:00";
+		break;
 	}
 }
 // ---------------------------------------------------------------------------
