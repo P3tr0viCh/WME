@@ -20,6 +20,8 @@
 __fastcall TSettings::TSettings() {
 	FConfigDir = GetConfigDir();
 
+	FColorReadOnly = 0x00E8E8E8;
+
 	FConnection = new TConnection();
 	FUserList = new TObjList<TUser>();
 }

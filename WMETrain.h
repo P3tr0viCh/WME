@@ -46,17 +46,35 @@ __published:
 	void __fastcall sgVansKeyDown(TObject *Sender, WORD &Key,
 		TShiftState Shift);
 	void __fastcall tbtnSaveClick(TObject *Sender);
-	void __fastcall sgVansGetEditMask(TObject *Sender, int ACol, int ARow, UnicodeString &Value);
-
+	void __fastcall sgVansGetEditMask(TObject *Sender, int ACol, int ARow,
+		UnicodeString &Value);
+	void __fastcall sgVansGetEditText(TObject *Sender, int ACol, int ARow,
+		UnicodeString &Value);
+	void __fastcall sgVansExit(TObject *Sender);
+	void __fastcall sgVansDrawCell(TObject *Sender, int ACol, int ARow, TRect &Rect,
+          TGridDrawState State);
+	void __fastcall sgTrainDrawCell(TObject *Sender, int ACol, int ARow, TRect &Rect,
+          TGridDrawState State);
 
 private:
 	TObjList<TVan> *FVanList;
 
+	TIntegerSet NUSet;
+	TColor NUColor;
+
+	String CellValue;
 
 	void CreateVansColumns();
 	void CreateTrainColumns();
 
+	void UpdateTrainCell(int ACol, float Value);
+
+	void CalcFields(int ARow = -1);
 	void UpdateTrain();
+
+	void UpdateVanList();
+
+	__property TObjList<TVan> *VanList = {read = FVanList};
 
 public:
 	__fastcall TfrmTrain(TComponent* Owner);

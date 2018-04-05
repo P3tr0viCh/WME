@@ -60,3 +60,75 @@ void StringGridSetHeader(TStringGrid *Grid, int Col, String ColName,
 }
 
 // ---------------------------------------------------------------------------
+void StringGridDrawCell(TStringGrid *Grid, int ACol, int ARow, TRect Rect,
+	TGridDrawState State, TIntegerSet ColsReadOnly, TIntegerSet ColsLeftAlign,
+	TIntegerSet ColsCustomColor, TColor ReadOnlyColor, TColor CustomColor,
+	bool DrawFocusedOnInactive) {
+	Grid->Canvas->Font = Grid->Font;
+
+	// Grid->Canvas->Brush->Color = Grid->Color;
+	// Grid->Canvas->FillRect(Rect);
+
+	if (State.Contains(gdFixed)) {
+		Grid->Canvas->Brush->Color = Grid->FixedColor;
+	}
+	else {
+		if (State.Contains(gdSelected)) {
+			if (State.Contains(gdFocused)) {
+				Grid->Canvas->Brush->Color = clMedGray;
+			}
+			else {
+				Grid->Canvas->Brush->Color = DrawFocusedOnInactive ? clSilver :
+					clWindow;
+			}
+		}
+		else {
+			if (ColsCustomColor.Contains(ACol)) {
+				Grid->Canvas->Brush->Color = CustomColor;
+			}
+			else {
+				if (ColsReadOnly.Contains(ACol)) {
+					Grid->Canvas->Brush->Color = ReadOnlyColor;
+				}
+				else {
+					Grid->Canvas->Brush->Color = Grid->Color;
+				}
+			}
+		}
+	}
+
+	Grid->Canvas->FillRect(Rect);
+
+	if (State.Contains(gdFixed)) {
+		InflateRect(Rect, -2, 0);
+		OffsetRect(Rect, -1, 0);
+
+		DrawText(Grid->Canvas->Handle, Grid->Cells[ACol][ARow].c_str(),
+			Grid->Cells[ACol][ARow].Length(), (RECT*)&Rect,
+			DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+	}
+	else {
+		InflateRect(Rect, -2, 0);
+		OffsetRect(Rect, 0, 2);
+
+		if (!State.Contains(gdSelected)) {
+			if (ColsCustomColor.Contains(ACol)) {
+				// Grid->Canvas->Font->Color =
+				// GetColorByBack(Grid->Canvas->Brush->Color);
+			}
+		}
+
+		if (ColsLeftAlign.Contains(ACol)) {
+			DrawText(Grid->Canvas->Handle, Grid->Cells[ACol][ARow].c_str(),
+				Grid->Cells[ACol][ARow].Length(), (RECT*)&Rect,
+				DT_SINGLELINE | DT_END_ELLIPSIS);
+		}
+		else {
+			DrawText(Grid->Canvas->Handle, Grid->Cells[ACol][ARow].c_str(),
+				Grid->Cells[ACol][ARow].Length(), (RECT*)&Rect,
+				DT_SINGLELINE | DT_END_ELLIPSIS | DT_CENTER);
+		}
+	}
+}
+
+// ---------------------------------------------------------------------------

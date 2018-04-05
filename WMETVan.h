@@ -9,6 +9,7 @@
 // ---------------------------------------------------------------------------
 class TVan : public TObject {
 private:
+	int FNum;
 	TDateTime FDateTime;
 
 public:
@@ -20,6 +21,7 @@ public:
 
 	void SetDefault();
 
+	__property int Num = {read = FNum, write = FNum};
 	__property TDateTime DateTime = {read = FDateTime, write = FDateTime};
 };
 

@@ -14,6 +14,7 @@ __fastcall TVan::TVan() {
 
 // ---------------------------------------------------------------------------
 void TVan::SetDefault() {
+	FNum = 0;
 	FDateTime = NULL;
 }
 
@@ -26,7 +27,7 @@ bool __fastcall TVan::Equals(TObject* Obj) {
 
 	TVan *Van = (TVan*) Obj;
 
-	if (DateTime != Van->DateTime)
+	if (Num != Van->Num || DateTime != Van->DateTime)
 		return false;
 
 	return true;
@@ -34,6 +35,7 @@ bool __fastcall TVan::Equals(TObject* Obj) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TVan::Assign(TVan* Source) {
+	Num = Source->Num;
 	DateTime = Source->DateTime;
 }
 
@@ -42,6 +44,8 @@ String __fastcall TVan::ToString() {
 	String S;
 
 	S = "TVan{";
+	S += "FNum=" + IntToStr(FNum);
+	S += ",";
 	S += "FDateTime='" + DateTimeToStr(FDateTime) + "'";
 	S += "}";
 

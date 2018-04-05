@@ -18,6 +18,8 @@ class TSettings : public TObject {
 private:
 	String FConfigDir;
 
+	TColor FColorReadOnly;
+
 	TConnection *FConnection;
 
 	TObjList<TUser> *FUserList;
@@ -39,6 +41,8 @@ public:
 
 	bool Load();
 	bool Save();
+
+	__property TColor ColorReadOnly = {read = FColorReadOnly};
 
 	__property TConnection *Connection = {read = FConnection};
 	__property TObjList<TUser> *UserList = {read = FUserList};

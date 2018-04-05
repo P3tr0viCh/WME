@@ -95,10 +95,14 @@ object frmTrain: TfrmTrain
       Height = 201
       Align = alClient
       ColCount = 2
+      DefaultDrawing = False
       RowCount = 2
       Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goTabs]
       TabOrder = 1
+      OnDrawCell = sgVansDrawCell
+      OnExit = sgVansExit
       OnGetEditMask = sgVansGetEditMask
+      OnGetEditText = sgVansGetEditText
       OnKeyDown = sgVansKeyDown
       OnSelectCell = sgVansSelectCell
       OnSetEditText = sgVansSetEditText
@@ -119,11 +123,13 @@ object frmTrain: TfrmTrain
       Height = 80
       Align = alBottom
       ColCount = 2
+      DefaultDrawing = False
       FixedCols = 0
       RowCount = 2
       Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine]
       ScrollBars = ssHorizontal
       TabOrder = 3
+      OnDrawCell = sgTrainDrawCell
     end
     object PanelBottom: TPanel
       Left = 8
