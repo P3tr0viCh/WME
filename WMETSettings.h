@@ -8,7 +8,7 @@
 #include <ObjList.h>
 
 #include "WMETUser.h"
-#include "WMETConnection.h"
+#include "WMETConnectionInfo.h"
 
 #define CFG_DIR_NAME "cfg"
 #define CFG_EXT ".cfg"
@@ -20,7 +20,7 @@ private:
 
 	TColor FColorReadOnly;
 
-	TConnection *FConnection;
+	TConnectionInfo *FConnection;
 
 	TObjList<TUser> *FUserList;
 
@@ -44,7 +44,7 @@ public:
 
 	__property TColor ColorReadOnly = {read = FColorReadOnly};
 
-	__property TConnection *Connection = {read = FConnection};
+	__property TConnectionInfo *Connection = {read = FConnection};
 	__property TObjList<TUser> *UserList = {read = FUserList};
 };
 

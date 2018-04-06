@@ -74,11 +74,11 @@ private:
 
 	bool IsUserAdmin(int Index);
 
-	TConnection* GetConnection();
+	TConnectionInfo* GetConnection();
 
-	static const int DB_ACTION_CHECK = 100;
-	static const int DB_ACTION_CREATE = 101;
-	static const int DB_ACTION_DROP = 102;
+	static const int DB_ACTION_CHECK = 0;
+	static const int DB_ACTION_CREATE = 1;
+	static const int DB_ACTION_DROP = 2;
 
 	void DatabaseAction(int Action);
 

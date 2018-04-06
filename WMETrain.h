@@ -55,9 +55,12 @@ __published:
           TGridDrawState State);
 	void __fastcall sgTrainDrawCell(TObject *Sender, int ACol, int ARow, TRect &Rect,
           TGridDrawState State);
+	void __fastcall FormCloseQuery(TObject *Sender, bool &CanClose);
 
 private:
 	TObjList<TVan> *FVanList;
+
+	bool Changed;
 
 	TIntegerSet NUSet;
 	TColor NUColor;
@@ -72,7 +75,18 @@ private:
 	void CalcFields(int ARow = -1);
 	void UpdateTrain();
 
+	void UpdateValue(int ACol, int ARow);
+	void UpdateValues(int ARow = -1);
+
+	String CheckStrValue(String Value);
+	void CheckStrValue(int ACol, int ARow);
+	bool CheckDateTimeValue(String Value);
+	bool CheckIntValue(String Value);
+	bool CheckValues(int ARow = -1);
+
 	void UpdateVanList();
+
+	bool SaveVans();
 
 	__property TObjList<TVan> *VanList = {read = FVanList};
 

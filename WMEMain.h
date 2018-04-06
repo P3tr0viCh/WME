@@ -24,8 +24,6 @@ __published:
 	TButton *btnDatabase;
 	TStatusBar *StatusBar;
 	TButton *btnOperator;
-	TADOConnection *ADOConnection;
-	TADOQuery *ADOQuery;
 
 	void __fastcall btnAboutClick(TObject *Sender);
 	void __fastcall btnCloseClick(TObject *Sender);
@@ -38,8 +36,6 @@ __published:
 	void __fastcall FormCloseQuery(TObject *Sender, bool &CanClose);
 
 private:
-	void SetQuerySQL(String Text);
-	void SetQuerySQL(NativeUInt Ident);
 
 public:
 	TSettings *Settings;
@@ -50,11 +46,8 @@ public:
 
 	void ChangeUser();
 
-	bool CheckConnection(TConnection *Connection);
-	bool CheckConnection(TConnection *Connection, String &MySqlVersion);
-
-	bool DatabaseDrop(TConnection *Connection);
-	bool DatabaseCreate(TConnection *Connection);
+	bool CheckConnection(TConnectionInfo *Connection);
+	bool CheckConnection(TConnectionInfo *Connection, String &MySqlVersion);
 };
 
 // ---------------------------------------------------------------------------

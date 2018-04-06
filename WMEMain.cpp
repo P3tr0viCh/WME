@@ -22,6 +22,10 @@
 #include "WMETrainList.h"
 #include "WMEOptions.h"
 
+#include "WMETDBDrop.h"
+#include "WMETDBCheck.h"
+#include "WMETDBCreate.h"
+
 #include "WMEMain.h"
 
 // ---------------------------------------------------------------------------
@@ -57,8 +61,6 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 	Caption = Application->Title + " " + GetFileVer(Application->ExeName);
 	StatusBar->Panels->Items[0]->Text = LoadStr(IDS_COPYRIGHT_STATUS);
 
-	ADOQuery->Connection = ADOConnection;
-
 	WriteToLog(Format(IDS_LOG_START_PROGRAM,
 		ARRAYOFCONST((GetFileVer(Application->ExeName, false)))));
 
@@ -85,8 +87,8 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 	ChangeUser();
 #endif
 
-//	btnOptions->Click();
-	btnManual->Click();
+	// btnOptions->Click();
+	// btnManual->Click();
 }
 
 // ---------------------------------------------------------------------------
@@ -109,6 +111,8 @@ void __fastcall TMain::FormDestroy(TObject *Sender) {
 // ---------------------------------------------------------------------------
 void __fastcall TMain::btnManualClick(TObject *Sender) {
 	TfrmTrain::Show();
+
+	Application->Terminate();
 }
 
 // ---------------------------------------------------------------------------
@@ -153,34 +157,18 @@ void __fastcall TMain::FormCloseQuery(TObject *Sender, bool &CanClose) {
 }
 
 // ---------------------------------------------------------------------------
-void TMain::SetQuerySQL(String Text) {
-	ADOQuery->SQL->Text = Text;
-}
-
-// ---------------------------------------------------------------------------
-void TMain::SetQuerySQL(NativeUInt Ident) {
-	TResourceStream *Stream = new TResourceStream((int)HInstance,
-		LoadStr(Ident), RT_RCDATA);
-
-	try {
-		ADOQuery->SQL->LoadFromStream(Stream);
-	}
-	__finally {
-		Stream->Free();
-	}
-}
-
-// ---------------------------------------------------------------------------
-bool TMain::CheckConnection(TConnection *Connection) {
+bool TMain::CheckConnection(TConnectionInfo *Connection) {
 	String MySqlVersion;
 	return CheckConnection(Connection, MySqlVersion);
 }
 
 // ---------------------------------------------------------------------------
-bool TMain::CheckConnection(TConnection *Connection, String &MySqlVersion) {
+bool TMain::CheckConnection(TConnectionInfo *Connection, String &MySqlVersion) {
 	bool Result = false;
 
 	ShowWaitCursor();
+
+	TADOConnection * ADOConnection = new TADOConnection(NULL);
 	try {
 		ADOConnection->ConnectionString =
 			Connection->GetConnectionString(false);
@@ -192,11 +180,16 @@ bool TMain::CheckConnection(TConnection *Connection, String &MySqlVersion) {
 
 			ADOConnection->Open();
 
-			SetQuerySQL(LoadStr(IDS_MYSQL_VERSION));
+			TADODataSet *DataSet = new TADODataSet(NULL);
+			try {
+				DataSet->Recordset =
+					ADOConnection->Execute(LoadStr(IDS_MYSQL_VERSION));
 
-			ADOQuery->Open();
-
-			MySqlVersion = ADOQuery->Fields->Fields[0]->AsString;
+				MySqlVersion = DataSet->Fields->Fields[0]->AsString;
+			}
+			__finally {
+				DataSet->Free();
+			}
 
 			Result = true;
 		}
@@ -205,11 +198,8 @@ bool TMain::CheckConnection(TConnection *Connection, String &MySqlVersion) {
 		}
 	}
 	__finally {
+		ADOConnection->Free();
 		RestoreCursor();
-	}
-
-	if (ADOConnection->Connected) {
-		ADOConnection->Close();
 	}
 
 	if (Result) {
@@ -223,117 +213,6 @@ bool TMain::CheckConnection(TConnection *Connection, String &MySqlVersion) {
 		WriteToLog(Format(IDS_LOG_MYSQL_CONNECT_FAIL,
 			StringReplace(MySqlVersion, sLineBreak, " ",
 			TReplaceFlags() << rfReplaceAll)));
-	}
-
-	return Result;
-}
-
-// ---------------------------------------------------------------------------
-bool TMain::DatabaseDrop(TConnection *Connection) {
-	bool Result = false;
-	String Error;
-
-	ShowWaitCursor();
-	try {
-		ADOConnection->ConnectionString =
-			Connection->GetConnectionString(false);
-
-		try {
-			ADOConnection->Open();
-
-			SetQuerySQL(LoadStr(IDS_MYSQL_DATABASE_DROP));
-
-			ADOQuery->ExecSQL();
-
-			Result = true;
-		}
-		catch (Exception *E) {
-			Error = E->Message;
-		}
-	}
-	__finally {
-		RestoreCursor();
-	}
-
-	if (ADOConnection->Connected) {
-		ADOConnection->Close();
-	}
-
-	if (Result) {
-		WriteToLog(LoadStr(IDS_LOG_MYSQL_DB_DROP_OK));
-	}
-	else {
-		if (IsEmpty(Error)) {
-			Error = LoadStr(IDS_ERROR_UNKNOWN);
-		}
-
-		WriteToLog(Format(IDS_LOG_MYSQL_DB_DROP_FAIL, StringReplace(Error,
-			sLineBreak, " ", TReplaceFlags() << rfReplaceAll)));
-	}
-
-	return Result;
-}
-
-// ---------------------------------------------------------------------------
-bool TMain::DatabaseCreate(TConnection *Connection) {
-	bool Result = false;
-	String Error;
-
-	ShowWaitCursor();
-	try {
-		ADOConnection->ConnectionString =
-			Connection->GetConnectionString(false);
-
-		try {
-			ADOConnection->Open();
-
-			SetQuerySQL(LoadStr(IDS_MYSQL_DATABASE_DROP));
-
-			ADOQuery->ExecSQL();
-
-			SetQuerySQL(LoadStr(IDS_MYSQL_DATABASE_CREATE));
-
-			ADOQuery->ExecSQL();
-
-			ADOConnection->Close();
-
-			ADOConnection->ConnectionString =
-				Connection->GetConnectionString(true);
-
-			ADOConnection->Open();
-
-			SetQuerySQL(IDS_MYSQL_TBL_TRAINS_CREATE);
-
-			ADOQuery->ExecSQL();
-
-			SetQuerySQL(IDS_MYSQL_TBL_VANS_CREATE);
-
-			ADOQuery->ExecSQL();
-
-			Result = true;
-		}
-		catch (Exception *E) {
-			Error = E->Message;
-		}
-	}
-	__finally {
-		RestoreCursor();
-	}
-
-	if (ADOConnection->Connected) {
-		ADOConnection->Close();
-	}
-
-	if (Result) {
-		WriteToLog(LoadStr(IDS_LOG_MYSQL_DB_CREATE_OK));
-	}
-	else {
-		if (IsEmpty(Error)) {
-			Error = LoadStr(IDS_ERROR_UNKNOWN);
-		}
-
-		WriteToLog(Format(IDS_LOG_MYSQL_DB_CREATE_FAIL, StringReplace(Error,
-			sLineBreak, " ", TReplaceFlags() << rfReplaceAll)));
 	}
 
 	return Result;

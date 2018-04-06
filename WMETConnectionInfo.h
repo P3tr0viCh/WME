@@ -1,12 +1,12 @@
 // ---------------------------------------------------------------------------
 
-#ifndef WMETConnectionH
-#define WMETConnectionH
+#ifndef WMETConnectionInfoH
+#define WMETConnectionInfoH
 
 #include <System.Classes.hpp>
 
 // ---------------------------------------------------------------------------
-class TConnection : public TObject {
+class TConnectionInfo : public TObject {
 private:
 	String FHost;
 	String FPort;
@@ -17,10 +17,10 @@ private:
 	String FPassword;
 
 public:
-	__fastcall TConnection();
+	__fastcall TConnectionInfo();
 
 	bool __fastcall Equals(TObject* Obj);
-	void __fastcall Assign(TConnection* Source);
+	void __fastcall Assign(TConnectionInfo* Source);
 	String __fastcall ToString();
 
 	void SetDefault();

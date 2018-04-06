@@ -65,7 +65,8 @@ public:
 static TVansColumns VansColumns;
 
 // ---------------------------------------------------------------------------
-struct {
+class TTrainColumns {
+public:
 	static const VANCOUNT = 0;
 	static const DATETIME = 1;
 	static const CARRYING = 2;
@@ -77,7 +78,15 @@ struct {
 	static const VISIBLE_COUNT = 7;
 
 	static const COUNT = 7;
-} TrainColumns;
+
+	TTrainColumns() {
+		LeftAlign = TIntegerSet() << DATETIME;
+	}
+
+	TIntegerSet LeftAlign;
+};
+
+static TTrainColumns TrainColumns;
 
 // ---------------------------------------------------------------------------
 __fastcall TfrmTrain::TfrmTrain(TComponent* Owner) : TForm(Owner) {
@@ -101,6 +110,8 @@ bool TfrmTrain::Show() {
 // ---------------------------------------------------------------------------
 void __fastcall TfrmTrain::FormCreate(TObject *Sender) {
 	WriteToLogForm(true, ClassName());
+
+	Changed = false;
 
 	FVanList = new TObjList<TVan>();
 
@@ -162,18 +173,16 @@ void TfrmTrain::CreateTrainColumns() {
 
 	StringGridSetHeader(sgTrain, TrainColumns.VANCOUNT, "Кол-во вагонов", 120);
 	StringGridSetHeader(sgTrain, TrainColumns.DATETIME, "Дата и время", 160);
-	StringGridSetHeader(sgTrain, TrainColumns.CARRYING, "ГП", 70);
-	StringGridSetHeader(sgTrain, TrainColumns.BRUTTO, "Брутто", 70);
-	StringGridSetHeader(sgTrain, TrainColumns.TARE, "Тара", 70);
-	StringGridSetHeader(sgTrain, TrainColumns.NETTO, "Нетто", 70);
+	StringGridSetHeader(sgTrain, TrainColumns.CARRYING, "ГП", 90);
+	StringGridSetHeader(sgTrain, TrainColumns.BRUTTO, "Брутто", 90);
+	StringGridSetHeader(sgTrain, TrainColumns.TARE, "Тара", 90);
+	StringGridSetHeader(sgTrain, TrainColumns.NETTO, "Нетто", 90);
 	StringGridSetHeader(sgTrain, TrainColumns.OVERLOAD, "Перегруз", 90);
 }
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmTrain::tbtnCloseClick(TObject * Sender) {
 	Close();
-
-	Application->Terminate();
 }
 
 // ---------------------------------------------------------------------------
@@ -212,8 +221,7 @@ void TfrmTrain::CalcFields(int ARow) {
 		Overload = Netto - Carrying;
 	}
 
-	sgVans->Cells[VansColumns.NETTO][ARow] = Netto > 0 ? FloatToStr(Netto) :
-		String("");
+	sgVans->Cells[VansColumns.NETTO][ARow] = FloatToStr(Netto);
 	sgVans->Cells[VansColumns.OVERLOAD][ARow] = FloatToStr(Overload);
 }
 
@@ -259,6 +267,8 @@ void TfrmTrain::UpdateTrain() {
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmTrain::tbtnAddClick(TObject *Sender) {
+	Changed = true;
+
 	if (!StringGridIsEmpty(sgVans)) {
 		sgVans->RowCount++;
 	}
@@ -274,6 +284,8 @@ void __fastcall TfrmTrain::tbtnAddClick(TObject *Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmTrain::tbtnDeleteClick(TObject *Sender) {
+	Changed = true;
+
 	StringGridDeleteRow(sgVans, sgVans->Row, VansColumns.COUNT);
 
 	if (!StringGridIsEmpty(sgVans)) {
@@ -305,7 +317,7 @@ void __fastcall TfrmTrain::sgVansSelectCell(TObject *Sender, int ACol, int ARow,
 // ---------------------------------------------------------------------------
 void __fastcall TfrmTrain::sgVansSetEditText(TObject *Sender, int ACol,
 	int ARow, const UnicodeString Value) {
-	//
+	Changed = true;
 }
 
 // ---------------------------------------------------------------------------
@@ -351,6 +363,112 @@ void __fastcall TfrmTrain::sgVansKeyDown(TObject *Sender, WORD &Key,
 }
 
 // ---------------------------------------------------------------------------
+void TfrmTrain::UpdateValue(int ACol, int ARow) {
+	if (IsEmpty(sgVans->Cells[ACol][ARow])) {
+		sgVans->Cells[ACol][ARow] = "0";
+	}
+}
+
+// ---------------------------------------------------------------------------
+void TfrmTrain::UpdateValues(int ARow) {
+	if (ARow == -1) {
+		for (int i = 1; i < sgVans->RowCount; i++) {
+			UpdateValues(i);
+		}
+		return;
+	}
+
+	UpdateValue(VansColumns.CARRYING, ARow);
+	UpdateValue(VansColumns.BRUTTO, ARow);
+	UpdateValue(VansColumns.TARE_T, ARow);
+	UpdateValue(VansColumns.TARE_D, ARow);
+	UpdateValue(VansColumns.TARE_S, ARow);
+
+	CalcFields(ARow);
+}
+
+// ---------------------------------------------------------------------------
+String TfrmTrain::CheckStrValue(String Value) {
+	int P = Value.Pos(sLineBreak);
+	if (P > 0) {
+		Value = Value.SubString(0, P - 1);
+	}
+
+	return Trim(Value);
+}
+
+// ---------------------------------------------------------------------------
+void TfrmTrain::CheckStrValue(int ACol, int ARow) {
+	sgVans->Cells[ACol][ARow] = CheckStrValue(sgVans->Cells[ACol][ARow]);
+}
+
+// ---------------------------------------------------------------------------
+bool TfrmTrain::CheckDateTimeValue(String Value) {
+	try {
+		StrToDateTime(Value);
+	}
+	catch (...) {
+		return false;
+	}
+	return true;
+}
+
+// ---------------------------------------------------------------------------
+bool TfrmTrain::CheckIntValue(String Value) {
+	try {
+		StrToInt(Value);
+	}
+	catch (...) {
+		return false;
+	}
+	return true;
+}
+
+// ---------------------------------------------------------------------------
+bool TfrmTrain::CheckValues(int ARow) {
+	if (ARow == -1) {
+		bool Result = true;
+
+		for (int i = 1; i < sgVans->RowCount; i++) {
+			if (!CheckValues(i)) {
+				Result = false;
+			}
+		}
+
+		return Result;
+	}
+
+	CheckStrValue(VansColumns.VANNUM, ARow);
+	CheckStrValue(VansColumns.VANTYPE, ARow);
+	CheckStrValue(VansColumns.CARGOTYPE, ARow);
+	CheckStrValue(VansColumns.DEPART_STATION, ARow);
+	CheckStrValue(VansColumns.PURPOSE_STATION, ARow);
+	CheckStrValue(VansColumns.INVOICE_NUM, ARow);
+	CheckStrValue(VansColumns.INVOICE_SUPPLIER, ARow);
+	CheckStrValue(VansColumns.INVOICE_CONSIGN, ARow);
+
+	if (!CheckDateTimeValue(sgVans->Cells[VansColumns.DATETIME][ARow])) {
+		StringGridSelectCell(sgVans, VansColumns.DATETIME, ARow);
+		return false;
+	}
+
+	if (!CheckIntValue(sgVans->Cells[VansColumns.CARRYING][ARow])) {
+		StringGridSelectCell(sgVans, VansColumns.CARRYING, ARow);
+		return false;
+	}
+	if (!CheckIntValue(sgVans->Cells[VansColumns.BRUTTO][ARow])) {
+		StringGridSelectCell(sgVans, VansColumns.BRUTTO, ARow);
+		return false;
+	}
+	if (!CheckIntValue(sgVans->Cells[VansColumns.TARE_T][ARow])) {
+		StringGridSelectCell(sgVans, VansColumns.TARE_T, ARow);
+		return false;
+	}
+
+	return true;
+}
+
+// ---------------------------------------------------------------------------
 void TfrmTrain::UpdateVanList() {
 	VanList->Clear();
 
@@ -360,22 +478,73 @@ void TfrmTrain::UpdateVanList() {
 		Van = new TVan();
 
 		Van->Num = i;
+
 		Van->DateTime = sgVans->Cells[VansColumns.DATETIME][i];
+
+		Van->VanNum = sgVans->Cells[VansColumns.VANNUM][i];
+		Van->VanType = sgVans->Cells[VansColumns.VANTYPE][i];
+
+		Van->Carrying = StrToInt(sgVans->Cells[VansColumns.CARRYING][i]);
+		Van->Brutto = StrToInt(sgVans->Cells[VansColumns.BRUTTO][i]);
+
+		Van->TareTrft = StrToInt(sgVans->Cells[VansColumns.TARE_T][i]);
+		Van->TareDyn = StrToInt(sgVans->Cells[VansColumns.TARE_D][i]);
+		Van->TareSta = StrToInt(sgVans->Cells[VansColumns.TARE_S][i]);
+		Van->TareIndex = 0; // sgVans->Cells[VansColumns.TARE_INDEX][i];
+
+		Van->CargoType = sgVans->Cells[VansColumns.CARGOTYPE][i];
+		Van->DepartStation = sgVans->Cells[VansColumns.DEPART_STATION][i];
+		Van->PurposeStation = sgVans->Cells[VansColumns.PURPOSE_STATION][i];
+		Van->InvoiceNum = sgVans->Cells[VansColumns.INVOICE_NUM][i];
+		Van->InvoiceSupplier = sgVans->Cells[VansColumns.INVOICE_SUPPLIER][i];
+		Van->InvoiceConsign = sgVans->Cells[VansColumns.INVOICE_CONSIGN][i];
 
 		VanList->Add(Van);
 	}
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmTrain::tbtnSaveClick(TObject *Sender) {
-	UpdateVanList();
+bool DataBaseSaveVans(TObjList<TVan> *VanList) {
+	MsgBox(VanList->ToString());
 
-	MsgBox(FVanList->ToString());
+	return true;
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmTrain::sgVansGetEditMask(TObject *Sender, int ACol,
-	int ARow, UnicodeString &Value) {
+bool TfrmTrain::SaveVans() {
+	if (StringGridIsEmpty(sgVans)) {
+		MsgBoxErr("NOTHING SAVE");
+		return false;
+	}
+
+	UpdateValues();
+
+	if (!CheckValues()) {
+		MsgBoxErr("BAD VALUES");
+		return false;
+	}
+
+	UpdateVanList();
+
+	bool Result = DataBaseSaveVans(VanList);
+
+	if (!Result) {
+        MsgBoxErr("SAVE ERROR");
+	}
+
+	return Result;
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmTrain::tbtnSaveClick(TObject * Sender) {
+	if (SaveVans()) {
+		Changed = false;
+	}
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmTrain::sgVansGetEditMask(TObject * Sender, int ACol,
+	int ARow, UnicodeString & Value) {
 	if (StringGridIsEmpty(sgVans)) {
 		return;
 	}
@@ -388,28 +557,49 @@ void __fastcall TfrmTrain::sgVansGetEditMask(TObject *Sender, int ACol,
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmTrain::sgVansGetEditText(TObject *Sender, int ACol,
-	int ARow, UnicodeString &Value) {
+void __fastcall TfrmTrain::sgVansGetEditText(TObject * Sender, int ACol,
+	int ARow, UnicodeString & Value) {
 	CellValue = Value;
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmTrain::sgVansExit(TObject *Sender) {
+void __fastcall TfrmTrain::sgVansExit(TObject * Sender) {
 	CalcFields();
 	UpdateTrain();
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmTrain::sgVansDrawCell(TObject *Sender, int ACol, int ARow,
-	TRect &Rect, TGridDrawState State) {
+void __fastcall TfrmTrain::sgVansDrawCell(TObject * Sender, int ACol, int ARow,
+	TRect & Rect, TGridDrawState State) {
 	StringGridDrawCell(sgVans, ACol, ARow, Rect, State, VansColumns.ReadOnly,
-		VansColumns.LeftAlign, NUSet, Main->Settings->ColorReadOnly, NUColor, true);
+		VansColumns.LeftAlign, NUSet, Main->Settings->ColorReadOnly,
+		NUColor, true);
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmTrain::sgTrainDrawCell(TObject *Sender, int ACol, int ARow,
-	TRect &Rect, TGridDrawState State) {
+void __fastcall TfrmTrain::sgTrainDrawCell(TObject * Sender, int ACol, int ARow,
+	TRect & Rect, TGridDrawState State) {
 	StringGridDrawCell(sgTrain, ACol, ARow, Rect, State, NUSet,
-		VansColumns.LeftAlign, NUSet, NUColor, NUColor, false);
+		TrainColumns.LeftAlign, NUSet, NUColor, NUColor, false);
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmTrain::FormCloseQuery(TObject *Sender, bool &CanClose) {
+	if (!Changed) {
+		return;
+	}
+
+	switch (MsgBox(LoadStr(IDS_QUESTION_TRAIN_CHANGED),
+		MB_ICONQUESTION | MB_YESNOCANCEL)) {
+	case ID_YES:
+		CanClose = SaveVans();
+		break;
+	case ID_CANCEL:
+		CanClose = false;
+		break;
+	default:
+		CanClose = true;
+		ModalResult = mrCancel;
+	}
 }
 // ---------------------------------------------------------------------------

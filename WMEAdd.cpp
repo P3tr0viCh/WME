@@ -19,6 +19,12 @@ bool StringGridIsEmpty(TStringGrid *Grid) {
 }
 
 // ---------------------------------------------------------------------------
+void StringGridSelectCell(TStringGrid *Grid, int ACol, int ARow) {
+	Grid->Col = ACol;
+	Grid->Row = ARow;
+}
+
+// ---------------------------------------------------------------------------
 void StringGridUpdateOrderNum(TStringGrid *Grid) {
 	for (int ARow = 1, Count = Grid->RowCount; ARow < Count; ARow++) {
 		Grid->Cells[0][ARow] = IntToStr(ARow);
@@ -129,6 +135,28 @@ void StringGridDrawCell(TStringGrid *Grid, int ACol, int ARow, TRect Rect,
 				DT_SINGLELINE | DT_END_ELLIPSIS | DT_CENTER);
 		}
 	}
+}
+
+// ---------------------------------------------------------------------------
+String LoadSQL(NativeUInt Ident) {
+	String Result;
+
+	TStrings *Strings = new TStringList;
+
+	TResourceStream *Stream = new TResourceStream((int)HInstance,
+		LoadStr(Ident), RT_RCDATA);
+
+	try {
+		Strings->LoadFromStream(Stream);
+
+		Result = Strings->Text;
+	}
+	__finally {
+		Stream->Free();
+		Strings->Free();
+	}
+
+	return Result;
 }
 
 // ---------------------------------------------------------------------------

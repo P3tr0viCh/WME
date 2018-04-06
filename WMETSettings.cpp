@@ -20,9 +20,9 @@
 __fastcall TSettings::TSettings() {
 	FConfigDir = GetConfigDir();
 
-	FColorReadOnly = 0x00E8E8E8;
+	FColorReadOnly = TColor(0x00E8E8E8);
 
-	FConnection = new TConnection();
+	FConnection = new TConnectionInfo();
 	FUserList = new TObjList<TUser>();
 }
 
@@ -67,8 +67,8 @@ String __fastcall TSettings::ToString() {
 	String S;
 
 	S = "TSettings{";
-	S += "FConnection='" + FConnection->ToString() + "'";
-	S += "FUserList->Count='" + IntToStr(FUserList->Count) + "'";
+	S += "Connection='" + Connection->ToString() + "'";
+	S += "UserList->Count='" + IntToStr(UserList->Count) + "'";
 	S += "}";
 
 	return S;

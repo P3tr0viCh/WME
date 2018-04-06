@@ -11,6 +11,7 @@ object frmTrain: TfrmTrain
   Font.Name = 'Segoe UI'
   Font.Style = []
   OldCreateOrder = False
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96

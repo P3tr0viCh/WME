@@ -15,6 +15,10 @@
 
 #include "WMETSettings.h"
 
+#include "WMETDBDrop.h"
+#include "WMETDBCheck.h"
+#include "WMETDBCreate.h"
+
 #include "WMEOptions.h"
 
 // ---------------------------------------------------------------------------
@@ -185,8 +189,8 @@ void TfrmOptions::UpdateSettings() {
 }
 
 // ---------------------------------------------------------------------------
-TConnection* TfrmOptions::GetConnection() {
-	TConnection *Connection = new TConnection();
+TConnectionInfo* TfrmOptions::GetConnection() {
+	TConnectionInfo *Connection = new TConnectionInfo();
 
 	Connection->Host = eDBHost->Text;
 	Connection->Port = eDBPort->Text;
@@ -215,47 +219,58 @@ void TfrmOptions::DatabaseAction(int Action) {
 
 	String MySqlVersion;
 
-	String SActionResultOK, SActionResultFail;
+	int ActionResultOK[3] = {
+		IDS_MSG_MYSQL_CONNECTION_OK, IDS_MSG_MYSQL_DB_CREATE_OK,
+		IDS_MSG_MYSQL_DB_DROP_OK};
+	int ActionResultFail[3] = {
+		IDS_ERROR_MYSQL_CONNECTION, IDS_ERROR_MYSQL_DB_CREATE,
+		IDS_ERROR_MYSQL_DB_DROP};
 
-	TConnection *Connection = GetConnection();
-
+	ShowWaitCursor();
 	try {
-		switch (Action) {
-		case DB_ACTION_CHECK:
-			Result = Main->CheckConnection(Connection, MySqlVersion);
+		TConnectionInfo *Connection = GetConnection();
 
-			SActionResultOK = Format(IDS_MSG_MYSQL_CONNECTION_OK, MySqlVersion);
-			SActionResultFail = Format(IDS_ERROR_MYSQL_CONNECTION,
-				MySqlVersion);
+		TDatabaseOperation *DatabaseOperation;
 
-			break;
-		case DB_ACTION_CREATE:
-			Result = Main->DatabaseCreate(Connection);
+		try {
+			switch (Action) {
+			case DB_ACTION_CHECK:
+				DatabaseOperation = new TDBCheck(Connection);
 
-			SActionResultOK = LoadStr(IDS_MSG_MYSQL_DB_CREATE_OK);
-			SActionResultFail = LoadStr(IDS_ERROR_MYSQL_DB_CREATE);
+				// TODO
+				Result = Main->CheckConnection(Connection, MySqlVersion);
 
-			break;
-		case DB_ACTION_DROP:
-			Result = Main->DatabaseDrop(Connection);
+				break;
+			case DB_ACTION_CREATE:
+				DatabaseOperation = new TDBCreate(Connection);
 
-			SActionResultOK = LoadStr(IDS_MSG_MYSQL_DB_DROP_OK);
-			SActionResultFail = LoadStr(IDS_ERROR_MYSQL_DB_DROP);
+				Result = DatabaseOperation->Execute();
 
-			break;
-		default:
-			throw EActionError("DatabaseAction: unknown Action");
+				break;
+			case DB_ACTION_DROP:
+				DatabaseOperation = new TDBDrop(Connection);
+
+				Result = DatabaseOperation->Execute();
+
+				break;
+			default:
+				throw EActionError("DatabaseAction: unknown Action");
+			}
+		}
+		__finally {
+			DatabaseOperation->Free();
+			Connection->Free();
 		}
 	}
 	__finally {
-		Connection->Free();
+		RestoreCursor();
 	}
 
 	if (Result) {
-		MsgBox(SActionResultOK);
+		MsgBox(LoadStr(ActionResultOK[Action]));
 	}
 	else {
-		MsgBoxErr(SActionResultFail);
+		MsgBoxErr(LoadStr(ActionResultFail[Action]));
 	}
 }
 

@@ -6,18 +6,18 @@
 
 #include "WMEStrings.h"
 
-#include "WMETConnection.h"
+#include "WMETConnectionInfo.h"
 
 // ---------------------------------------------------------------------------
 #pragma package(smart_init)
 
 // ---------------------------------------------------------------------------
-__fastcall TConnection::TConnection() {
+__fastcall TConnectionInfo::TConnectionInfo() {
 	SetDefault();
 }
 
 // ---------------------------------------------------------------------------
-void TConnection::SetDefault() {
+void TConnectionInfo::SetDefault() {
 	FHost = "localhost";
 	FPort = "3306";
 	FDatabase = "wme";
@@ -26,13 +26,13 @@ void TConnection::SetDefault() {
 }
 
 // ---------------------------------------------------------------------------
-bool __fastcall TConnection::Equals(TObject* Obj) {
+bool __fastcall TConnectionInfo::Equals(TObject* Obj) {
 	if (this == Obj)
 		return true;
 	if (Obj == NULL || ClassType() != Obj->ClassType())
 		return false;
 
-	TConnection *Connection = (TConnection*) Obj;
+	TConnectionInfo *Connection = (TConnectionInfo*) Obj;
 
 	if (Host != Connection->Host || Port != Connection->Port ||
 		Database != Connection->Database || User != Connection->User ||
@@ -43,7 +43,7 @@ bool __fastcall TConnection::Equals(TObject* Obj) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TConnection::Assign(TConnection* Source) {
+void __fastcall TConnectionInfo::Assign(TConnectionInfo* Source) {
 	Host = Source->Host;
 	Port = Source->Port;
 	Database = Source->Database;
@@ -52,23 +52,23 @@ void __fastcall TConnection::Assign(TConnection* Source) {
 }
 
 // ---------------------------------------------------------------------------
-String __fastcall TConnection::ToString() {
+String __fastcall TConnectionInfo::ToString() {
 	String S;
 
-	S = "TConnection{";
-	S += "FHost='" + FHost + "'";
-	S += ", FPort='" + FPort + "'";
-	S += ", FDatabase='" + FDatabase + "'";
-	S += ", FUser='" + FUser + "'";
-	S += ", FPassword='" + FPassword + "'";
+	S = "TConnectionInfo{";
+	S += "Host='" + Host + "'";
+	S += ", Port='" + Port + "'";
+	S += ", Database='" + Database + "'";
+	S += ", User='" + User + "'";
+	S += ", Password='" + Password + "'";
 	S += "}";
 
 	return S;
 }
 
 // ---------------------------------------------------------------------------
-String TConnection::GetConnectionString(bool WithDB) {
+String TConnectionInfo::GetConnectionString(bool WithDB) {
 	return Format(IDS_MYSQL_CONNECTION,
-		ARRAYOFCONST((FHost, FPort, WithDB ? FDatabase : String(""), FUser,
+		ARRAYOFCONST((FHost, FPort, WithDB ? FDatabase : String(""), User,
 		FPassword)));
 }
