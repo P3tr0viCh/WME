@@ -6,6 +6,8 @@
 #include <System.Classes.hpp>
 #include <System.SysUtils.hpp>
 
+#include <ObjList.h>
+
 // ---------------------------------------------------------------------------
 class TVan : public TObject {
 private:
@@ -75,6 +77,9 @@ public:
 	__property String InvoiceConsign = {
 		read = FInvoiceConsign, write = FInvoiceConsign};
 };
+
+// ---------------------------------------------------------------------------
+typedef TObjList<TVan> TVanList;
 
 // ---------------------------------------------------------------------------
 #endif

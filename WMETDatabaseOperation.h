@@ -20,22 +20,23 @@ private:
 
 	String FErrorMessage;
 
-	int FLogOperationStart;
-	int FLogOperationEndOK;
-	int FLogOperationEndFail;
-
 	__fastcall TDatabaseOperation();
 
-	void SetUseDatabase(bool Value);
+	void __fastcall SetUseDatabase(bool Value);
 
 public:
 	__fastcall TDatabaseOperation(TConnectionInfo *ConnectionInfo);
 	__fastcall ~TDatabaseOperation();
 
+	virtual void OperationStart() = 0;
+	virtual void OperationEndOK() = 0;
+	virtual void OperationEndFail() = 0;
+
 	virtual void Operation() = 0;
 
 	bool Execute();
 
+__published:
 	__property TADOConnection *Connection = {read = FConnection};
 
 	__property TConnectionInfo *ConnectionInfo = {read = FConnectionInfo};
@@ -43,13 +44,6 @@ public:
 	__property bool UseDatabase = {read = FUseDatabase, write = SetUseDatabase};
 
 	__property String ErrorMessage = {read = FErrorMessage};
-
-	__property int LogOperationStart = {
-		read = FLogOperationStart, write = FLogOperationStart};
-	__property int LogOperationEndOK = {
-		read = FLogOperationEndOK, write = FLogOperationEndOK};
-	__property int LogOperationEndFail = {
-		read = FLogOperationEndFail, write = FLogOperationEndFail};
 };
 
 // ---------------------------------------------------------------------------

@@ -2,6 +2,9 @@
 
 #pragma hdrstop
 
+#include <UtilsLog.h>
+#include <UtilsStr.h>
+
 #include "WMEStrings.h"
 
 #include "WMETDBDrop.h"
@@ -12,8 +15,16 @@
 // ---------------------------------------------------------------------------
 __fastcall TDBDrop::TDBDrop(TConnectionInfo *ConnectionInfo)
 	: TDatabaseOperation(ConnectionInfo) {
-	LogOperationEndOK = IDS_LOG_MYSQL_DB_DROP_OK;
-	LogOperationEndFail = IDS_LOG_MYSQL_DB_DROP_FAIL;
+}
+
+// ---------------------------------------------------------------------------
+void TDBDrop::OperationEndOK() {
+	WriteToLog(LoadStr(IDS_LOG_MYSQL_DB_DROP_OK));
+}
+
+// ---------------------------------------------------------------------------
+void TDBDrop::OperationEndFail() {
+	WriteToLog(Format(IDS_LOG_MYSQL_DB_DROP_FAIL, ErrorMessage));
 }
 
 // ---------------------------------------------------------------------------
@@ -24,7 +35,7 @@ void TDBDrop::Operation() {
 
 	Connection->Execute(LoadStr(IDS_MYSQL_DATABASE_DROP));
 
-    Connection->Close();
+	Connection->Close();
 }
 
 // ---------------------------------------------------------------------------

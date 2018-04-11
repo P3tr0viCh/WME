@@ -45,9 +45,6 @@ public:
 	__fastcall TMain(TComponent* Owner);
 
 	void ChangeUser();
-
-	bool CheckConnection(TConnectionInfo *Connection);
-	bool CheckConnection(TConnectionInfo *Connection, String &MySqlVersion);
 };
 
 // ---------------------------------------------------------------------------

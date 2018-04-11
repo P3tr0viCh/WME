@@ -13,6 +13,8 @@
 #include "WMEAdd.h"
 #include "WMEStrings.h"
 
+#include "WMETDBSaveTrain.h"
+
 #include "WMEMain.h"
 
 #include "WMETrain.h"
@@ -113,8 +115,6 @@ void __fastcall TfrmTrain::FormCreate(TObject *Sender) {
 
 	Changed = false;
 
-	FVanList = new TObjList<TVan>();
-
 	TFileIni* FileIni = TFileIni::GetNewInstance();
 	try {
 		FileIni->ReadFormBounds(this);
@@ -141,8 +141,6 @@ void __fastcall TfrmTrain::FormDestroy(TObject *Sender) {
 	__finally {
 		delete FileIni;
 	}
-
-	FVanList->Free();
 
 	WriteToLogForm(false, ClassName());
 }
@@ -469,8 +467,8 @@ bool TfrmTrain::CheckValues(int ARow) {
 }
 
 // ---------------------------------------------------------------------------
-void TfrmTrain::UpdateVanList() {
-	VanList->Clear();
+TVanList *TfrmTrain::GetVanList() {
+	TVanList *VanList = new TVanList();
 
 	TVan *Van;
 
@@ -501,13 +499,8 @@ void TfrmTrain::UpdateVanList() {
 
 		VanList->Add(Van);
 	}
-}
 
-// ---------------------------------------------------------------------------
-bool DataBaseSaveVans(TObjList<TVan> *VanList) {
-	MsgBox(VanList->ToString());
-
-	return true;
+	return VanList;
 }
 
 // ---------------------------------------------------------------------------
@@ -524,12 +517,19 @@ bool TfrmTrain::SaveVans() {
 		return false;
 	}
 
-	UpdateVanList();
+	bool Result;
 
-	bool Result = DataBaseSaveVans(VanList);
+	TDBSaveTrain *DBSaveTrain = new TDBSaveTrain(Main->Settings->Connection,
+		GetVanList());
+	try {
+		Result = DBSaveTrain->Execute();
+	}
+	__finally {
+		DBSaveTrain->Free();
+	}
 
 	if (!Result) {
-        MsgBoxErr("SAVE ERROR");
+		MsgBoxErr("SAVE ERROR");
 	}
 
 	return Result;

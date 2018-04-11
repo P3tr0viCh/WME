@@ -13,8 +13,6 @@
 #include <Vcl.Grids.hpp>
 #include <Vcl.ExtCtrls.hpp>
 
-#include <ObjList.h>
-
 #include "WMETVan.h"
 
 // ---------------------------------------------------------------------------
@@ -51,15 +49,13 @@ __published:
 	void __fastcall sgVansGetEditText(TObject *Sender, int ACol, int ARow,
 		UnicodeString &Value);
 	void __fastcall sgVansExit(TObject *Sender);
-	void __fastcall sgVansDrawCell(TObject *Sender, int ACol, int ARow, TRect &Rect,
-          TGridDrawState State);
-	void __fastcall sgTrainDrawCell(TObject *Sender, int ACol, int ARow, TRect &Rect,
-          TGridDrawState State);
+	void __fastcall sgVansDrawCell(TObject *Sender, int ACol, int ARow,
+		TRect &Rect, TGridDrawState State);
+	void __fastcall sgTrainDrawCell(TObject *Sender, int ACol, int ARow,
+		TRect &Rect, TGridDrawState State);
 	void __fastcall FormCloseQuery(TObject *Sender, bool &CanClose);
 
 private:
-	TObjList<TVan> *FVanList;
-
 	bool Changed;
 
 	TIntegerSet NUSet;
@@ -84,11 +80,9 @@ private:
 	bool CheckIntValue(String Value);
 	bool CheckValues(int ARow = -1);
 
-	void UpdateVanList();
+	TVanList *GetVanList();
 
 	bool SaveVans();
-
-	__property TObjList<TVan> *VanList = {read = FVanList};
 
 public:
 	__fastcall TfrmTrain(TComponent* Owner);

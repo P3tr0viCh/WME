@@ -79,18 +79,22 @@ IDS_LOG_WRITE_FILE_FAIL,
 IDS_LOG_READ_FILE_FAIL,
         "read file fail: %s; e = %s"
 IDS_LOG_MYSQL_CONNECT,
-        "try mysql connect: %s@%s:%s"
+        "try database connect: %s@%s:%s"
 IDS_LOG_MYSQL_CONNECT_OK,
-        "mysql connected, version: %s"
+        "database connected, version: %s"
 IDS_LOG_MYSQL_CONNECT_FAIL,
-        "mysql connect fail: %s"
+        "database connect fail: %s"
 IDS_LOG_MYSQL_DB_DROP_OK,
-        "mysql database drop ok"
+        "database drop ok"
 IDS_LOG_MYSQL_DB_DROP_FAIL,
-        "mysql database drop fail: %s"
+        "database drop fail: %s"
 IDS_LOG_MYSQL_DB_CREATE_OK,
-        "mysql database create ok"
+        "database create ok"
 IDS_LOG_MYSQL_DB_CREATE_FAIL,
-        "mysql database create fail: %s"
+        "database create fail: %s"
+IDS_LOG_MYSQL_SAVE_TRAIN_OK,
+        "database save train, vancount: %d"
+IDS_LOG_MYSQL_SAVE_TRAIN_FAIL,
+        "database save train fail: %s"
 
 END

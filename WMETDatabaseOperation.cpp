@@ -14,10 +14,6 @@
 
 // ---------------------------------------------------------------------------
 __fastcall TDatabaseOperation::TDatabaseOperation(TConnectionInfo *Connection) {
-	FLogOperationStart = -1;
-	FLogOperationEndOK = -1;
-	FLogOperationEndFail = -1;
-
 	FConnection = new TADOConnection(NULL);
 
 	FConnectionInfo = Connection;
@@ -29,7 +25,7 @@ __fastcall TDatabaseOperation::~TDatabaseOperation() {
 }
 
 // ---------------------------------------------------------------------------
-void TDatabaseOperation::SetUseDatabase(bool Value) {
+void __fastcall TDatabaseOperation::SetUseDatabase(bool Value) {
 	FUseDatabase = Value;
 
 	Connection->ConnectionString = ConnectionInfo->GetConnectionString(Value);
@@ -39,9 +35,7 @@ void TDatabaseOperation::SetUseDatabase(bool Value) {
 bool TDatabaseOperation::Execute() {
 	bool Result = false;
 
-	if (LogOperationStart > 0) {
-		WriteToLog(LoadStr(LogOperationStart));
-	}
+	OperationStart();
 
 	try {
 		Operation();
@@ -53,19 +47,14 @@ bool TDatabaseOperation::Execute() {
 	}
 
 	if (Result) {
-		if (LogOperationEndOK > 0) {
-			WriteToLog(LoadStr(LogOperationEndOK));
-		}
+		OperationEndOK();
 	}
 	else {
 		if (IsEmpty(FErrorMessage)) {
 			FErrorMessage = LoadStr(IDS_ERROR_UNKNOWN);
 		}
 
-		if (LogOperationEndFail > 0) {
-			WriteToLog(Format(LogOperationEndFail, StringReplace(FErrorMessage,
-				sLineBreak, " ", TReplaceFlags() << rfReplaceAll)));
-		}
+		OperationEndFail();
 	}
 
 	return Result;

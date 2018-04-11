@@ -237,25 +237,20 @@ void TfrmOptions::DatabaseAction(int Action) {
 			case DB_ACTION_CHECK:
 				DatabaseOperation = new TDBCheck(Connection);
 
-				// TODO
-				Result = Main->CheckConnection(Connection, MySqlVersion);
-
 				break;
 			case DB_ACTION_CREATE:
 				DatabaseOperation = new TDBCreate(Connection);
-
-				Result = DatabaseOperation->Execute();
 
 				break;
 			case DB_ACTION_DROP:
 				DatabaseOperation = new TDBDrop(Connection);
 
-				Result = DatabaseOperation->Execute();
-
 				break;
 			default:
 				throw EActionError("DatabaseAction: unknown Action");
 			}
+
+			Result = DatabaseOperation->Execute();
 		}
 		__finally {
 			DatabaseOperation->Free();

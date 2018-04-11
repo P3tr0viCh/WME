@@ -51,6 +51,8 @@
 #define IDS_LOG_MYSQL_DB_DROP_FAIL		9104
 #define IDS_LOG_MYSQL_DB_CREATE_OK		9105
 #define IDS_LOG_MYSQL_DB_CREATE_FAIL	9106
+#define IDS_LOG_MYSQL_SAVE_TRAIN_OK		9107
+#define IDS_LOG_MYSQL_SAVE_TRAIN_FAIL	9108
 
 // ---------------------------------------------------------------------------
 #endif

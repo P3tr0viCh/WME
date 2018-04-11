@@ -42,10 +42,6 @@ object frmOptions: TfrmOptions
       StyleElements = [seFont, seClient]
       object tsDatabase: TTabSheet
         Caption = #1041#1072#1079#1072' '#1076#1072#1085#1085#1099#1093
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         DesignSize = (
           598
           330)

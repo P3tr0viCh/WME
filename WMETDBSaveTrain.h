@@ -1,17 +1,20 @@
 // ---------------------------------------------------------------------------
 
-#ifndef WMETDBCheckH
-#define WMETDBCheckH
+#ifndef WMETDBSaveTrainH
+#define WMETDBSaveTrainH
+
+#include "WMETVan.h"
 
 #include "WMETDatabaseOperation.h"
 
 // ---------------------------------------------------------------------------
-class TDBCheck : public TDatabaseOperation {
+class TDBSaveTrain : public TDatabaseOperation {
 private:
-	String FMySQLVersion;
+	TVanList *FVanList;
 
 public:
-	__fastcall TDBCheck(TConnectionInfo *ConnectionInfo);
+	__fastcall TDBSaveTrain(TConnectionInfo *ConnectionInfo,
+		TVanList *VanList);
 
 	void OperationStart();
 	void OperationEndOK();
@@ -19,7 +22,7 @@ public:
 
 	void Operation();
 
-	__property String MySQLVersion = {read = FMySQLVersion};
+	__property TVanList *VanList = {read = FVanList};
 };
 
 // ---------------------------------------------------------------------------
