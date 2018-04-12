@@ -29,13 +29,12 @@ __published:
 	void __fastcall btnOkClick(TObject *Sender);
 
 private:
-	TObjList<TUser> *UserList;
+	TUserList *UserList;
 
 public:
-
 	__fastcall TfrmLogin(TComponent* Owner);
 
-	static bool Show(TObjList<TUser> *UserList, TUser* User);
+	static bool Show(TUserList *UserList, TUser* User);
 
 	void UpdateForm();
 

@@ -3,6 +3,7 @@
 #pragma hdrstop
 
 #include <System.SysUtils.hpp>
+#include <System.DateUtils.hpp>
 
 #include <UtilsStr.h>
 
@@ -71,9 +72,6 @@ void StringGridDrawCell(TStringGrid *Grid, int ACol, int ARow, TRect Rect,
 	TIntegerSet ColsCustomColor, TColor ReadOnlyColor, TColor CustomColor,
 	bool DrawFocusedOnInactive) {
 	Grid->Canvas->Font = Grid->Font;
-
-	// Grid->Canvas->Brush->Color = Grid->Color;
-	// Grid->Canvas->FillRect(Rect);
 
 	if (State.Contains(gdFixed)) {
 		Grid->Canvas->Brush->Color = Grid->FixedColor;
@@ -157,6 +155,17 @@ String LoadSQL(NativeUInt Ident) {
 	}
 
 	return Result;
+}
+
+// ---------------------------------------------------------------------------
+String DateTimeToSQLStr(TDateTime ADateTime) {
+	return FormatDateTime("yyyyMMddhhnnss", ADateTime);
+}
+
+// ---------------------------------------------------------------------------
+int DateTimeToWTime(TDateTime ADateTime) {
+	// TODO: Magic Number
+	return int(DateTimeToUnix(IncHour(ADateTime, -3)));
 }
 
 // ---------------------------------------------------------------------------

@@ -44,7 +44,7 @@ public:
 	static const PURPOSE_STATION = 15;
 	static const INVOICE_NUM = 16;
 	static const INVOICE_SUPPLIER = 17;
-	static const INVOICE_CONSIGN = 18;
+	static const INVOICE_RECIPIENT = 18;
 
 	static const VISIBLE_COUNT = 19;
 
@@ -56,7 +56,7 @@ public:
 			TARE_INDEX << NETTO << OVERLOAD;
 		LeftAlign = TIntegerSet() << NUM << DATETIME << VANNUM << VANTYPE <<
 			CARGOTYPE << DEPART_STATION << PURPOSE_STATION << INVOICE_NUM <<
-			INVOICE_SUPPLIER << INVOICE_CONSIGN;
+			INVOICE_SUPPLIER << INVOICE_RECIPIENT;
 	}
 
 	TIntegerSet ReadOnly;
@@ -130,6 +130,8 @@ void __fastcall TfrmTrain::FormCreate(TObject *Sender) {
 		sgVans->Options = sgVans->Options << goColSizing;
 		sgTrain->Options = sgTrain->Options << goColSizing;
 	}
+
+	UpdateButtons();
 }
 
 // ---------------------------------------------------------------------------
@@ -163,6 +165,16 @@ void TfrmTrain::CreateVansColumns() {
 	StringGridSetHeader(sgVans, VansColumns.NETTO, "Нетто", 60);
 	StringGridSetHeader(sgVans, VansColumns.OVERLOAD, "Перегруз", 80);
 	StringGridSetHeader(sgVans, VansColumns.CARGOTYPE, "Род груза", 120);
+	StringGridSetHeader(sgVans, VansColumns.DEPART_STATION,
+		"Станция отправления", 180);
+	StringGridSetHeader(sgVans, VansColumns.PURPOSE_STATION,
+		"Станция назначения", 180);
+	StringGridSetHeader(sgVans, VansColumns.INVOICE_NUM,
+		"Номер накладной", 180);
+	StringGridSetHeader(sgVans, VansColumns.INVOICE_SUPPLIER,
+		"Грузоотправитель", 180);
+	StringGridSetHeader(sgVans, VansColumns.INVOICE_RECIPIENT,
+		"Грузополучатель", 180);
 }
 
 // ---------------------------------------------------------------------------
@@ -278,6 +290,8 @@ void __fastcall TfrmTrain::tbtnAddClick(TObject *Sender) {
 	StringGridUpdateOrderNum(sgVans);
 
 	UpdateTrain();
+
+	UpdateButtons();
 }
 
 // ---------------------------------------------------------------------------
@@ -291,6 +305,8 @@ void __fastcall TfrmTrain::tbtnDeleteClick(TObject *Sender) {
 	}
 
 	UpdateTrain();
+
+	UpdateButtons();
 }
 
 // ---------------------------------------------------------------------------
@@ -386,6 +402,18 @@ void TfrmTrain::UpdateValues(int ARow) {
 }
 
 // ---------------------------------------------------------------------------
+void TfrmTrain::UpdateButtons() {
+	tbtnDelete->Enabled = !StringGridIsEmpty(sgVans);
+	tbtnSave->Enabled = tbtnDelete->Enabled;
+
+	if (!tbtnDelete->Enabled) {
+		sgVans->Options = sgVans->Options >> goEditing;
+	}
+
+	sgVans->EditorMode = false;
+}
+
+// ---------------------------------------------------------------------------
 String TfrmTrain::CheckStrValue(String Value) {
 	int P = Value.Pos(sLineBreak);
 	if (P > 0) {
@@ -443,7 +471,7 @@ bool TfrmTrain::CheckValues(int ARow) {
 	CheckStrValue(VansColumns.PURPOSE_STATION, ARow);
 	CheckStrValue(VansColumns.INVOICE_NUM, ARow);
 	CheckStrValue(VansColumns.INVOICE_SUPPLIER, ARow);
-	CheckStrValue(VansColumns.INVOICE_CONSIGN, ARow);
+	CheckStrValue(VansColumns.INVOICE_RECIPIENT, ARow);
 
 	if (!CheckDateTimeValue(sgVans->Cells[VansColumns.DATETIME][ARow])) {
 		StringGridSelectCell(sgVans, VansColumns.DATETIME, ARow);
@@ -495,12 +523,22 @@ TVanList *TfrmTrain::GetVanList() {
 		Van->PurposeStation = sgVans->Cells[VansColumns.PURPOSE_STATION][i];
 		Van->InvoiceNum = sgVans->Cells[VansColumns.INVOICE_NUM][i];
 		Van->InvoiceSupplier = sgVans->Cells[VansColumns.INVOICE_SUPPLIER][i];
-		Van->InvoiceConsign = sgVans->Cells[VansColumns.INVOICE_CONSIGN][i];
+		Van->InvoiceRecipient = sgVans->Cells[VansColumns.INVOICE_RECIPIENT][i];
 
 		VanList->Add(Van);
 	}
 
 	return VanList;
+}
+
+// ---------------------------------------------------------------------------
+TTrain *TfrmTrain::GetTrain() {
+	TTrain *Train = new TTrain(GetVanList());
+
+	Train->TrainNum = DateTimeToWTime(Now());
+	Train->UnixTime = DateTimeToWTime(Train->DateTime);
+
+	return Train;
 }
 
 // ---------------------------------------------------------------------------
@@ -520,7 +558,7 @@ bool TfrmTrain::SaveVans() {
 	bool Result;
 
 	TDBSaveTrain *DBSaveTrain = new TDBSaveTrain(Main->Settings->Connection,
-		GetVanList());
+		GetTrain());
 	try {
 		Result = DBSaveTrain->Execute();
 	}
@@ -585,6 +623,10 @@ void __fastcall TfrmTrain::sgTrainDrawCell(TObject * Sender, int ACol, int ARow,
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmTrain::FormCloseQuery(TObject *Sender, bool &CanClose) {
+	if (StringGridIsEmpty(sgVans)) {
+		return;
+	}
+
 	if (!Changed) {
 		return;
 	}

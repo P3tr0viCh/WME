@@ -6,6 +6,7 @@
 #include <UtilsStr.h>
 #include <UtilsMisc.h>
 
+#include "WMEAdd.h"
 #include "WMEStrings.h"
 
 #include "WMETDBSaveTrain.h"
@@ -15,8 +16,17 @@
 
 // ---------------------------------------------------------------------------
 __fastcall TDBSaveTrain::TDBSaveTrain(TConnectionInfo *ConnectionInfo,
-	TVanList *VanList) : TDatabaseOperation(ConnectionInfo) {
-	FVanList = VanList;
+	TTrain *Train) : TDatabaseOperation(ConnectionInfo) {
+	VansFields = new TDBVansFields();
+	TrainsFields = new TDBTrainsFields();
+
+	FTrain = Train;
+}
+
+// ---------------------------------------------------------------------------
+__fastcall TDBSaveTrain::~TDBSaveTrain() {
+	TrainsFields->Free();
+	VansFields->Free();
 }
 
 // ---------------------------------------------------------------------------
@@ -26,7 +36,7 @@ void TDBSaveTrain::OperationStart() {
 // ---------------------------------------------------------------------------
 void TDBSaveTrain::OperationEndOK() {
 	WriteToLog(Format(IDS_LOG_MYSQL_SAVE_TRAIN_OK,
-		ARRAYOFCONST((VanList->Count))));
+		ARRAYOFCONST((Train->VanList->Count))));
 }
 
 // ---------------------------------------------------------------------------
@@ -35,35 +45,28 @@ void TDBSaveTrain::OperationEndFail() {
 }
 
 // ---------------------------------------------------------------------------
-String GetParam(String ParamName, int Index) {
-	return Index < 0 ? ParamName : ":" + ParamName + IntToStr(Index);
+void TDBSaveTrain::SetVansParam(TADOQuery *Query, TDBVansFieldName Name,
+	int Index, Variant Value) {
+	TParameter *Param = Query->Parameters->ParamByName
+		(VansFields->GetParamName(Name, Index));
+	Param->DataType = VansFields->GetFieldType(Name);
+	Param->Value = Value;
 }
 
 // ---------------------------------------------------------------------------
-String GetVansParams(int Index) {
-	return GetParam("trnum", Index) + "," + GetParam("num", Index) + "," +
-		GetParam("wtime", Index) + "," + GetParam("bdatetime", Index) + "," +
-		GetParam("vannum", Index) + "," + GetParam("brutto", Index);
-}
-
-// ---------------------------------------------------------------------------
-String GetTrainParams(int Index) {
-	return GetParam("trnum", Index) + "," + GetParam("wtime", Index) + "," +
-		GetParam("bdatetime", Index) + "," + GetParam("brutto", Index);
-}
-
-// ---------------------------------------------------------------------------
-String DateTimeToSQLStr(TDateTime ADateTime) {
-	return FormatDateTime("yyyyMMddhhnnss", ADateTime);
+void TDBSaveTrain::SetTrainsParam(TADOQuery *Query, TDBTrainsFieldName Name,
+	Variant Value) {
+	TParameter *Param = Query->Parameters->ParamByName
+		(TrainsFields->GetParamName(Name, 0));
+	Param->DataType = TrainsFields->GetFieldType(Name);
+	Param->Value = Value;
 }
 
 // ---------------------------------------------------------------------------
 void TDBSaveTrain::Operation() {
-	if (VanList->Count == 0) {
+	if (Train->VanList->IsEmpty()) {
 		return;
 	}
-
-	randomize();
 
 	UseDatabase = true;
 
@@ -75,45 +78,41 @@ void TDBSaveTrain::Operation() {
 	try {
 		Query->Connection = Connection;
 
-		int TrainNum = rand();
-
-		int UnixTime = 0;
-
 		Query->SQL->Clear();
 		Query->SQL->Add("INSERT INTO vans");
 		Query->SQL->Add("(");
-		Query->SQL->Add(GetVansParams(-1));
+		Query->SQL->Add(VansFields->GetFields(dboVansSaveTrain));
 		Query->SQL->Add(")");
 		Query->SQL->Add("VALUES");
 
-		Query->SQL->Add("(" + GetVansParams(0) + ")");
-		for (int i = 1; i < VanList->Count; i++) {
+		Query->SQL->Add("(" + VansFields->GetValues(dboVansSaveTrain, 0) + ")");
+		for (int i = 1; i < Train->VanList->Count; i++) {
 			Query->SQL->Add(",");
-			Query->SQL->Add("(" + GetVansParams(i) + ")");
+			Query->SQL->Add("(" + VansFields->GetValues(dboVansSaveTrain,
+				i) + ")");
 		}
 
-		for (int i = 0; i < VanList->Count; i++) {
-			Param = Query->Parameters->ParamByName("trnum" + IntToStr(i));
-			Param->DataType = ftInteger;
-			Param->Value = TrainNum;
-			Param = Query->Parameters->ParamByName("num" + IntToStr(i));
-			Param->DataType = ftInteger;
-			Param->Value = VanList->Items[i]->Num;
-			Param = Query->Parameters->ParamByName("wtime" + IntToStr(i));
-			Param->DataType = ftInteger;
-			Param->Value = UnixTime;
-			Param = Query->Parameters->ParamByName("bdatetime" + IntToStr(i));
-			Param->DataType = ftString;
-			Param->Value = DateTimeToSQLStr(VanList->Items[i]->DateTime);
-			Param = Query->Parameters->ParamByName("vannum" + IntToStr(i));
-			Param->DataType = ftString;
-			Param->Value = VanList->Items[i]->VanNum;
-			Param = Query->Parameters->ParamByName("brutto" + IntToStr(i));
-			Param->DataType = ftInteger;
-			Param->Value = VanList->Items[i]->Brutto;
+		// WriteToLog(Query->SQL->Text);
+
+		for (int i = 0; i < Train->VanList->Count; i++) {
+			SetVansParam(Query, fnVansTrnum, i, Train->TrainNum);
+			SetVansParam(Query, fnVansNum, i, Train->VanList->Items[i]->Num);
+			SetVansParam(Query, fnVansWTime, i, Train->UnixTime);
+			SetVansParam(Query, fnVansDatetime, i,
+				DateTimeToSQLStr(Train->VanList->Items[i]->DateTime));
+			SetVansParam(Query, fnVansVannum, i,
+				Train->VanList->Items[i]->VanNum);
+			SetVansParam(Query, fnVansBrutto, i,
+				Train->VanList->Items[i]->Brutto);
+			// SetVansParam(Query, fnVansTare, i,
+			// Train->VanList->Items[i]->Tare);
+			// SetVansParam(Query, fnVansNetto, i,
+			// Train->VanList->Items[i]->Netto);
 		}
 
 		// WriteToLog(VanList->ToString());
+
+		// WriteToLog(Query->SQL->Text);
 
 		Query->Prepared = true;
 
@@ -121,32 +120,26 @@ void TDBSaveTrain::Operation() {
 
 		Query->Prepared = false;
 
-		float Brutto = 0;
-		for (int i = 0; i < VanList->Count; i++) {
-			Brutto += VanList->Items[i]->Brutto;
-		}
-
 		Query->SQL->Clear();
 
 		Query->SQL->Add("INSERT INTO trains");
 		Query->SQL->Add("(");
-		Query->SQL->Add(GetTrainParams(-1));
+		Query->SQL->Add(TrainsFields->GetFields(dboTrainsSaveTrain));
 		Query->SQL->Add(")");
 		Query->SQL->Add("VALUES");
-		Query->SQL->Add("(" + GetTrainParams(0) + ")");
 
-		Param = Query->Parameters->ParamByName("trnum0");
-		Param->DataType = ftInteger;
-		Param->Value = TrainNum;
-		Param = Query->Parameters->ParamByName("wtime0");
-		Param->DataType = ftInteger;
-		Param->Value = UnixTime;
-		Param = Query->Parameters->ParamByName("bdatetime0");
-		Param->DataType = ftString;
-		Param->Value = DateTimeToSQLStr(VanList->Items[0]->DateTime);
-		Param = Query->Parameters->ParamByName("brutto0");
-		Param->DataType = ftInteger;
-		Param->Value = Brutto;
+		Query->SQL->Add("(" + TrainsFields->GetValues(dboTrainsSaveTrain,
+			0) + ")");
+
+		SetTrainsParam(Query, fnTrainsTrnum, Train->TrainNum);
+		SetTrainsParam(Query, fnTrainsWTime, Train->UnixTime);
+		SetTrainsParam(Query, fnTrainsDatetime,
+			DateTimeToSQLStr(Train->DateTime));
+		SetTrainsParam(Query, fnTrainsCarrying, Train->Carrying);
+		SetTrainsParam(Query, fnTrainsBrutto, Train->Brutto);
+		SetTrainsParam(Query, fnTrainsTare, Train->Tare);
+		SetTrainsParam(Query, fnTrainsNetto, Train->Netto);
+		SetTrainsParam(Query, fnTrainsOverload, Train->Overload);
 
 		Query->Prepared = true;
 

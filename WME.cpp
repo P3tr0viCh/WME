@@ -8,9 +8,9 @@
 
 // ---------------------------------------------------------------------------
 USEFORM("WMEOptionsUser.cpp", frmOptionsUser);
+USEFORM("WMELogin.cpp", frmLogin);
 USEFORM("WMEOptions.cpp", frmOptions);
 USEFORM("WMEMain.cpp", Main);
-USEFORM("WMELogin.cpp", frmLogin);
 USEFORM("WMETrainList.cpp", frmTrainList);
 USEFORM("WMETrain.cpp", frmTrain);
 //---------------------------------------------------------------------------

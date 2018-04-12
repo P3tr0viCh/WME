@@ -35,7 +35,9 @@ private:
 	String FPurposeStation;
 	String FInvoiceNum;
 	String FInvoiceSupplier;
-	String FInvoiceConsign;
+	String FInvoiceRecipient;
+
+	void Init();
 
 	void SetCarrying(int Value);
 	void SetBrutto(int Value);
@@ -51,21 +53,23 @@ public:
 	void __fastcall Assign(TVan* Source);
 	String __fastcall ToString();
 
-	void SetDefault();
-
 	__property int Num = {read = FNum, write = FNum};
+
 	__property TDateTime DateTime = {read = FDateTime, write = FDateTime};
+
 	__property String VanNum = {read = FVanNum, write = FVanNum};
 	__property String VanType = {read = FVanType, write = FVanType};
-	__property int Carrying = {read = FCarrying, write = FCarrying};
-	__property int Brutto = {read = FBrutto, write = FBrutto};
+
+	__property int Carrying = {read = FCarrying, write = SetCarrying};
+	__property int Brutto = {read = FBrutto, write = SetBrutto};
 	__property int Tare = {read = FTare};
-	__property int TareTrft = {read = FTareTrft, write = FTareTrft};
-	__property int TareDyn = {read = FTareDyn, write = FTareDyn};
-	__property int TareSta = {read = FTareSta, write = FTareSta};
-	__property int TareIndex = {read = FTareIndex, write = FTareIndex};
+	__property int TareTrft = {read = FTareTrft, write = SetTareTrft};
+	__property int TareDyn = {read = FTareDyn, write = SetTareDyn};
+	__property int TareSta = {read = FTareSta, write = SetTareSta};
+	__property int TareIndex = {read = FTareIndex, write = SetTareIndex};
 	__property int Netto = {read = FNetto};
 	__property int Overload = {read = FOverload};
+
 	__property String CargoType = {read = FCargoType, write = FCargoType};
 	__property String DepartStation = {
 		read = FDepartStation, write = FDepartStation};
@@ -74,12 +78,12 @@ public:
 	__property String InvoiceNum = {read = FInvoiceNum, write = FInvoiceNum};
 	__property String InvoiceSupplier = {
 		read = FInvoiceSupplier, write = FInvoiceSupplier};
-	__property String InvoiceConsign = {
-		read = FInvoiceConsign, write = FInvoiceConsign};
+	__property String InvoiceRecipient = {
+		read = FInvoiceRecipient, write = FInvoiceRecipient};
 };
 
 // ---------------------------------------------------------------------------
-typedef TObjList<TVan> TVanList;
+typedef TObjList<TVan>TVanList;
 
 // ---------------------------------------------------------------------------
 #endif

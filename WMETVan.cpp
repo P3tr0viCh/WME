@@ -9,25 +9,57 @@
 
 // ---------------------------------------------------------------------------
 __fastcall TVan::TVan() {
-	SetDefault();
+	Init();
 }
 
 // ---------------------------------------------------------------------------
-void TVan::SetDefault() {
+void TVan::Init() {
 	FNum = 0;
 	FDateTime = NULL;
+	FTareIndex = 0;
 }
 
 // ---------------------------------------------------------------------------
 void TVan::SetCarrying(int Value) {
+	if (FCarrying == Value) {
+		return;
+	}
+
+	FCarrying = Value;
+
+	FOverload = FNetto - FCarrying;
 }
 
 // ---------------------------------------------------------------------------
 void TVan::SetBrutto(int Value) {
+	if (FBrutto == Value) {
+		return;
+	}
+
+	FBrutto = Value;
+
+	FNetto = FBrutto - FTare;
+
+	FOverload = FNetto - FCarrying;
 }
 
 // ---------------------------------------------------------------------------
 void TVan::SetTareTrft(int Value) {
+	if (FTareTrft == Value) {
+		return;
+	}
+
+	FTareTrft = Value;
+
+	if (TareIndex != 0) {
+		return;
+	}
+
+	FTare = FTareTrft;
+
+	FNetto = FBrutto - FTare;
+
+	FOverload = FNetto - FCarrying;
 }
 
 // ---------------------------------------------------------------------------
@@ -60,7 +92,7 @@ bool __fastcall TVan::Equals(TObject* Obj) {
 		PurposeStation != Van->PurposeStation ||
 		InvoiceNum != Van->InvoiceNum ||
 		InvoiceSupplier != Van->InvoiceSupplier ||
-		InvoiceConsign != Van->InvoiceConsign) {
+		InvoiceRecipient != Van->InvoiceRecipient) {
 		return false;
 	}
 
@@ -71,6 +103,24 @@ bool __fastcall TVan::Equals(TObject* Obj) {
 void __fastcall TVan::Assign(TVan* Source) {
 	Num = Source->Num;
 	DateTime = Source->DateTime;
+
+	VanNum = Source->VanNum;
+	VanType = Source->VanType;
+
+	Carrying = Source->Carrying;
+	Brutto = Source->Brutto;
+	TareTrft = Source->TareTrft;
+	TareDyn = Source->TareDyn;
+	TareSta = Source->TareSta;
+	TareIndex = Source->TareIndex;
+
+	CargoType = Source->CargoType;
+
+	DepartStation = Source->DepartStation;
+	PurposeStation = Source->PurposeStation;
+	InvoiceNum = Source->InvoiceNum;
+	InvoiceSupplier = Source->InvoiceSupplier;
+	InvoiceRecipient = Source->InvoiceRecipient;
 }
 
 // ---------------------------------------------------------------------------
@@ -114,7 +164,7 @@ String __fastcall TVan::ToString() {
 	S += ",";
 	S += "InvoiceSupplier='" + InvoiceSupplier + "'";
 	S += ",";
-	S += "InvoiceConsign='" + InvoiceConsign + "'";
+	S += "InvoiceRecipient='" + InvoiceRecipient + "'";
 	S += "}";
 
 	return S;

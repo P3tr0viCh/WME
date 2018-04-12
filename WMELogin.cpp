@@ -23,7 +23,7 @@ __fastcall TfrmLogin::TfrmLogin(TComponent* Owner) : TForm(Owner) {
 }
 
 // ---------------------------------------------------------------------------
-bool TfrmLogin::Show(TObjList<TUser> *UserList, TUser* User) {
+bool TfrmLogin::Show(TUserList *UserList, TUser* User) {
 	bool Result = false;
 
 	TfrmLogin *frmLogin = new TfrmLogin(Application);
@@ -50,7 +50,7 @@ bool TfrmLogin::Show(TObjList<TUser> *UserList, TUser* User) {
 void __fastcall TfrmLogin::FormCreate(TObject *Sender) {
 	WriteToLogForm(true, ClassName());
 
-	UserList = new TObjList<TUser>();
+	UserList = new TUserList();
 
 	TFileIni* FileIni = TFileIni::GetNewInstance();
 	try {

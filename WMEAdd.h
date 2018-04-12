@@ -23,4 +23,8 @@ void StringGridDrawCell(TStringGrid *Grid, int ACol, int ARow, TRect Rect,
 String LoadSQL(NativeUInt Ident);
 
 // ---------------------------------------------------------------------------
+String DateTimeToSQLStr(TDateTime ADateTime);
+int DateTimeToWTime(TDateTime ADateTime);
+
+// ---------------------------------------------------------------------------
 #endif

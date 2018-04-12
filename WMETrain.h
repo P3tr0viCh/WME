@@ -14,6 +14,7 @@
 #include <Vcl.ExtCtrls.hpp>
 
 #include "WMETVan.h"
+#include "WMETTrain.h"
 
 // ---------------------------------------------------------------------------
 class TfrmTrain : public TForm {
@@ -74,6 +75,8 @@ private:
 	void UpdateValue(int ACol, int ARow);
 	void UpdateValues(int ARow = -1);
 
+	void UpdateButtons();
+
 	String CheckStrValue(String Value);
 	void CheckStrValue(int ACol, int ARow);
 	bool CheckDateTimeValue(String Value);
@@ -81,6 +84,7 @@ private:
 	bool CheckValues(int ARow = -1);
 
 	TVanList *GetVanList();
+	TTrain *GetTrain();
 
 	bool SaveVans();
 

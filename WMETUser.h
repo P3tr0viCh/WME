@@ -5,6 +5,8 @@
 
 #include <System.Classes.hpp>
 
+#include <ObjList.h>
+
 // ---------------------------------------------------------------------------
 class TUser : public TObject {
 private:
@@ -26,6 +28,9 @@ public:
 
 	__property bool IsAdmin = {read = FAdmin, write = FAdmin};
 };
+
+// ---------------------------------------------------------------------------
+typedef TObjList<TUser> TUserList;
 
 // ---------------------------------------------------------------------------
 #endif
