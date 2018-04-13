@@ -14,9 +14,16 @@ __fastcall TVan::TVan() {
 
 // ---------------------------------------------------------------------------
 void TVan::Init() {
+	FUser = new TUser();
+
 	FNum = 0;
 	FDateTime = NULL;
 	FTareIndex = 0;
+}
+
+// ---------------------------------------------------------------------------
+__fastcall TVan::~TVan() {
+	FUser->Free();
 }
 
 // ---------------------------------------------------------------------------
@@ -75,6 +82,11 @@ void TVan::SetTareIndex(int Value) {
 }
 
 // ---------------------------------------------------------------------------
+void TVan::SetUser(TUser *Value) {
+	User->Assign(Value);
+}
+
+// ---------------------------------------------------------------------------
 bool __fastcall TVan::Equals(TObject* Obj) {
 	if (this == Obj)
 		return true;
@@ -93,6 +105,10 @@ bool __fastcall TVan::Equals(TObject* Obj) {
 		InvoiceNum != Van->InvoiceNum ||
 		InvoiceSupplier != Van->InvoiceSupplier ||
 		InvoiceRecipient != Van->InvoiceRecipient) {
+		return false;
+	}
+
+	if (!User->Equals(Van->User)) {
 		return false;
 	}
 
@@ -115,6 +131,8 @@ void __fastcall TVan::Assign(TVan* Source) {
 	TareIndex = Source->TareIndex;
 
 	CargoType = Source->CargoType;
+
+	User->Assign(Source->User);
 
 	DepartStation = Source->DepartStation;
 	PurposeStation = Source->PurposeStation;
@@ -155,6 +173,8 @@ String __fastcall TVan::ToString() {
 	S += "Overload='" + IntToStr(Overload) + "'";
 	S += ",";
 	S += "CargoType='" + CargoType + "'";
+	S += ",";
+	S += "User Name='" + User->Name + "'";
 	S += ",";
 	S += "DepartStation='" + DepartStation + "'";
 	S += ",";

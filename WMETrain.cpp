@@ -12,6 +12,7 @@
 
 #include "WMEAdd.h"
 #include "WMEStrings.h"
+#include "WMEStringsGridHeader.h"
 
 #include "WMETDBSaveTrain.h"
 
@@ -95,11 +96,13 @@ __fastcall TfrmTrain::TfrmTrain(TComponent* Owner) : TForm(Owner) {
 }
 
 // ---------------------------------------------------------------------------
-bool TfrmTrain::Show() {
+bool TfrmTrain::Show(int TrainNum) {
 	bool Result = false;
 
 	TfrmTrain *frmTrain = new TfrmTrain(Application);
 	try {
+		frmTrain->TrainNum = TrainNum;
+
 		Result = frmTrain->ShowModal() == mrOk;
 	}
 	__finally {
@@ -151,43 +154,54 @@ void __fastcall TfrmTrain::FormDestroy(TObject *Sender) {
 void TfrmTrain::CreateVansColumns() {
 	sgVans->ColCount = VansColumns.VISIBLE_COUNT;
 
-	StringGridSetHeader(sgVans, VansColumns.NUM, "№", 50);
-	StringGridSetHeader(sgVans, VansColumns.DATETIME, "Дата и время", 160);
-	StringGridSetHeader(sgVans, VansColumns.VANNUM, "№ вагона", 80);
-	StringGridSetHeader(sgVans, VansColumns.VANTYPE, "Род вагона", 120);
-	StringGridSetHeader(sgVans, VansColumns.CARRYING, "ГП", 50);
-	StringGridSetHeader(sgVans, VansColumns.BRUTTO, "Брутто", 60);
-	StringGridSetHeader(sgVans, VansColumns.TARE, "Тара", 60);
-	StringGridSetHeader(sgVans, VansColumns.TARE_T, "Тара Т", 60);
-	StringGridSetHeader(sgVans, VansColumns.TARE_D, "Тара Д", 60);
-	StringGridSetHeader(sgVans, VansColumns.TARE_S, "Тара С", 60);
-	StringGridSetHeader(sgVans, VansColumns.TARE_INDEX, "Тара", 60);
-	StringGridSetHeader(sgVans, VansColumns.NETTO, "Нетто", 60);
-	StringGridSetHeader(sgVans, VansColumns.OVERLOAD, "Перегруз", 80);
-	StringGridSetHeader(sgVans, VansColumns.CARGOTYPE, "Род груза", 120);
+	StringGridSetHeader(sgVans, VansColumns.NUM, IDS_GRID_HEADER_NUM, 50);
+	StringGridSetHeader(sgVans, VansColumns.DATETIME,
+		IDS_GRID_HEADER_DATETIME, 160);
+	StringGridSetHeader(sgVans, VansColumns.VANNUM, IDS_GRID_HEADER_VANNUM, 80);
+	StringGridSetHeader(sgVans, VansColumns.VANTYPE,
+		IDS_GRID_HEADER_VANTYPE, 120);
+	StringGridSetHeader(sgVans, VansColumns.CARRYING,
+		IDS_GRID_HEADER_CARRYING, 50);
+	StringGridSetHeader(sgVans, VansColumns.BRUTTO, IDS_GRID_HEADER_BRUTTO, 60);
+	StringGridSetHeader(sgVans, VansColumns.TARE, IDS_GRID_HEADER_TARE, 60);
+	StringGridSetHeader(sgVans, VansColumns.TARE_T, IDS_GRID_HEADER_TARE_T, 60);
+	StringGridSetHeader(sgVans, VansColumns.TARE_D, IDS_GRID_HEADER_TARE_D, 60);
+	StringGridSetHeader(sgVans, VansColumns.TARE_S, IDS_GRID_HEADER_TARE_S, 60);
+	StringGridSetHeader(sgVans, VansColumns.TARE_INDEX,
+		IDS_GRID_HEADER_TARE_INDEX, 60);
+	StringGridSetHeader(sgVans, VansColumns.NETTO, IDS_GRID_HEADER_NETTO, 60);
+	StringGridSetHeader(sgVans, VansColumns.OVERLOAD,
+		IDS_GRID_HEADER_OVERLOAD, 80);
+	StringGridSetHeader(sgVans, VansColumns.CARGOTYPE,
+		IDS_GRID_HEADER_CARGOTYPE, 120);
 	StringGridSetHeader(sgVans, VansColumns.DEPART_STATION,
-		"Станция отправления", 180);
+		IDS_GRID_HEADER_DEPART_STATION, 180);
 	StringGridSetHeader(sgVans, VansColumns.PURPOSE_STATION,
-		"Станция назначения", 180);
+		IDS_GRID_HEADER_PURPOSE_STATION, 180);
 	StringGridSetHeader(sgVans, VansColumns.INVOICE_NUM,
-		"Номер накладной", 180);
+		IDS_GRID_HEADER_INVOICE_NUM, 180);
 	StringGridSetHeader(sgVans, VansColumns.INVOICE_SUPPLIER,
-		"Грузоотправитель", 180);
+		IDS_GRID_HEADER_INVOICE_SUPPLIER, 180);
 	StringGridSetHeader(sgVans, VansColumns.INVOICE_RECIPIENT,
-		"Грузополучатель", 180);
+		IDS_GRID_HEADER_INVOICE_RECIPIENT, 180);
 }
 
 // ---------------------------------------------------------------------------
 void TfrmTrain::CreateTrainColumns() {
 	sgTrain->ColCount = TrainColumns.VISIBLE_COUNT;
 
-	StringGridSetHeader(sgTrain, TrainColumns.VANCOUNT, "Кол-во вагонов", 120);
-	StringGridSetHeader(sgTrain, TrainColumns.DATETIME, "Дата и время", 160);
-	StringGridSetHeader(sgTrain, TrainColumns.CARRYING, "ГП", 90);
-	StringGridSetHeader(sgTrain, TrainColumns.BRUTTO, "Брутто", 90);
-	StringGridSetHeader(sgTrain, TrainColumns.TARE, "Тара", 90);
-	StringGridSetHeader(sgTrain, TrainColumns.NETTO, "Нетто", 90);
-	StringGridSetHeader(sgTrain, TrainColumns.OVERLOAD, "Перегруз", 90);
+	StringGridSetHeader(sgTrain, TrainColumns.VANCOUNT,
+		IDS_GRID_HEADER_VANCOUNT, 120);
+	StringGridSetHeader(sgTrain, TrainColumns.DATETIME,
+		IDS_GRID_HEADER_DATETIME, 160);
+	StringGridSetHeader(sgTrain, TrainColumns.CARRYING,
+		IDS_GRID_HEADER_CARRYING, 90);
+	StringGridSetHeader(sgTrain, TrainColumns.BRUTTO,
+		IDS_GRID_HEADER_BRUTTO, 90);
+	StringGridSetHeader(sgTrain, TrainColumns.TARE, IDS_GRID_HEADER_TARE, 90);
+	StringGridSetHeader(sgTrain, TrainColumns.NETTO, IDS_GRID_HEADER_NETTO, 90);
+	StringGridSetHeader(sgTrain, TrainColumns.OVERLOAD,
+		IDS_GRID_HEADER_OVERLOAD, 90);
 }
 
 // ---------------------------------------------------------------------------
@@ -519,6 +533,9 @@ TVanList *TfrmTrain::GetVanList() {
 		Van->TareIndex = 0; // sgVans->Cells[VansColumns.TARE_INDEX][i];
 
 		Van->CargoType = sgVans->Cells[VansColumns.CARGOTYPE][i];
+
+		Van->User = Main->User;
+
 		Van->DepartStation = sgVans->Cells[VansColumns.DEPART_STATION][i];
 		Van->PurposeStation = sgVans->Cells[VansColumns.PURPOSE_STATION][i];
 		Van->InvoiceNum = sgVans->Cells[VansColumns.INVOICE_NUM][i];
@@ -535,7 +552,7 @@ TVanList *TfrmTrain::GetVanList() {
 TTrain *TfrmTrain::GetTrain() {
 	TTrain *Train = new TTrain(GetVanList());
 
-	Train->TrainNum = DateTimeToWTime(Now());
+	Train->TrainNum = TrainNum;
 	Train->UnixTime = DateTimeToWTime(Train->DateTime);
 
 	return Train;
@@ -557,13 +574,18 @@ bool TfrmTrain::SaveVans() {
 
 	bool Result;
 
-	TDBSaveTrain *DBSaveTrain = new TDBSaveTrain(Main->Settings->Connection,
-		GetTrain());
+	TTrain *Train = GetTrain();
+
+	TDBSaveTrain *DBSaveTrain =
+		new TDBSaveTrain(Main->Settings->Connection, Train);
 	try {
 		Result = DBSaveTrain->Execute();
+
+		TrainNum = Train->TrainNum;
 	}
 	__finally {
 		DBSaveTrain->Free();
+		Train->Free();
 	}
 
 	if (!Result) {

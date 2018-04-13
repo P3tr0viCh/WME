@@ -89,6 +89,7 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 
 	// btnOptions->Click();
 	// btnManual->Click();
+	// btnDatabase->Click();
 }
 
 // ---------------------------------------------------------------------------
@@ -110,7 +111,7 @@ void __fastcall TMain::FormDestroy(TObject *Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::btnManualClick(TObject *Sender) {
-	TfrmTrain::Show();
+	TfrmTrain::Show(-1);
 
 	Application->Terminate();
 }
@@ -118,6 +119,8 @@ void __fastcall TMain::btnManualClick(TObject *Sender) {
 // ---------------------------------------------------------------------------
 void __fastcall TMain::btnDatabaseClick(TObject *Sender) {
 	TfrmTrainList::Show();
+
+	Application->Terminate();
 }
 
 // ---------------------------------------------------------------------------

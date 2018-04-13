@@ -99,7 +99,7 @@ object frmTrain: TfrmTrain
       DefaultDrawing = False
       RowCount = 2
       Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goTabs]
-      TabOrder = 1
+      TabOrder = 2
       OnDrawCell = sgVansDrawCell
       OnExit = sgVansExit
       OnGetEditMask = sgVansGetEditMask
@@ -115,7 +115,7 @@ object frmTrain: TfrmTrain
       Height = 8
       Align = alTop
       BevelOuter = bvNone
-      TabOrder = 2
+      TabOrder = 1
     end
     object sgTrain: TStringGrid
       Left = 8
@@ -129,7 +129,7 @@ object frmTrain: TfrmTrain
       RowCount = 2
       Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine]
       ScrollBars = ssHorizontal
-      TabOrder = 3
+      TabOrder = 4
       OnDrawCell = sgTrainDrawCell
     end
     object PanelBottom: TPanel
@@ -139,7 +139,7 @@ object frmTrain: TfrmTrain
       Height = 8
       Align = alBottom
       BevelOuter = bvNone
-      TabOrder = 4
+      TabOrder = 3
     end
   end
 end

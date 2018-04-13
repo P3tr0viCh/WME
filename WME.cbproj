@@ -257,6 +257,14 @@
             <Form>WMEStrings.res</Form>
             <BuildOrder>20</BuildOrder>
         </ResourceCompile>
+        <None Include="WMEStringsGridHeader.h">
+            <BuildOrder>45</BuildOrder>
+        </None>
+        <ResourceCompile Include="WMEStringsGridHeader.rc">
+            <ModuleName>WMEStringsGridHeader.rc</ModuleName>
+            <Form>WMEStringsGridHeader.res</Form>
+            <BuildOrder>44</BuildOrder>
+        </ResourceCompile>
         <CppCompile Include="WMETConnectionInfo.cpp">
             <DependentOn>WMETConnectionInfo.h</DependentOn>
             <BuildOrder>28</BuildOrder>
@@ -321,10 +329,10 @@
             <DependentOn>WMETVan.h</DependentOn>
             <BuildOrder>34</BuildOrder>
         </CppCompile>
-        <FormResources Include="WMEOptionsUser.dfm"/>
+        <FormResources Include="WMEMain.dfm"/>
         <FormResources Include="WMELogin.dfm"/>
         <FormResources Include="WMEOptions.dfm"/>
-        <FormResources Include="WMEMain.dfm"/>
+        <FormResources Include="WMEOptionsUser.dfm"/>
         <FormResources Include="WMETrainList.dfm"/>
         <FormResources Include="WMETrain.dfm"/>
         <BuildConfiguration Include="Release">
@@ -801,13 +809,13 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
             </Deployment>
             <Platforms>
                 <Platform value="Win32">True</Platform>

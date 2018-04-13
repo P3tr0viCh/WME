@@ -115,6 +115,7 @@ object frmOptions: TfrmOptions
           EditLabel.Width = 36
           EditLabel.Height = 21
           EditLabel.Caption = #1055#1086#1088#1090
+          NumbersOnly = True
           TabOrder = 1
         end
         object btnDBConnectionDefault: TButton
@@ -148,10 +149,6 @@ object frmOptions: TfrmOptions
       object tsUsers: TTabSheet
         Caption = #1055#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1080
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object sgUsers: TStringGrid
           Left = 16
           Top = 16

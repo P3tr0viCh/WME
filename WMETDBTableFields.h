@@ -15,7 +15,7 @@ public:
 
 	// field_name0
 	String GetParamName(T Name, int Index) {
-		return GetFieldName(Name) + IntToStr(Index);
+		return GetFieldName(Name) + (Index < 0 ? String("") : IntToStr(Index));
 	};
 
 	// :field_name0

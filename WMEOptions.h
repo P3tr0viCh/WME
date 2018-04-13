@@ -33,13 +33,13 @@ __published:
 	TButton *btnDBCreate;
 	TButton *btnDBDelete;
 	TTabSheet *tsUsers;
-	TPanel *PanelButtons;
-	TButton *btnOk;
-	TButton *btnCancel;
 	TStringGrid *sgUsers;
 	TButton *btnUsersAdd;
 	TButton *btnUsersChange;
 	TButton *btnUsersDelete;
+	TPanel *PanelButtons;
+	TButton *btnOk;
+	TButton *btnCancel;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);

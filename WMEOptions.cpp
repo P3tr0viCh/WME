@@ -10,6 +10,7 @@
 
 #include "WMEAdd.h"
 #include "WMEStrings.h"
+#include "WMEStringsGridHeader.h"
 
 #include "WMEMain.h"
 
@@ -113,12 +114,16 @@ void __fastcall TfrmOptions::FormDestroy(TObject *Sender) {
 void TfrmOptions::CreateUsersColumns() {
 	sgUsers->ColCount = UsersColumns.VISIBLE_COUNT;
 
-	StringGridSetHeader(sgUsers, UsersColumns.NUM, "№", 50);
-	StringGridSetHeader(sgUsers, UsersColumns.NAME, "ФИО", 190);
-	StringGridSetHeader(sgUsers, UsersColumns.HAS_PASS, "Пароль", 70);
-	StringGridSetHeader(sgUsers, UsersColumns.IS_ADMIN, "Админ", 60);
-	StringGridSetHeader(sgUsers, UsersColumns.TABNUM, "Таб. номер", 100);
-	StringGridSetHeader(sgUsers, UsersColumns.SHIFTNUM, "Смена", 60);
+	StringGridSetHeader(sgUsers, UsersColumns.NUM, IDS_GRID_HEADER_NUM, 50);
+	StringGridSetHeader(sgUsers, UsersColumns.NAME, IDS_GRID_HEADER_NAME, 190);
+	StringGridSetHeader(sgUsers, UsersColumns.HAS_PASS,
+		IDS_GRID_HEADER_HAS_PASS, 70);
+	StringGridSetHeader(sgUsers, UsersColumns.IS_ADMIN,
+		IDS_GRID_HEADER_IS_ADMIN, 60);
+	StringGridSetHeader(sgUsers, UsersColumns.TABNUM,
+		IDS_GRID_HEADER_TABNUM, 100);
+	StringGridSetHeader(sgUsers, UsersColumns.SHIFTNUM,
+		IDS_GRID_HEADER_SHIFTNUM, 60);
 }
 
 // ---------------------------------------------------------------------------

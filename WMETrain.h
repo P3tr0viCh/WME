@@ -83,6 +83,8 @@ private:
 	bool CheckIntValue(String Value);
 	bool CheckValues(int ARow = -1);
 
+	int TrainNum;
+
 	TVanList *GetVanList();
 	TTrain *GetTrain();
 
@@ -91,7 +93,7 @@ private:
 public:
 	__fastcall TfrmTrain(TComponent* Owner);
 
-	static bool Show();
+	static bool Show(int TrainNum);
 };
 
 // ---------------------------------------------------------------------------

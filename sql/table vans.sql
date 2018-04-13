@@ -1,6 +1,6 @@
 CREATE TABLE vans
 (
-  trnum                  INT(10)                                    NOT NULL,
+  trnum                  INT(10) UNSIGNED                           NOT NULL,
   scales                 INT(10) DEFAULT '0'                        NOT NULL,
   num                    SMALLINT(5) UNSIGNED                       NOT NULL,
   wtime                  INT(10) UNSIGNED                           NOT NULL,

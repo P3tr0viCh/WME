@@ -8,6 +8,8 @@
 
 #include <ObjList.h>
 
+#include "WMETUser.h"
+
 // ---------------------------------------------------------------------------
 class TVan : public TObject {
 private:
@@ -31,6 +33,9 @@ private:
 	int FOverload;
 
 	String FCargoType;
+
+	TUser *FUser;
+
 	String FDepartStation;
 	String FPurposeStation;
 	String FInvoiceNum;
@@ -46,8 +51,11 @@ private:
 	void SetTareSta(int Value);
 	void SetTareIndex(int Value);
 
+	void SetUser(TUser *Value);
+
 public:
 	__fastcall TVan();
+	__fastcall ~TVan();
 
 	bool __fastcall Equals(TObject* Obj);
 	void __fastcall Assign(TVan* Source);
@@ -71,6 +79,9 @@ public:
 	__property int Overload = {read = FOverload};
 
 	__property String CargoType = {read = FCargoType, write = FCargoType};
+
+	__property TUser *User = {read = FUser, write = SetUser};
+
 	__property String DepartStation = {
 		read = FDepartStation, write = FDepartStation};
 	__property String PurposeStation = {

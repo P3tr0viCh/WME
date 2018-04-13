@@ -10,7 +10,8 @@
 const TDBTrainsFieldName TDBTrainsFields::SAVE_TRAIN_FIELDS
 	[TDBTrainsFields::SAVE_TRAIN_FIELDS_COUNT] = {
 	fnTrainsTrnum, fnTrainsWTime, fnTrainsDatetime, fnTrainsCarrying,
-	fnTrainsBrutto, fnTrainsTare, fnTrainsNetto, fnTrainsOverload};
+	fnTrainsBrutto, fnTrainsTare, fnTrainsNetto, fnTrainsOverload,
+	fnTrainsNumVans};
 
 // ---------------------------------------------------------------------------
 String TDBTrainsFields::GetFieldName(TDBTrainsFieldName Name) {
@@ -31,6 +32,8 @@ String TDBTrainsFields::GetFieldName(TDBTrainsFieldName Name) {
 		return "netto";
 	case fnTrainsOverload:
 		return "overload";
+	case fnTrainsNumVans:
+		return "nvans";
 	default:
 		throw Exception("TDBVansFields: unknown Name");
 	}
@@ -50,6 +53,7 @@ TFieldType TDBTrainsFields::GetFieldType(TDBTrainsFieldName Name) {
 	case fnTrainsTare:
 	case fnTrainsNetto:
 	case fnTrainsOverload:
+	case fnTrainsNumVans:
 		return ftInteger;
 	default:
 		throw Exception("TDBVansFields: unknown Name");

@@ -1,0 +1,32 @@
+#include "WMEStringsGridHeader.h"
+
+STRINGTABLE
+BEGIN
+IDS_GRID_HEADER_NUM,                    "№"
+IDS_GRID_HEADER_DATETIME,               "Дата и время"
+IDS_GRID_HEADER_VANNUM,                 "№ вагона"
+IDS_GRID_HEADER_VANTYPE,                "Род вагона"
+IDS_GRID_HEADER_CARRYING,               "ГП"
+IDS_GRID_HEADER_BRUTTO,                 "Брутто"
+IDS_GRID_HEADER_TARE,                   "Тара"
+IDS_GRID_HEADER_TARE_T,                 "Тара Т"
+IDS_GRID_HEADER_TARE_D,                 "Тара Д"
+IDS_GRID_HEADER_TARE_S,                 "Тара С"
+IDS_GRID_HEADER_TARE_INDEX,             "Тара"
+IDS_GRID_HEADER_NETTO,                  "Нетто"
+IDS_GRID_HEADER_OVERLOAD,               "Перегруз"
+IDS_GRID_HEADER_CARGOTYPE,              "Род груза"
+IDS_GRID_HEADER_DEPART_STATION,         "Станция отправления"
+IDS_GRID_HEADER_PURPOSE_STATION,        "Станция назначения"
+IDS_GRID_HEADER_INVOICE_NUM,            "Номер накладной"
+IDS_GRID_HEADER_INVOICE_SUPPLIER,       "Грузоотправитель"
+IDS_GRID_HEADER_INVOICE_RECIPIENT,      "Грузополучатель"
+IDS_GRID_HEADER_VANCOUNT,               "Кол-во вагонов"
+
+IDS_GRID_HEADER_NAME,                   "ФИО"
+IDS_GRID_HEADER_HAS_PASS,               "Пароль"
+IDS_GRID_HEADER_IS_ADMIN,               "Админ"
+IDS_GRID_HEADER_TABNUM,                 "Таб. номер"
+IDS_GRID_HEADER_SHIFTNUM,               "Смена"
+
+END

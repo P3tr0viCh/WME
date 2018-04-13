@@ -7,10 +7,10 @@
 #include "WMEDebug.h"
 
 // ---------------------------------------------------------------------------
-USEFORM("WMEOptionsUser.cpp", frmOptionsUser);
+USEFORM("WMEMain.cpp", Main);
 USEFORM("WMELogin.cpp", frmLogin);
 USEFORM("WMEOptions.cpp", frmOptions);
-USEFORM("WMEMain.cpp", Main);
+USEFORM("WMEOptionsUser.cpp", frmOptionsUser);
 USEFORM("WMETrainList.cpp", frmTrainList);
 USEFORM("WMETrain.cpp", frmTrain);
 //---------------------------------------------------------------------------
