@@ -7,12 +7,12 @@
 #include "WMEDebug.h"
 
 // ---------------------------------------------------------------------------
-USEFORM("WMEMain.cpp", Main);
-USEFORM("WMELogin.cpp", frmLogin);
-USEFORM("WMEOptions.cpp", frmOptions);
 USEFORM("WMEOptionsUser.cpp", frmOptionsUser);
+USEFORM("WMEOptions.cpp", frmOptions);
 USEFORM("WMETrainList.cpp", frmTrainList);
 USEFORM("WMETrain.cpp", frmTrain);
+USEFORM("WMEMain.cpp", Main);
+USEFORM("WMELogin.cpp", frmLogin);
 //---------------------------------------------------------------------------
 int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int) {
 	HANDLE hMutex;

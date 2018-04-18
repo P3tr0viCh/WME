@@ -4,6 +4,7 @@
 #pragma hdrstop
 
 #include <UtilsLog.h>
+#include <UtilsStr.h>
 #include <UtilsMisc.h>
 #include <UtilsFileIni.h>
 
@@ -35,19 +36,21 @@ bool TfrmLogin::Show(TUserList *UserList, TUser* User) {
 
 		if (Result) {
 			User->Assign(UserList->Items[frmLogin->cboxUser->ItemIndex]);
+			WriteToLog(Format(IDS_LOG_LOGIN_OK, User->Name));
+		}
+		else {
+			WriteToLog(IDS_LOG_LOGIN_CANCEL);
 		}
 	}
 	__finally {
 		delete frmLogin;
 	}
 
-	WriteToLog(Result != NULL ? IDS_LOG_LOGIN_OK : IDS_LOG_LOGIN_CANCEL);
-
 	return Result;
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmLogin::FormCreate(TObject *Sender) {
+void __fastcall TfrmLogin::FormCreate(TObject * Sender) {
 	WriteToLogForm(true, ClassName());
 
 	UserList = new TUserList();
@@ -62,7 +65,7 @@ void __fastcall TfrmLogin::FormCreate(TObject *Sender) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmLogin::FormDestroy(TObject *Sender) {
+void __fastcall TfrmLogin::FormDestroy(TObject * Sender) {
 	TFileIni* FileIni = TFileIni::GetNewInstance();
 	try {
 		FileIni->WriteFormPosition(this);
@@ -77,7 +80,7 @@ void __fastcall TfrmLogin::FormDestroy(TObject *Sender) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmLogin::FormCloseQuery(TObject *Sender, bool &CanClose) {
+void __fastcall TfrmLogin::FormCloseQuery(TObject * Sender, bool &CanClose) {
 #ifdef FORCECLOSE
 	CanClose = true;
 #else
@@ -102,7 +105,7 @@ bool TfrmLogin::CheckPass() {
 		cboxUser->Text = "";
 		cboxUser->SetFocus();
 
-		MsgBoxErr(LoadStr(IDS_ERROR_SELECT_USERNAME));
+		MsgBoxErr(IDS_ERROR_SELECT_USERNAME);
 
 		return false;
 	}
@@ -111,7 +114,7 @@ bool TfrmLogin::CheckPass() {
 		ePass->Clear();
 		ePass->SetFocus();
 
-		MsgBoxErr(LoadStr(IDS_ERROR_PASS_WRONG));
+		MsgBoxErr(IDS_ERROR_PASS_WRONG);
 
 		return false;
 	}
@@ -120,7 +123,7 @@ bool TfrmLogin::CheckPass() {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmLogin::btnOkClick(TObject *Sender) {
+void __fastcall TfrmLogin::btnOkClick(TObject * Sender) {
 	if (!CheckPass()) {
 		ModalResult = mrNone;
 	}

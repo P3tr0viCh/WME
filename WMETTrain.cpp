@@ -29,78 +29,14 @@ void TTrain::Init() {
 	FVanList = new TVanList();
 
 	FTrainNum = 0;
+
 	FUnixTime = 0;
 	FDateTime = NULL;
 }
 
 // ---------------------------------------------------------------------------
-void TTrain::SetCarrying(int Value) {
-	if (FCarrying == Value) {
-		return;
-	}
-
-	FCarrying = Value;
-
-	FOverload = FNetto - FCarrying;
-}
-
-// ---------------------------------------------------------------------------
-void TTrain::SetBrutto(int Value) {
-	if (FBrutto == Value) {
-		return;
-	}
-
-	FBrutto = Value;
-
-	FNetto = FBrutto - FTare;
-
-	FOverload = FNetto - FCarrying;
-}
-
-// ---------------------------------------------------------------------------
-void TTrain::SetTare(int Value) {
-	if (FTare == Value) {
-		return;
-	}
-
-	FTare = Value;
-
-	FNetto = FBrutto - FTare;
-
-	FOverload = FNetto - FCarrying;
-}
-
-// ---------------------------------------------------------------------------
 void TTrain::SetVanList(TVanList *AVanList) {
 	VanList->Assign(AVanList);
-	CalcFields();
-}
-
-// ---------------------------------------------------------------------------
-void TTrain::CalcFields() {
-	if (VanList->IsEmpty()) {
-		Carrying = 0;
-		Brutto = 0;
-		Tare = 0;
-
-		return;
-	}
-
-	DateTime = VanList->Items[0]->DateTime;
-
-	int ACarrying = 0;
-	int ABrutto = 0;
-	int ATare = 0;
-
-	for (int i = 0; i < VanList->Count; i++) {
-		ACarrying += VanList->Items[i]->Carrying;
-		ABrutto += VanList->Items[i]->Brutto;
-		ATare += VanList->Items[i]->Tare;
-	}
-
-	Carrying = ACarrying;
-	Brutto = ABrutto;
-	Tare = ATare;
 }
 
 // ---------------------------------------------------------------------------
@@ -112,9 +48,11 @@ bool __fastcall TTrain::Equals(TObject* Obj) {
 
 	TTrain *Train = (TTrain*) Obj;
 
-	if (TrainNum != Train->TrainNum || DateTime != Train->DateTime ||
-		Carrying != Train->Carrying || Brutto != Train->Brutto ||
-		Tare != Train->Tare) {
+	if (TrainNum != Train->TrainNum || UnixTime != Train->UnixTime ||
+		DateTime != Train->DateTime || Carrying != Train->Carrying ||
+		Brutto != Train->Brutto || Tare != Train->Tare ||
+		Netto != Train->Netto || Overload != Train->Overload ||
+		VanCount != Train->VanCount) {
 		return false;
 	}
 
@@ -128,9 +66,19 @@ bool __fastcall TTrain::Equals(TObject* Obj) {
 // ---------------------------------------------------------------------------
 void __fastcall TTrain::Assign(TTrain* Source) {
 	TrainNum = Source->TrainNum;
+
+	UnixTime = Source->UnixTime;
 	DateTime = Source->DateTime;
 
-	VanList = Source->VanList;
+	Carrying = Source->Carrying;
+	Brutto = Source->Brutto;
+	Tare = Source->Tare;
+	Netto = Source->Netto;
+	Overload = Source->Overload;
+
+	VanCount = Source->VanCount;
+
+	VanList->Assign(Source->VanList);
 }
 
 // ---------------------------------------------------------------------------
@@ -151,6 +99,8 @@ String __fastcall TTrain::ToString() {
 	S += "Netto='" + IntToStr(Netto) + "'";
 	S += ",";
 	S += "Overload='" + IntToStr(Overload) + "'";
+	S += ",";
+	S += "VanCount='" + IntToStr(VanCount) + "'";
 	S += ",";
 	S += "VanList Items Count='" + IntToStr(VanList->Count) + "'";
 	S += "}";

@@ -11,7 +11,13 @@ const TDBTrainsFieldName TDBTrainsFields::SAVE_TRAIN_FIELDS
 	[TDBTrainsFields::SAVE_TRAIN_FIELDS_COUNT] = {
 	fnTrainsTrnum, fnTrainsWTime, fnTrainsDatetime, fnTrainsCarrying,
 	fnTrainsBrutto, fnTrainsTare, fnTrainsNetto, fnTrainsOverload,
-	fnTrainsNumVans};
+	fnTrainsVanCount};
+
+const TDBTrainsFieldName TDBTrainsFields::LOAD_TRAINS_FIELDS
+	[TDBTrainsFields::LOAD_TRAINS_FIELDS_COUNT] = {
+	fnTrainsTrnum, fnTrainsWTime, fnTrainsDatetime, fnTrainsCarrying,
+	fnTrainsBrutto, fnTrainsTare, fnTrainsNetto, fnTrainsOverload,
+	fnTrainsVanCount};
 
 // ---------------------------------------------------------------------------
 String TDBTrainsFields::GetFieldName(TDBTrainsFieldName Name) {
@@ -32,7 +38,7 @@ String TDBTrainsFields::GetFieldName(TDBTrainsFieldName Name) {
 		return "netto";
 	case fnTrainsOverload:
 		return "overload";
-	case fnTrainsNumVans:
+	case fnTrainsVanCount:
 		return "nvans";
 	default:
 		throw Exception("TDBVansFields: unknown Name");
@@ -53,7 +59,7 @@ TFieldType TDBTrainsFields::GetFieldType(TDBTrainsFieldName Name) {
 	case fnTrainsTare:
 	case fnTrainsNetto:
 	case fnTrainsOverload:
-	case fnTrainsNumVans:
+	case fnTrainsVanCount:
 		return ftInteger;
 	default:
 		throw Exception("TDBVansFields: unknown Name");
@@ -62,38 +68,27 @@ TFieldType TDBTrainsFields::GetFieldType(TDBTrainsFieldName Name) {
 
 // ---------------------------------------------------------------------------
 String TDBTrainsFields::GetFields(TDBTrainsDatabaseOp DatabaseOp) {
-	String S;
-
 	switch (DatabaseOp) {
 	case dboTrainsSaveTrain:
-		S = GetFieldName(SAVE_TRAIN_FIELDS[0]);
-		for (int i = 1; i < SAVE_TRAIN_FIELDS_COUNT; i++) {
-			S = S + "," + GetFieldName(SAVE_TRAIN_FIELDS[i]);
-		}
-		break;
+		return ConcatFields(SAVE_TRAIN_FIELDS, SAVE_TRAIN_FIELDS_COUNT);
+	case dboTrainsLoadTrains:
+		return ConcatFields(LOAD_TRAINS_FIELDS, LOAD_TRAINS_FIELDS_COUNT);
 	default:
 		throw Exception("TDBTrainsFields: unknown DatabaseOp");
 	}
-
-	return S;
 }
 
 // ---------------------------------------------------------------------------
 String TDBTrainsFields::GetValues(TDBTrainsDatabaseOp DatabaseOp, int Index) {
-	String S;
-
 	switch (DatabaseOp) {
 	case dboTrainsSaveTrain:
-		S = GetParamValue(SAVE_TRAIN_FIELDS[0], Index);
-		for (int i = 1; i < SAVE_TRAIN_FIELDS_COUNT; i++) {
-			S = S + "," + GetParamValue(SAVE_TRAIN_FIELDS[i], Index);
-		}
-		break;
+		return ConcatValues(SAVE_TRAIN_FIELDS, SAVE_TRAIN_FIELDS_COUNT, Index);
+	case dboTrainsLoadTrains:
+		return ConcatValues(LOAD_TRAINS_FIELDS, LOAD_TRAINS_FIELDS_COUNT,
+			Index);
 	default:
 		throw Exception("TDBTrainsFields: unknown DatabaseOp");
 	}
-
-	return S;
 }
 
 // ---------------------------------------------------------------------------

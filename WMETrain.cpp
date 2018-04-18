@@ -55,8 +55,9 @@ public:
 		ReadOnly =
 			TIntegerSet() << NUM << VANTYPE << TARE << TARE_D << TARE_S <<
 			TARE_INDEX << NETTO << OVERLOAD;
-		LeftAlign = TIntegerSet() << NUM << DATETIME << VANNUM << VANTYPE <<
-			CARGOTYPE << DEPART_STATION << PURPOSE_STATION << INVOICE_NUM <<
+		LeftAlign =
+			TIntegerSet() << DATETIME << VANNUM << VANTYPE << CARGOTYPE <<
+			DEPART_STATION << PURPOSE_STATION << INVOICE_NUM <<
 			INVOICE_SUPPLIER << INVOICE_RECIPIENT;
 	}
 
@@ -553,7 +554,27 @@ TTrain *TfrmTrain::GetTrain() {
 	TTrain *Train = new TTrain(GetVanList());
 
 	Train->TrainNum = TrainNum;
+
+	Train->DateTime = Train->VanList->Items[0]->DateTime;
 	Train->UnixTime = DateTimeToWTime(Train->DateTime);
+
+	int Carrying = 0;
+	int Brutto = 0;
+	int Tare = 0;
+
+	for (int i = 0; i < Train->VanList->Count; i++) {
+		Carrying += Train->VanList->Items[i]->Carrying;
+		Brutto += Train->VanList->Items[i]->Brutto;
+		Tare += Train->VanList->Items[i]->Tare;
+	}
+
+	Train->Carrying = Carrying;
+	Train->Brutto = Brutto;
+	Train->Tare = Tare;
+	Train->Netto = Train->Brutto - Train->Tare;
+	Train->Overload = Train->Netto - Train->Carrying;
+
+	Train->VanCount = Train->VanList->Count;
 
 	return Train;
 }
@@ -561,20 +582,22 @@ TTrain *TfrmTrain::GetTrain() {
 // ---------------------------------------------------------------------------
 bool TfrmTrain::SaveVans() {
 	if (StringGridIsEmpty(sgVans)) {
-		MsgBoxErr("NOTHING SAVE");
+		MsgBoxErr(IDS_ERROR_NOTHING_SAVE);
 		return false;
 	}
 
 	UpdateValues();
 
 	if (!CheckValues()) {
-		MsgBoxErr("BAD VALUES");
+		MsgBoxErr(IDS_ERROR_BAD_VALUES);
 		return false;
 	}
 
 	bool Result;
 
 	TTrain *Train = GetTrain();
+
+	ShowWaitCursor();
 
 	TDBSaveTrain *DBSaveTrain =
 		new TDBSaveTrain(Main->Settings->Connection, Train);
@@ -586,10 +609,12 @@ bool TfrmTrain::SaveVans() {
 	__finally {
 		DBSaveTrain->Free();
 		Train->Free();
+
+		RestoreCursor();
 	}
 
 	if (!Result) {
-		MsgBoxErr("SAVE ERROR");
+		MsgBoxErr(IDS_ERROR_TRAIN_SAVE);
 	}
 
 	return Result;

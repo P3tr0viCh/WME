@@ -113,7 +113,7 @@ void __fastcall TMain::FormDestroy(TObject *Sender) {
 void __fastcall TMain::btnManualClick(TObject *Sender) {
 	TfrmTrain::Show(-1);
 
-	Application->Terminate();
+//	Application->Terminate();
 }
 
 // ---------------------------------------------------------------------------
@@ -157,6 +157,13 @@ void __fastcall TMain::FormCloseQuery(TObject *Sender, bool &CanClose) {
 #ifndef FORCECLOSE
 	CanClose = MsgBoxYesNo(LoadStr(IDS_QUESTION_CLOSE_PROGRAM));
 #endif
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TMain::ApplicationEventsException(TObject *Sender, Exception *E)
+{
+	MsgBoxErr(Format(IDS_ERROR_UNKNOWN_EXCEPTION, E->Message));
+	WriteToLog(Format(IDS_LOG_EXCEPTION, E->Message));
 }
 
 // ---------------------------------------------------------------------------

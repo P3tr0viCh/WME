@@ -27,10 +27,6 @@ object frmTrainList: TfrmTrainList
     Padding.Right = 8
     Padding.Bottom = 8
     TabOrder = 0
-    ExplicitLeft = 8
-    ExplicitTop = 8
-    ExplicitWidth = 609
-    ExplicitHeight = 342
     object Splitter: TSplitter
       Left = 8
       Top = 205
@@ -58,6 +54,7 @@ object frmTrainList: TfrmTrainList
         Top = 0
         Caption = #1054#1090#1082#1088#1099#1090#1100
         ImageIndex = 2
+        OnClick = tbtnOpenClick
       end
       object tbtnSeparator02: TToolButton
         Left = 69
@@ -84,9 +81,12 @@ object frmTrainList: TfrmTrainList
       Constraints.MinHeight = 100
       DefaultDrawing = False
       RowCount = 2
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goTabs]
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goFixedColClick]
       TabOrder = 2
+      OnDblClick = sgTrainsDblClick
       OnDrawCell = sgTrainsDrawCell
+      OnFixedCellClick = sgTrainsFixedCellClick
+      OnSelectCell = sgTrainsSelectCell
     end
     object PanelTop: TPanel
       Left = 8
@@ -96,7 +96,6 @@ object frmTrainList: TfrmTrainList
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitWidth = 593
     end
     object sgVans: TStringGrid
       Left = 8
@@ -107,14 +106,12 @@ object frmTrainList: TfrmTrainList
       ColCount = 2
       Constraints.MinHeight = 100
       DefaultDrawing = False
-      FixedCols = 0
       RowCount = 2
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine]
-      ScrollBars = ssHorizontal
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goFixedColClick]
       TabOrder = 3
+      OnDblClick = sgTrainsDblClick
       OnDrawCell = sgVansDrawCell
-      ExplicitTop = 233
-      ExplicitHeight = 240
+      OnFixedCellClick = sgTrainsFixedCellClick
     end
   end
   object StatusBar: TStatusBar
@@ -123,7 +120,5 @@ object frmTrainList: TfrmTrainList
     Width = 683
     Height = 20
     Panels = <>
-    ExplicitTop = 342
-    ExplicitWidth = 609
   end
 end

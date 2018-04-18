@@ -261,7 +261,6 @@
             <BuildOrder>45</BuildOrder>
         </None>
         <ResourceCompile Include="WMEStringsGridHeader.rc">
-            <ModuleName>WMEStringsGridHeader.rc</ModuleName>
             <Form>WMEStringsGridHeader.res</Form>
             <BuildOrder>44</BuildOrder>
         </ResourceCompile>
@@ -284,6 +283,14 @@
         <CppCompile Include="WMETDBDrop.cpp">
             <DependentOn>WMETDBDrop.h</DependentOn>
             <BuildOrder>37</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="WMETDBLoadTrain.cpp">
+            <DependentOn>WMETDBLoadTrain.h</DependentOn>
+            <BuildOrder>47</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="WMETDBLoadTrains.cpp">
+            <DependentOn>WMETDBLoadTrains.h</DependentOn>
+            <BuildOrder>46</BuildOrder>
         </CppCompile>
         <CppCompile Include="WMETDBSaveTrain.cpp">
             <DependentOn>WMETDBSaveTrain.h</DependentOn>
@@ -329,12 +336,12 @@
             <DependentOn>WMETVan.h</DependentOn>
             <BuildOrder>34</BuildOrder>
         </CppCompile>
-        <FormResources Include="WMEMain.dfm"/>
-        <FormResources Include="WMELogin.dfm"/>
-        <FormResources Include="WMEOptions.dfm"/>
         <FormResources Include="WMEOptionsUser.dfm"/>
+        <FormResources Include="WMEOptions.dfm"/>
         <FormResources Include="WMETrainList.dfm"/>
         <FormResources Include="WMETrain.dfm"/>
+        <FormResources Include="WMEMain.dfm"/>
+        <FormResources Include="WMELogin.dfm"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -813,9 +820,9 @@
                 <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
             </Deployment>
             <Platforms>
                 <Platform value="Win32">True</Platform>

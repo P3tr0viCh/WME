@@ -24,17 +24,13 @@ private:
 	int FNetto;
 	int FOverload;
 
+	int FVanCount;
+
 	TVanList *FVanList;
 
 	void Init();
 
-	void SetCarrying(int Value);
-	void SetBrutto(int Value);
-	void SetTare(int Value);
-
 	void SetVanList(TVanList *AVanList);
-
-	void CalcFields();
 
 public:
 	__fastcall TTrain();
@@ -51,11 +47,13 @@ public:
 	__property int UnixTime = {read = FUnixTime, write = FUnixTime};
 	__property TDateTime DateTime = {read = FDateTime, write = FDateTime};
 
-	__property int Carrying = {read = FCarrying, write = SetCarrying};
-	__property int Brutto = {read = FBrutto, write = SetBrutto};
-	__property int Tare = {read = FTare, write = SetTare};
-	__property int Netto = {read = FNetto};
-	__property int Overload = {read = FOverload};
+	__property int Carrying = {read = FCarrying, write = FCarrying};
+	__property int Brutto = {read = FBrutto, write = FBrutto};
+	__property int Tare = {read = FTare, write = FTare};
+	__property int Netto = {read = FNetto, write = FNetto};
+	__property int Overload = {read = FOverload, write = FOverload};
+
+	__property int VanCount = {read = FVanCount, write = FVanCount};
 
 	__property TVanList *VanList = {read = FVanList, write = SetVanList};
 };

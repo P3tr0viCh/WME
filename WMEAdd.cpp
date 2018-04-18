@@ -20,6 +20,14 @@ bool StringGridIsEmpty(TStringGrid *Grid) {
 }
 
 // ---------------------------------------------------------------------------
+void StringGridClear(TStringGrid *Grid) {
+	for (int i = 1; i < Grid->RowCount; i++) {
+		Grid->Rows[i]->Clear();
+	}
+	Grid->RowCount = 2;
+}
+
+// ---------------------------------------------------------------------------
 void StringGridSelectCell(TStringGrid *Grid, int ACol, int ARow) {
 	Grid->Col = ACol;
 	Grid->Row = ARow;

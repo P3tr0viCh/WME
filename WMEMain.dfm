@@ -85,4 +85,9 @@ object Main: TMain
     TabOrder = 3
     OnClick = btnOperatorClick
   end
+  object ApplicationEvents: TApplicationEvents
+    OnException = ApplicationEventsException
+    Left = 272
+    Top = 88
+  end
 end

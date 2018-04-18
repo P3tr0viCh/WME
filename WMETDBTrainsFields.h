@@ -12,19 +12,22 @@
 enum TDBTrainsFieldName {
 	fnTrainsTrnum, fnTrainsWTime, fnTrainsDatetime, fnTrainsCarrying,
 	fnTrainsBrutto, fnTrainsTare, fnTrainsNetto, fnTrainsOverload,
-	fnTrainsNumVans
+	fnTrainsVanCount
 };
 
 enum TDBTrainsDatabaseOp {
-	dboTrainsSaveTrain
+	dboTrainsSaveTrain,
+	dboTrainsLoadTrains
 };
 
 class TDBTrainsFields
 	: public TDBTableFields<TDBTrainsFieldName, TDBTrainsDatabaseOp> {
 public:
 	static const SAVE_TRAIN_FIELDS_COUNT = 9;
+	static const LOAD_TRAINS_FIELDS_COUNT = 9;
 
 	static const TDBTrainsFieldName SAVE_TRAIN_FIELDS[SAVE_TRAIN_FIELDS_COUNT];
+	static const TDBTrainsFieldName LOAD_TRAINS_FIELDS[LOAD_TRAINS_FIELDS_COUNT];
 
 	String GetFieldName(TDBTrainsFieldName Name);
 

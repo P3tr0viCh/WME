@@ -12,6 +12,7 @@
 #include <Data.Win.ADODB.hpp>
 
 #include "WMETSettings.h"
+#include <Vcl.AppEvnts.hpp>
 
 // ---------------------------------------------------------------------------
 class TMain : public TForm {
@@ -24,6 +25,7 @@ __published:
 	TButton *btnDatabase;
 	TStatusBar *StatusBar;
 	TButton *btnOperator;
+	TApplicationEvents *ApplicationEvents;
 
 	void __fastcall btnAboutClick(TObject *Sender);
 	void __fastcall btnCloseClick(TObject *Sender);
@@ -34,6 +36,7 @@ __published:
 	void __fastcall btnOperatorClick(TObject *Sender);
 	void __fastcall btnOptionsClick(TObject *Sender);
 	void __fastcall FormCloseQuery(TObject *Sender, bool &CanClose);
+	void __fastcall ApplicationEventsException(TObject *Sender, Exception *E);
 
 private:
 

@@ -55,7 +55,7 @@ bool TfrmOptionsUser::Show(TComponent* Owner, TUser *User, int AdminCount) {
 // ---------------------------------------------------------------------------
 void __fastcall TfrmOptionsUser::btnOkClick(TObject *Sender) {
 	if (IsEmpty(eName->Text)) {
-		MsgBoxErr(LoadStr(IDS_ERROR_NEED_USERNAME), this->Handle);
+		MsgBoxErr(IDS_ERROR_NEED_USERNAME);
 		eName->SetFocus();
 		return;
 	}

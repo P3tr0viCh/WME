@@ -13,6 +13,12 @@ const TDBVansFieldName TDBVansFields::SAVE_TRAIN_FIELDS
 	fnVansCarrying, fnVansBrutto, fnVansTare, fnVansNetto, fnVansOverload,
 	fnVansOperator, fnVansOperatorTabNum, fnVansOperatorShiftNum};
 
+const TDBVansFieldName TDBVansFields::LOAD_TRAIN_FIELDS
+	[TDBVansFields::LOAD_TRAIN_FIELDS_COUNT] = {
+	fnVansTrnum, fnVansNum, fnVansWTime, fnVansDatetime, fnVansVannum,
+	fnVansCarrying, fnVansBrutto, fnVansTare, fnVansNetto, fnVansOverload,
+	fnVansOperator, fnVansOperatorTabNum, fnVansOperatorShiftNum};
+
 // ---------------------------------------------------------------------------
 String TDBVansFields::GetFieldName(TDBVansFieldName Name) {
 	switch (Name) {
@@ -87,38 +93,26 @@ TFieldType TDBVansFields::GetFieldType(TDBVansFieldName Name) {
 
 // ---------------------------------------------------------------------------
 String TDBVansFields::GetFields(TDBVansDatabaseOp DatabaseOp) {
-	String S;
-
 	switch (DatabaseOp) {
 	case dboVansSaveTrain:
-		S = GetFieldName(SAVE_TRAIN_FIELDS[0]);
-		for (int i = 1; i < SAVE_TRAIN_FIELDS_COUNT; i++) {
-			S = S + "," + GetFieldName(SAVE_TRAIN_FIELDS[i]);
-		}
-		break;
+		return ConcatFields(SAVE_TRAIN_FIELDS, SAVE_TRAIN_FIELDS_COUNT);
+	case dboVansLoadTrain:
+		return ConcatFields(LOAD_TRAIN_FIELDS, LOAD_TRAIN_FIELDS_COUNT);
 	default:
 		throw Exception("TDBVansFields: unknown DatabaseOp");
 	}
-
-	return S;
 }
 
 // ---------------------------------------------------------------------------
 String TDBVansFields::GetValues(TDBVansDatabaseOp DatabaseOp, int Index) {
-	String S;
-
 	switch (DatabaseOp) {
 	case dboVansSaveTrain:
-		S = GetParamValue(SAVE_TRAIN_FIELDS[0], Index);
-		for (int i = 1; i < SAVE_TRAIN_FIELDS_COUNT; i++) {
-			S = S + "," + GetParamValue(SAVE_TRAIN_FIELDS[i], Index);
-		}
-		break;
+		return ConcatValues(SAVE_TRAIN_FIELDS, SAVE_TRAIN_FIELDS_COUNT, Index);
+	case dboVansLoadTrain:
+		return ConcatValues(LOAD_TRAIN_FIELDS, LOAD_TRAIN_FIELDS_COUNT, Index);
 	default:
 		throw Exception("TDBVansFields: unknown DatabaseOp");
 	}
-
-	return S;
 }
 
 // ---------------------------------------------------------------------------

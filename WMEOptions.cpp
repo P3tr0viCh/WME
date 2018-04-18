@@ -232,37 +232,34 @@ void TfrmOptions::DatabaseAction(int Action) {
 		IDS_ERROR_MYSQL_DB_DROP};
 
 	ShowWaitCursor();
+	TConnectionInfo *Connection = GetConnection();
+
+	TDatabaseOperation *DatabaseOperation;
+
 	try {
-		TConnectionInfo *Connection = GetConnection();
+		switch (Action) {
+		case DB_ACTION_CHECK:
+			DatabaseOperation = new TDBCheck(Connection);
 
-		TDatabaseOperation *DatabaseOperation;
+			break;
+		case DB_ACTION_CREATE:
+			DatabaseOperation = new TDBCreate(Connection);
 
-		try {
-			switch (Action) {
-			case DB_ACTION_CHECK:
-				DatabaseOperation = new TDBCheck(Connection);
+			break;
+		case DB_ACTION_DROP:
+			DatabaseOperation = new TDBDrop(Connection);
 
-				break;
-			case DB_ACTION_CREATE:
-				DatabaseOperation = new TDBCreate(Connection);
-
-				break;
-			case DB_ACTION_DROP:
-				DatabaseOperation = new TDBDrop(Connection);
-
-				break;
-			default:
-				throw EActionError("DatabaseAction: unknown Action");
-			}
-
-			Result = DatabaseOperation->Execute();
+			break;
+		default:
+			throw EActionError("DatabaseAction: unknown Action");
 		}
-		__finally {
-			DatabaseOperation->Free();
-			Connection->Free();
-		}
+
+		Result = DatabaseOperation->Execute();
 	}
 	__finally {
+		DatabaseOperation->Free();
+		Connection->Free();
+
 		RestoreCursor();
 	}
 
@@ -270,7 +267,7 @@ void TfrmOptions::DatabaseAction(int Action) {
 		MsgBox(LoadStr(ActionResultOK[Action]));
 	}
 	else {
-		MsgBoxErr(LoadStr(ActionResultFail[Action]));
+		MsgBoxErr(ActionResultFail[Action]);
 	}
 }
 
@@ -416,7 +413,7 @@ void __fastcall TfrmOptions::btnUsersChangeClick(TObject * Sender) {
 // ---------------------------------------------------------------------------
 void __fastcall TfrmOptions::btnUsersDeleteClick(TObject *Sender) {
 	if (IsUserAdmin(sgUsers->Row) && (AdminCount() == 1)) {
-		MsgBoxErr(LoadStr(IDS_ERROR_USERS_LAST_ADMIN));
+		MsgBoxErr(IDS_ERROR_USERS_LAST_ADMIN);
 
 		return;
 	}
@@ -455,11 +452,11 @@ void __fastcall TfrmOptions::sgUsersDblClick(TObject *Sender) {
 // ---------------------------------------------------------------------------
 void __fastcall TfrmOptions::sgUsersFixedCellClick(TObject *Sender, int ACol,
 	int ARow) {
-	if (StringGridIsEmpty(sgUsers)) {
+	if (ARow < 1) {
 		return;
 	}
 
-	if (ARow < 1) {
+	if (StringGridIsEmpty(sgUsers)) {
 		return;
 	}
 

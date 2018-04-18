@@ -13,6 +13,11 @@
 #include "WMEStrings.h"
 #include "WMEStringsGridHeader.h"
 
+#include "WMETDBLoadTrains.h"
+#include "WMETDBLoadTrain.h"
+
+#include "WMEMain.h"
+
 #include "WMETrainList.h"
 
 // ---------------------------------------------------------------------------
@@ -72,8 +77,9 @@ public:
 	static const COUNT = 19;
 
 	TVansColumns() {
-		LeftAlign = TIntegerSet() << NUM << DATETIME << VANNUM << VANTYPE <<
-			CARGOTYPE << DEPART_STATION << PURPOSE_STATION << INVOICE_NUM <<
+		LeftAlign =
+			TIntegerSet() << DATETIME << VANNUM << VANTYPE << CARGOTYPE <<
+			DEPART_STATION << PURPOSE_STATION << INVOICE_NUM <<
 			INVOICE_SUPPLIER << INVOICE_RECIPIENT;
 	}
 
@@ -92,7 +98,14 @@ __fastcall TfrmTrainList::TfrmTrainList(TComponent* Owner) : TForm(Owner) {
 void TfrmTrainList::Show() {
 	TfrmTrainList *frmTrainList = new TfrmTrainList(Application);
 	try {
-		frmTrainList->ShowModal();
+		if (frmTrainList->LoadTrains()) {
+
+			if (!frmTrainList->TrainList->IsEmpty()) {
+				frmTrainList->LoadTrain(0);
+			}
+
+			frmTrainList->ShowModal();
+		}
 	}
 	__finally {
 		delete frmTrainList;
@@ -102,6 +115,10 @@ void TfrmTrainList::Show() {
 // ---------------------------------------------------------------------------
 void __fastcall TfrmTrainList::FormCreate(TObject *Sender) {
 	WriteToLogForm(true, ClassName());
+
+	SelectedRow = -1;
+
+	TrainList = new TTrainList();
 
 	TFileIni* FileIni = TFileIni::GetNewInstance();
 	try {
@@ -124,6 +141,8 @@ void __fastcall TfrmTrainList::FormDestroy(TObject *Sender) {
 	__finally {
 		delete FileIni;
 	}
+
+	TrainList->Free();
 
 	WriteToLogForm(false, ClassName());
 }
@@ -193,7 +212,7 @@ void __fastcall TfrmTrainList::tbtnCloseClick(TObject *Sender) {
 void __fastcall TfrmTrainList::sgTrainsDrawCell(TObject *Sender, int ACol,
 	int ARow, TRect &Rect, TGridDrawState State) {
 	StringGridDrawCell(sgTrains, ACol, ARow, Rect, State, NUSet,
-		TrainsColumns.LeftAlign, NUSet, NUColor, NUColor, false);
+		TrainsColumns.LeftAlign, NUSet, NUColor, NUColor, true);
 }
 
 // ---------------------------------------------------------------------------
@@ -203,4 +222,181 @@ void __fastcall TfrmTrainList::sgVansDrawCell(TObject *Sender, int ACol,
 		VansColumns.LeftAlign, NUSet, NUColor, NUColor, true);
 }
 
+// ---------------------------------------------------------------------------
+bool TfrmTrainList::LoadTrains() {
+	bool Result;
+
+	ShowWaitCursor();
+
+	TrainList->Clear();
+
+	TDBLoadTrains *DBLoadTrains = new TDBLoadTrains(Main->Settings->Connection);
+	try {
+		Result = DBLoadTrains->Execute();
+
+		TrainList->Assign(DBLoadTrains->TrainList);
+	}
+	__finally {
+		DBLoadTrains->Free();
+
+		RestoreCursor();
+	}
+
+	if (Result) {
+		UpdateTrains();
+	}
+	else {
+		MsgBoxErr(IDS_ERROR_TRAINS_LOAD);
+	}
+
+	return Result;
+}
+
+// ---------------------------------------------------------------------------
+bool TfrmTrainList::LoadTrain(int Index) {
+	bool Result;
+
+	TTrain *Train = TrainList->Items[Index];
+
+	Result = Train->VanCount == Train->VanList->Count;
+
+	if (!Result) {
+		ShowWaitCursor();
+
+		TDBLoadTrain *DBLoadTrain = new TDBLoadTrain(Main->Settings->Connection,
+			Train->TrainNum);
+		try {
+			Result = DBLoadTrain->Execute();
+
+			Train->VanList->Assign(DBLoadTrain->VanList);
+		}
+		__finally {
+			DBLoadTrain->Free();
+
+			RestoreCursor();
+		}
+	}
+
+	if (Result) {
+		UpdateVans(Index);
+	}
+	else {
+		MsgBoxErr(IDS_ERROR_TRAIN_LOAD);
+	}
+
+	return Result;
+}
+
+// ---------------------------------------------------------------------------
+void TfrmTrainList::UpdateTrains() {
+	StringGridClear(sgTrains);
+
+	SelectedRow = -1;
+
+	for (int i = 0; i < TrainList->Count; i++) {
+		SetTrain(-1, TrainList->Items[i]);
+	}
+}
+
+// ---------------------------------------------------------------------------
+void TfrmTrainList::UpdateVans(int Index) {
+	StringGridClear(sgVans);
+
+	for (int i = 0; i < TrainList->Items[Index]->VanList->Count; i++) {
+		SetVan(-1, TrainList->Items[Index]->VanList->Items[i]);
+	}
+}
+
+// ---------------------------------------------------------------------------
+int TfrmTrainList::SetTrain(int Index, TTrain *Train) {
+	if (Index < 0) {
+		if (!StringGridIsEmpty(sgTrains)) {
+			sgTrains->RowCount++;
+		}
+		Index = sgTrains->RowCount - 1;
+	}
+
+	sgTrains->Cells[TrainsColumns.NUM][Index] = IntToStr(Index);
+	sgTrains->Cells[TrainsColumns.DATETIME][Index] =
+		DateTimeToStr(Train->DateTime);
+
+	sgTrains->Cells[TrainsColumns.CARRYING][Index] = IntToStr(Train->Carrying);
+	sgTrains->Cells[TrainsColumns.BRUTTO][Index] = IntToStr(Train->Brutto);
+	sgTrains->Cells[TrainsColumns.TARE][Index] = IntToStr(Train->Tare);
+	sgTrains->Cells[TrainsColumns.NETTO][Index] = IntToStr(Train->Netto);
+	sgTrains->Cells[TrainsColumns.OVERLOAD][Index] = IntToStr(Train->Overload);
+
+	sgTrains->Cells[TrainsColumns.VANCOUNT][Index] = IntToStr(Train->VanCount);
+
+	return Index;
+}
+
+// ---------------------------------------------------------------------------
+int TfrmTrainList::SetVan(int Index, TVan *Van) {
+	if (Index < 0) {
+		if (!StringGridIsEmpty(sgVans)) {
+			sgVans->RowCount++;
+		}
+		Index = sgVans->RowCount - 1;
+	}
+
+	sgVans->Cells[VansColumns.NUM][Index] = IntToStr(Van->Num);
+	sgVans->Cells[VansColumns.DATETIME][Index] = DateTimeToStr(Van->DateTime);
+
+	sgVans->Cells[VansColumns.CARRYING][Index] = IntToStr(Van->Carrying);
+	sgVans->Cells[VansColumns.BRUTTO][Index] = IntToStr(Van->Brutto);
+	sgVans->Cells[VansColumns.TARE][Index] = IntToStr(Van->Tare);
+	sgVans->Cells[VansColumns.NETTO][Index] = IntToStr(Van->Netto);
+	sgVans->Cells[VansColumns.OVERLOAD][Index] = IntToStr(Van->Overload);
+
+	return Index;
+}
+
+// ---------------------------------------------------------------------------l.----
+void __fastcall TfrmTrainList::sgTrainsSelectCell(TObject *Sender, int ACol,
+	int ARow, bool &CanSelect) {
+	if (StringGridIsEmpty(sgTrains)) {
+		return;
+	}
+
+	if (SelectedRow == ARow) {
+		return;
+	}
+
+	SelectedRow = ARow;
+
+	LoadTrain(ARow - 1);
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmTrainList::sgTrainsDblClick(TObject *Sender) {
+	tbtnOpen->Click();
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmTrainList::tbtnOpenClick(TObject *Sender) {
+	if (SelectedRow < 0) {
+		return;
+	}
+
+	if (StringGridIsEmpty(sgTrains)) {
+		return;
+	}
+
+	MsgBox(DateTimeToStr(TrainList->Items[SelectedRow - 1]->DateTime));
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmTrainList::sgTrainsFixedCellClick(TObject *Sender, int ACol,
+	int ARow) {
+	if (ARow < 1) {
+		return;
+	}
+
+	if (StringGridIsEmpty((TStringGrid*)Sender)) {
+		return;
+	}
+
+	((TStringGrid*)Sender)->Row = ARow;
+}
 // ---------------------------------------------------------------------------

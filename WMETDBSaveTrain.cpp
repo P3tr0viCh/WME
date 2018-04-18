@@ -57,7 +57,7 @@ void TDBSaveTrain::SetVansParam(TADOQuery *Query, TDBVansFieldName Name,
 void TDBSaveTrain::SetTrainsParam(TADOQuery *Query, TDBTrainsFieldName Name,
 	Variant Value) {
 	TParameter *Param = Query->Parameters->ParamByName
-		(TrainsFields->GetParamName(Name, -1));
+		(TrainsFields->GetParamName(Name));
 	Param->DataType = TrainsFields->GetFieldType(Name);
 	Param->Value = Value;
 }
@@ -83,7 +83,7 @@ void TDBSaveTrain::Operation() {
 			Query->SQL->Add("DELETE FROM vans");
 			Query->SQL->Add("WHERE");
 			Query->SQL->Add(VansFields->GetFieldName(fnVansTrnum) + "=" +
-				VansFields->GetParamValue(fnVansTrnum, -1));
+				VansFields->GetParamValue(fnVansTrnum));
 
 			SetVansParam(Query, fnVansTrnum, -1, Train->TrainNum);
 
@@ -95,7 +95,7 @@ void TDBSaveTrain::Operation() {
 			Query->SQL->Add("DELETE FROM trains");
 			Query->SQL->Add("WHERE");
 			Query->SQL->Add(TrainsFields->GetFieldName(fnTrainsTrnum) + "=" +
-				TrainsFields->GetParamValue(fnTrainsTrnum, -1));
+				TrainsFields->GetParamValue(fnTrainsTrnum));
 
 			SetTrainsParam(Query, fnTrainsTrnum, Train->TrainNum);
 
@@ -173,7 +173,7 @@ void TDBSaveTrain::Operation() {
 		SetTrainsParam(Query, fnTrainsTare, Train->Tare);
 		SetTrainsParam(Query, fnTrainsNetto, Train->Netto);
 		SetTrainsParam(Query, fnTrainsOverload, Train->Overload);
-		SetTrainsParam(Query, fnTrainsNumVans, Train->VanList->Count);
+		SetTrainsParam(Query, fnTrainsVanCount, Train->VanCount);
 
 		Query->Prepared = true;
 

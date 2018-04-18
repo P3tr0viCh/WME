@@ -30,12 +30,25 @@ IDS_ERROR_PASS_WRONG,
         "Неправильный пароль.\n\nПопробуйте ещё раз"
 IDS_ERROR_USERS_LAST_ADMIN,
         "В списке пользователей должен присутствовать как минимум один Администратор"
+IDS_ERROR_UNKNOWN_EXCEPTION,
+        "Возникла непредвиденная ошибка:\n\n%s"
+
 IDS_ERROR_MYSQL_CONNECTION,
         "Не удалось подключиться к базе данных"
 IDS_ERROR_MYSQL_DB_DROP,
         "Во время удаления базы данных произошла ошибка"
 IDS_ERROR_MYSQL_DB_CREATE,
         "Во время создания базы данных произошла ошибка"
+IDS_ERROR_NOTHING_SAVE,
+        "В составе отсутствуют вагоны"
+IDS_ERROR_BAD_VALUES,
+        "Значение одного или нескольких полей неверное"
+IDS_ERROR_TRAINS_LOAD,
+        "Во время загрузки списка поездов произошла ошибка"
+IDS_ERROR_TRAIN_SAVE,
+        "Во время сохранения произошла ошибка"
+IDS_ERROR_TRAIN_LOAD,
+        "Во время загрузки состава произошла ошибка"
 
 IDS_MSG_MYSQL_CONNECTION_OK,
         "Соединение с базой данных выполнено"
@@ -69,7 +82,7 @@ IDS_LOG_OPTIONS_SAVE,
 IDS_LOG_OPTIONS_CANCEL,
         "options: cancel"
 IDS_LOG_LOGIN_OK,
-        "login: ok"
+        "login: %s"
 IDS_LOG_LOGIN_CANCEL,
         "login: cancel"
 IDS_LOG_CREATE_DIR_FAIL,
@@ -78,6 +91,9 @@ IDS_LOG_WRITE_FILE_FAIL,
         "write file fail: %s; e = %s"
 IDS_LOG_READ_FILE_FAIL,
         "read file fail: %s; e = %s"
+IDS_LOG_EXCEPTION,
+        "exception: %s"
+
 IDS_LOG_MYSQL_CONNECT,
         "try database connect: %s@%s:%s"
 IDS_LOG_MYSQL_CONNECT_OK,
@@ -96,5 +112,13 @@ IDS_LOG_MYSQL_SAVE_TRAIN_OK,
         "database save train, vancount: %d"
 IDS_LOG_MYSQL_SAVE_TRAIN_FAIL,
         "database save train fail: %s"
+IDS_LOG_MYSQL_LOAD_TRAINS_OK,
+        "database load trains, traincount: %d"
+IDS_LOG_MYSQL_LOAD_TRAINS_FAIL,
+        "database load trains fail: %s"
+IDS_LOG_MYSQL_LOAD_TRAIN_OK,
+        "database load train, vancount: %d"
+IDS_LOG_MYSQL_LOAD_TRAIN_FAIL,
+        "database load train fail: %s"
 
 END

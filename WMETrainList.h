@@ -33,13 +33,31 @@ __published:
           TGridDrawState State);
 	void __fastcall sgVansDrawCell(TObject *Sender, int ACol, int ARow, TRect &Rect,
           TGridDrawState State);
+	void __fastcall sgTrainsSelectCell(TObject *Sender, int ACol, int ARow, bool &CanSelect);
+	void __fastcall tbtnOpenClick(TObject *Sender);
+	void __fastcall sgTrainsDblClick(TObject *Sender);
+	void __fastcall sgTrainsFixedCellClick(TObject *Sender, int ACol, int ARow);
+
 
 private:
 	TIntegerSet NUSet;
 	TColor NUColor;
 
+    int SelectedRow;
+
+	TTrainList *TrainList;
+
 	void CreateTrainsColumns();
 	void CreateVansColumns();
+
+	bool LoadTrains();
+	bool LoadTrain(int Index);
+
+	void UpdateTrains();
+	void UpdateVans(int Index);
+
+	int SetTrain(int Index, TTrain *Train);
+	int SetVan(int Index, TVan *Van);
 
 public:
 	__fastcall TfrmTrainList(TComponent* Owner);
