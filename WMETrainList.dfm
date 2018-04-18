@@ -45,26 +45,26 @@ object frmTrainList: TfrmTrainList
       Height = 29
       AutoSize = True
       ButtonHeight = 29
-      ButtonWidth = 69
+      ButtonWidth = 78
       Caption = 'ToolBar'
       ShowCaptions = True
       TabOrder = 0
       object tbtnOpen: TToolButton
         Left = 0
         Top = 0
-        Caption = #1054#1090#1082#1088#1099#1090#1100
+        Caption = #1048#1079#1084#1077#1085#1080#1090#1100
         ImageIndex = 2
         OnClick = tbtnOpenClick
       end
       object tbtnSeparator02: TToolButton
-        Left = 69
+        Left = 78
         Top = 0
         Width = 4
         ImageIndex = 1
         Style = tbsSeparator
       end
       object tbtnClose: TToolButton
-        Left = 73
+        Left = 82
         Top = 0
         Caption = #1047#1072#1082#1088#1099#1090#1100
         ImageIndex = 0
@@ -81,7 +81,7 @@ object frmTrainList: TfrmTrainList
       Constraints.MinHeight = 100
       DefaultDrawing = False
       RowCount = 2
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goFixedColClick]
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goFixedColClick]
       TabOrder = 2
       OnDblClick = sgTrainsDblClick
       OnDrawCell = sgTrainsDrawCell
@@ -107,7 +107,7 @@ object frmTrainList: TfrmTrainList
       Constraints.MinHeight = 100
       DefaultDrawing = False
       RowCount = 2
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goFixedColClick]
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goFixedColClick]
       TabOrder = 3
       OnDblClick = sgTrainsDblClick
       OnDrawCell = sgVansDrawCell

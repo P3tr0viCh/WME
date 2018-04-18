@@ -434,12 +434,9 @@ void __fastcall TfrmOptions::sgUsersDblClick(TObject *Sender) {
 		return;
 	}
 
-	TPoint P = Mouse->CursorPos;
-	P = sgUsers->ScreenToClient(P);
-
 	int Col, Row;
 
-	sgUsers->MouseToCell(P.X, P.Y, Col, Row);
+	StringGridMouseToCell(sgUsers, Col, Row);
 
 	if (Col < 0 || Row < 0) {
 		btnUsersAdd->Click();

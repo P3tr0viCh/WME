@@ -10,6 +10,8 @@
 
 #include "WMETVan.h"
 
+const TRAINNUM_NONE = 0;
+
 // ---------------------------------------------------------------------------
 class TTrain : public TObject {
 private:

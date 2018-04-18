@@ -46,6 +46,7 @@ object frmTrain: TfrmTrain
       Caption = 'ToolBar'
       ShowCaptions = True
       TabOrder = 0
+      OnMouseActivate = ToolBarMouseActivate
       object tbtnAdd: TToolButton
         Left = 0
         Top = 0
@@ -100,6 +101,7 @@ object frmTrain: TfrmTrain
       RowCount = 2
       Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goTabs]
       TabOrder = 2
+      OnDblClick = sgVansDblClick
       OnDrawCell = sgVansDrawCell
       OnExit = sgVansExit
       OnGetEditMask = sgVansGetEditMask
@@ -140,6 +142,23 @@ object frmTrain: TfrmTrain
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 3
+    end
+    object ComboBox: TComboBox
+      Left = 296
+      Top = 136
+      Width = 145
+      Height = 29
+      TabOrder = 5
+      Text = 'ComboBox'
+      Visible = False
+      OnEnter = ComboBoxEnter
+      OnExit = ComboBoxExit
+      OnKeyDown = ComboBoxKeyDown
+      OnKeyPress = ComboBoxKeyPress
+      Items.Strings = (
+        'VanType 1'
+        'VanType 2'
+        'VanType 3')
     end
   end
 end

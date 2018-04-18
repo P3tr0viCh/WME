@@ -111,9 +111,9 @@ void __fastcall TMain::FormDestroy(TObject *Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::btnManualClick(TObject *Sender) {
-	TfrmTrain::Show(-1);
+	TfrmTrain::Show(new TTrain());
 
-//	Application->Terminate();
+	// Application->Terminate();
 }
 
 // ---------------------------------------------------------------------------

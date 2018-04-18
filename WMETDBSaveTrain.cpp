@@ -76,7 +76,7 @@ void TDBSaveTrain::Operation() {
 	try {
 		Query->Connection = Connection;
 
-		if (Train->TrainNum < 0) {
+		if (Train->TrainNum == TRAINNUM_NONE) {
 			Train->TrainNum = DateTimeToWTime(Now());
 		}
 		else {
@@ -126,8 +126,11 @@ void TDBSaveTrain::Operation() {
 			SetVansParam(Query, fnVansDatetime, i,
 				DateTimeToSQLStr(Train->VanList->Items[i]->DateTime));
 
-			SetVansParam(Query, fnVansVannum, i,
+			SetVansParam(Query, fnVansVanNum, i,
 				Train->VanList->Items[i]->VanNum);
+
+			SetVansParam(Query, fnVansVanType, i,
+				Train->VanList->Items[i]->VanType);
 
 			SetVansParam(Query, fnVansCarrying, i,
 				Train->VanList->Items[i]->Carrying);

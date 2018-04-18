@@ -68,16 +68,16 @@ void StringGridDeleteRow(TStringGrid *Grid, int ARow, int AColCount) {
 }
 
 // ---------------------------------------------------------------------------
-void StringGridSetHeader(TStringGrid *Grid, int Col, String ColName,
+void StringGridSetHeader(TStringGrid *Grid, int ACol, String ColName,
 	int ColWidth) {
-	Grid->Cells[Col][0] = ColName;
-	Grid->ColWidths[Col] = ColWidth;
+	Grid->Cells[ACol][0] = ColName;
+	Grid->ColWidths[ACol] = ColWidth;
 }
 
 // ---------------------------------------------------------------------------
-void StringGridSetHeader(TStringGrid *Grid, int Col, NativeUInt ColNameIdent,
+void StringGridSetHeader(TStringGrid *Grid, int ACol, NativeUInt ColNameIdent,
 	int ColWidth) {
-	StringGridSetHeader(Grid, Col, LoadStr(ColNameIdent), ColWidth);
+	StringGridSetHeader(Grid, ACol, LoadStr(ColNameIdent), ColWidth);
 }
 
 // ---------------------------------------------------------------------------
@@ -147,6 +147,14 @@ void StringGridDrawCell(TStringGrid *Grid, int ACol, int ARow, TRect Rect,
 				DT_SINGLELINE | DT_END_ELLIPSIS | DT_CENTER);
 		}
 	}
+}
+
+// ---------------------------------------------------------------------------
+void StringGridMouseToCell(TStringGrid *Grid, int &ACol, int &ARow) {
+	TPoint P = Mouse->CursorPos;
+	P = Grid->ScreenToClient(P);
+
+	Grid->MouseToCell(P.X, P.Y, ACol, ARow);
 }
 
 // ---------------------------------------------------------------------------

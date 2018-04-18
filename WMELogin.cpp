@@ -50,7 +50,7 @@ bool TfrmLogin::Show(TUserList *UserList, TUser* User) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmLogin::FormCreate(TObject * Sender) {
+void __fastcall TfrmLogin::FormCreate(TObject *Sender) {
 	WriteToLogForm(true, ClassName());
 
 	UserList = new TUserList();
@@ -65,7 +65,7 @@ void __fastcall TfrmLogin::FormCreate(TObject * Sender) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmLogin::FormDestroy(TObject * Sender) {
+void __fastcall TfrmLogin::FormDestroy(TObject *Sender) {
 	TFileIni* FileIni = TFileIni::GetNewInstance();
 	try {
 		FileIni->WriteFormPosition(this);
@@ -80,7 +80,7 @@ void __fastcall TfrmLogin::FormDestroy(TObject * Sender) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmLogin::FormCloseQuery(TObject * Sender, bool &CanClose) {
+void __fastcall TfrmLogin::FormCloseQuery(TObject *Sender, bool &CanClose) {
 #ifdef FORCECLOSE
 	CanClose = true;
 #else
@@ -123,7 +123,7 @@ bool TfrmLogin::CheckPass() {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmLogin::btnOkClick(TObject * Sender) {
+void __fastcall TfrmLogin::btnOkClick(TObject *Sender) {
 	if (!CheckPass()) {
 		ModalResult = mrNone;
 	}

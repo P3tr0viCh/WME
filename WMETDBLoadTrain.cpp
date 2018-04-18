@@ -85,6 +85,14 @@ void TDBLoadTrain::Operation() {
 				Query->FieldByName(VansFields->GetFieldName(fnVansDatetime))
 				->AsDateTime;
 
+			Van->VanNum =
+				Query->FieldByName(VansFields->GetFieldName(fnVansVanNum))
+				->AsString;
+
+			Van->VanType =
+				Query->FieldByName(VansFields->GetFieldName(fnVansVanType))
+				->AsString;
+
 			Van->Carrying =
 				Query->FieldByName(VansFields->GetFieldName(fnVansCarrying))
 				->AsInteger;

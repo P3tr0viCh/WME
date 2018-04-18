@@ -18,6 +18,8 @@
 
 #include "WMEMain.h"
 
+#include "WMETrain.h"
+
 #include "WMETrainList.h"
 
 // ---------------------------------------------------------------------------
@@ -101,7 +103,9 @@ void TfrmTrainList::Show() {
 		if (frmTrainList->LoadTrains()) {
 
 			if (!frmTrainList->TrainList->IsEmpty()) {
-				frmTrainList->LoadTrain(0);
+				if (frmTrainList->LoadTrain(0)) {
+					frmTrainList->SelectedRow = 1;
+				}
 			}
 
 			frmTrainList->ShowModal();
@@ -308,6 +312,12 @@ void TfrmTrainList::UpdateVans(int Index) {
 }
 
 // ---------------------------------------------------------------------------
+void TfrmTrainList::UpdateTrain(int Index) {
+	SetTrain(Index + 1, TrainList->Items[Index]);
+    UpdateVans(Index);
+}
+
+// ---------------------------------------------------------------------------
 int TfrmTrainList::SetTrain(int Index, TTrain *Train) {
 	if (Index < 0) {
 		if (!StringGridIsEmpty(sgTrains)) {
@@ -343,9 +353,17 @@ int TfrmTrainList::SetVan(int Index, TVan *Van) {
 	sgVans->Cells[VansColumns.NUM][Index] = IntToStr(Van->Num);
 	sgVans->Cells[VansColumns.DATETIME][Index] = DateTimeToStr(Van->DateTime);
 
+	sgVans->Cells[VansColumns.VANNUM][Index] = Van->VanNum;
+
+	sgVans->Cells[VansColumns.VANTYPE][Index] = Van->VanType;
+
 	sgVans->Cells[VansColumns.CARRYING][Index] = IntToStr(Van->Carrying);
 	sgVans->Cells[VansColumns.BRUTTO][Index] = IntToStr(Van->Brutto);
 	sgVans->Cells[VansColumns.TARE][Index] = IntToStr(Van->Tare);
+	sgVans->Cells[VansColumns.TARE_T][Index] = IntToStr(Van->TareTrft);
+	sgVans->Cells[VansColumns.TARE_S][Index] = IntToStr(Van->TareSta);
+	sgVans->Cells[VansColumns.TARE_D][Index] = IntToStr(Van->TareDyn);
+	sgVans->Cells[VansColumns.TARE_INDEX][Index] = IntToStr(Van->TareIndex);
 	sgVans->Cells[VansColumns.NETTO][Index] = IntToStr(Van->Netto);
 	sgVans->Cells[VansColumns.OVERLOAD][Index] = IntToStr(Van->Overload);
 
@@ -383,7 +401,11 @@ void __fastcall TfrmTrainList::tbtnOpenClick(TObject *Sender) {
 		return;
 	}
 
-	MsgBox(DateTimeToStr(TrainList->Items[SelectedRow - 1]->DateTime));
+	int Index = SelectedRow - 1;
+
+	if (TfrmTrain::Show(TrainList->Items[Index])) {
+		UpdateTrain(Index);
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -399,4 +421,5 @@ void __fastcall TfrmTrainList::sgTrainsFixedCellClick(TObject *Sender, int ACol,
 
 	((TStringGrid*)Sender)->Row = ARow;
 }
+
 // ---------------------------------------------------------------------------

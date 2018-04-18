@@ -55,6 +55,7 @@ private:
 
 	void UpdateTrains();
 	void UpdateVans(int Index);
+	void UpdateTrain(int Index);
 
 	int SetTrain(int Index, TTrain *Train);
 	int SetVan(int Index, TVan *Van);

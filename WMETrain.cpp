@@ -97,12 +97,21 @@ __fastcall TfrmTrain::TfrmTrain(TComponent* Owner) : TForm(Owner) {
 }
 
 // ---------------------------------------------------------------------------
-bool TfrmTrain::Show(int TrainNum) {
+bool TfrmTrain::Show(TTrain *Train) {
 	bool Result = false;
 
 	TfrmTrain *frmTrain = new TfrmTrain(Application);
 	try {
-		frmTrain->TrainNum = TrainNum;
+		frmTrain->Train = Train;
+
+		frmTrain->UpdateVans(Train);
+
+		frmTrain->Changed = false;
+
+		// TODO: delete
+		if (Train->TrainNum == TRAINNUM_NONE) {
+			frmTrain->tbtnAdd->Click();
+		}
 
 		Result = frmTrain->ShowModal() == mrOk;
 	}
@@ -116,8 +125,6 @@ bool TfrmTrain::Show(int TrainNum) {
 // ---------------------------------------------------------------------------
 void __fastcall TfrmTrain::FormCreate(TObject *Sender) {
 	WriteToLogForm(true, ClassName());
-
-	Changed = false;
 
 	TFileIni* FileIni = TFileIni::GetNewInstance();
 	try {
@@ -134,8 +141,6 @@ void __fastcall TfrmTrain::FormCreate(TObject *Sender) {
 		sgVans->Options = sgVans->Options << goColSizing;
 		sgTrain->Options = sgTrain->Options << goColSizing;
 	}
-
-	UpdateButtons();
 }
 
 // ---------------------------------------------------------------------------
@@ -206,7 +211,7 @@ void TfrmTrain::CreateTrainColumns() {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmTrain::tbtnCloseClick(TObject * Sender) {
+void __fastcall TfrmTrain::tbtnCloseClick(TObject *Sender) {
 	Close();
 }
 
@@ -292,8 +297,6 @@ void TfrmTrain::UpdateTrain() {
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmTrain::tbtnAddClick(TObject *Sender) {
-	Changed = true;
-
 	if (!StringGridIsEmpty(sgVans)) {
 		sgVans->RowCount++;
 	}
@@ -306,13 +309,11 @@ void __fastcall TfrmTrain::tbtnAddClick(TObject *Sender) {
 
 	UpdateTrain();
 
-	UpdateButtons();
+	Changed = true;
 }
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmTrain::tbtnDeleteClick(TObject *Sender) {
-	Changed = true;
-
 	StringGridDeleteRow(sgVans, sgVans->Row, VansColumns.COUNT);
 
 	if (!StringGridIsEmpty(sgVans)) {
@@ -321,7 +322,7 @@ void __fastcall TfrmTrain::tbtnDeleteClick(TObject *Sender) {
 
 	UpdateTrain();
 
-	UpdateButtons();
+	Changed = true;
 }
 
 // ---------------------------------------------------------------------------
@@ -354,6 +355,22 @@ void __fastcall TfrmTrain::sgVansKeyDown(TObject *Sender, WORD &Key,
 	TShiftState Shift) {
 	if (StringGridIsEmpty(sgVans)) {
 		return;
+	}
+
+	if (Shift.Empty() && Key == VK_RETURN) {
+		if (sgVans->Col == VansColumns.VANTYPE) {
+			TRect Rect = sgVans->CellRect(sgVans->Col, sgVans->Row);
+
+			ComboBox->SetBounds(sgVans->Left + Rect.Left +
+				sgVans->GridLineWidth + 1,
+				sgVans->Top + Rect.Top + sgVans->GridLineWidth,
+				sgVans->ColWidths[sgVans->Col], sgVans->DefaultRowHeight);
+
+			ComboBox->Visible = true;
+			ComboBox->SetFocus();
+
+			return;
+		}
 	}
 
 	if (Shift.Empty() && Key == VK_ESCAPE) {
@@ -417,15 +434,23 @@ void TfrmTrain::UpdateValues(int ARow) {
 }
 
 // ---------------------------------------------------------------------------
+void TfrmTrain::SetChanged(bool Value) {
+	FChanged = Value;
+
+	ComboBox->Visible = false;
+
+	UpdateButtons();
+}
+
+// ---------------------------------------------------------------------------
 void TfrmTrain::UpdateButtons() {
 	tbtnDelete->Enabled = !StringGridIsEmpty(sgVans);
-	tbtnSave->Enabled = tbtnDelete->Enabled;
 
 	if (!tbtnDelete->Enabled) {
 		sgVans->Options = sgVans->Options >> goEditing;
 	}
 
-	sgVans->EditorMode = false;
+	tbtnSave->Enabled = tbtnDelete->Enabled && Changed;
 }
 
 // ---------------------------------------------------------------------------
@@ -550,7 +575,7 @@ TVanList *TfrmTrain::GetVanList() {
 }
 
 // ---------------------------------------------------------------------------
-TTrain *TfrmTrain::GetTrain() {
+TTrain *TfrmTrain::GetTrain(int TrainNum) {
 	TTrain *Train = new TTrain(GetVanList());
 
 	Train->TrainNum = TrainNum;
@@ -595,20 +620,20 @@ bool TfrmTrain::SaveVans() {
 
 	bool Result;
 
-	TTrain *Train = GetTrain();
+	TTrain *TempTrain = GetTrain(Train->TrainNum);
 
 	ShowWaitCursor();
 
-	TDBSaveTrain *DBSaveTrain =
-		new TDBSaveTrain(Main->Settings->Connection, Train);
+	TDBSaveTrain *DBSaveTrain = new TDBSaveTrain(Main->Settings->Connection,
+		TempTrain);
 	try {
 		Result = DBSaveTrain->Execute();
 
-		TrainNum = Train->TrainNum;
+		Train->Assign(TempTrain);
 	}
 	__finally {
 		DBSaveTrain->Free();
-		Train->Free();
+		TempTrain->Free();
 
 		RestoreCursor();
 	}
@@ -621,14 +646,51 @@ bool TfrmTrain::SaveVans() {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmTrain::tbtnSaveClick(TObject * Sender) {
+int TfrmTrain::SetVan(int Index, TVan *Van) {
+	if (Index < 0) {
+		if (!StringGridIsEmpty(sgVans)) {
+			sgVans->RowCount++;
+		}
+		Index = sgVans->RowCount - 1;
+	}
+
+	sgVans->Cells[VansColumns.NUM][Index] = IntToStr(Van->Num);
+	sgVans->Cells[VansColumns.DATETIME][Index] = DateTimeToStr(Van->DateTime);
+
+	sgVans->Cells[VansColumns.VANNUM][Index] = Van->VanNum;
+
+	sgVans->Cells[VansColumns.VANTYPE][Index] = Van->VanType;
+
+	sgVans->Cells[VansColumns.CARRYING][Index] = IntToStr(Van->Carrying);
+	sgVans->Cells[VansColumns.BRUTTO][Index] = IntToStr(Van->Brutto);
+	sgVans->Cells[VansColumns.TARE][Index] = IntToStr(Van->Tare);
+	sgVans->Cells[VansColumns.TARE_T][Index] = IntToStr(Van->TareTrft);
+	sgVans->Cells[VansColumns.TARE_S][Index] = IntToStr(Van->TareSta);
+	sgVans->Cells[VansColumns.TARE_D][Index] = IntToStr(Van->TareDyn);
+	sgVans->Cells[VansColumns.TARE_INDEX][Index] = IntToStr(Van->TareIndex);
+	sgVans->Cells[VansColumns.NETTO][Index] = IntToStr(Van->Netto);
+	sgVans->Cells[VansColumns.OVERLOAD][Index] = IntToStr(Van->Overload);
+
+	return Index;
+}
+
+// ---------------------------------------------------------------------------
+void TfrmTrain::UpdateVans(TTrain *Train) {
+	for (int i = 0; i < Train->VanList->Count; i++) {
+		SetVan(-1, Train->VanList->Items[i]);
+	}
+	UpdateTrain();
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmTrain::tbtnSaveClick(TObject *Sender) {
 	if (SaveVans()) {
 		Changed = false;
 	}
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmTrain::sgVansGetEditMask(TObject * Sender, int ACol,
+void __fastcall TfrmTrain::sgVansGetEditMask(TObject *Sender, int ACol,
 	int ARow, UnicodeString & Value) {
 	if (StringGridIsEmpty(sgVans)) {
 		return;
@@ -638,23 +700,26 @@ void __fastcall TfrmTrain::sgVansGetEditMask(TObject * Sender, int ACol,
 	case VansColumns.DATETIME:
 		Value = "00/00/0000 00:00:00";
 		break;
+	case VansColumns.VANNUM:
+		Value = "00000000";
+		break;
 	}
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmTrain::sgVansGetEditText(TObject * Sender, int ACol,
+void __fastcall TfrmTrain::sgVansGetEditText(TObject *Sender, int ACol,
 	int ARow, UnicodeString & Value) {
 	CellValue = Value;
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmTrain::sgVansExit(TObject * Sender) {
+void __fastcall TfrmTrain::sgVansExit(TObject *Sender) {
 	CalcFields();
 	UpdateTrain();
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmTrain::sgVansDrawCell(TObject * Sender, int ACol, int ARow,
+void __fastcall TfrmTrain::sgVansDrawCell(TObject *Sender, int ACol, int ARow,
 	TRect & Rect, TGridDrawState State) {
 	StringGridDrawCell(sgVans, ACol, ARow, Rect, State, VansColumns.ReadOnly,
 		VansColumns.LeftAlign, NUSet, Main->Settings->ColorReadOnly,
@@ -662,7 +727,7 @@ void __fastcall TfrmTrain::sgVansDrawCell(TObject * Sender, int ACol, int ARow,
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmTrain::sgTrainDrawCell(TObject * Sender, int ACol, int ARow,
+void __fastcall TfrmTrain::sgTrainDrawCell(TObject *Sender, int ACol, int ARow,
 	TRect & Rect, TGridDrawState State) {
 	StringGridDrawCell(sgTrain, ACol, ARow, Rect, State, NUSet,
 		TrainColumns.LeftAlign, NUSet, NUColor, NUColor, false);
@@ -670,6 +735,8 @@ void __fastcall TfrmTrain::sgTrainDrawCell(TObject * Sender, int ACol, int ARow,
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmTrain::FormCloseQuery(TObject *Sender, bool &CanClose) {
+	ModalResult = mrOk;
+
 	if (StringGridIsEmpty(sgVans)) {
 		return;
 	}
@@ -690,5 +757,81 @@ void __fastcall TfrmTrain::FormCloseQuery(TObject *Sender, bool &CanClose) {
 		CanClose = true;
 		ModalResult = mrCancel;
 	}
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmTrain::sgVansDblClick(TObject *Sender) {
+	if (StringGridIsEmpty(sgVans)) {
+		return;
+	}
+
+	int Col, Row;
+
+	StringGridMouseToCell(sgVans, Col, Row);
+
+	if (Col == VansColumns.VANTYPE) {
+		TRect Rect = sgVans->CellRect(Col, Row);
+
+		ComboBox->SetBounds(sgVans->Left + Rect.Left + sgVans->GridLineWidth +
+			1, sgVans->Top + Rect.Top + sgVans->GridLineWidth,
+			sgVans->ColWidths[Col], sgVans->DefaultRowHeight);
+
+		ComboBox->Visible = true;
+		ComboBox->SetFocus();
+	}
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmTrain::ComboBoxExit(TObject *Sender) {
+	if (StringGridIsEmpty(sgVans)) {
+		return;
+	}
+
+	if (sgVans->Cells[VansColumns.VANTYPE][sgVans->Row] != ComboBox->Text) {
+		sgVans->Cells[VansColumns.VANTYPE][sgVans->Row] = ComboBox->Text;
+
+		Changed = true;
+	}
+
+	ComboBox->Visible = false;
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmTrain::ComboBoxEnter(TObject *Sender) {
+	if (StringGridIsEmpty(sgVans)) {
+		return;
+	}
+
+	ComboBox->Text = sgVans->Cells[VansColumns.VANTYPE][sgVans->Row];
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmTrain::ComboBoxKeyDown(TObject *Sender, WORD &Key,
+	TShiftState Shift) {
+	if (Key == VK_ESCAPE) {
+		ComboBox->Text = sgVans->Cells[VansColumns.VANTYPE][sgVans->Row];
+		sgVans->SetFocus();
+		return;
+	}
+
+	if (Key == VK_RETURN) {
+		sgVans->SetFocus();
+		return;
+	}
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmTrain::ComboBoxKeyPress(TObject *Sender,
+	System::WideChar &Key) {
+	if (Key == '\x1B' || Key == '\r' || Key == '\n') {
+		Key = 0;
+	}
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmTrain::ToolBarMouseActivate(TObject *Sender,
+	TMouseButton Button, TShiftState Shift, int X, int Y, int HitTest,
+	TMouseActivate &MouseActivate) {
+	ComboBox->Visible = false;
 }
 // ---------------------------------------------------------------------------

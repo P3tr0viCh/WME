@@ -32,6 +32,7 @@ __published:
 	TPanel *PanelBottom;
 	TToolButton *tbtnSave;
 	TToolButton *tbtnSeparator02;
+	TComboBox *ComboBox;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -55,14 +56,27 @@ __published:
 	void __fastcall sgTrainDrawCell(TObject *Sender, int ACol, int ARow,
 		TRect &Rect, TGridDrawState State);
 	void __fastcall FormCloseQuery(TObject *Sender, bool &CanClose);
+	void __fastcall sgVansDblClick(TObject *Sender);
+	void __fastcall ComboBoxExit(TObject *Sender);
+	void __fastcall ComboBoxEnter(TObject *Sender);
+	void __fastcall ComboBoxKeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
+	void __fastcall ComboBoxKeyPress(TObject *Sender, System::WideChar &Key);
+	void __fastcall ToolBarMouseActivate(TObject *Sender, TMouseButton Button, TShiftState Shift,
+          int X, int Y, int HitTest, TMouseActivate &MouseActivate);
+
+
 
 private:
-	bool Changed;
+	bool FChanged;
+
+	TTrain *Train;
 
 	TIntegerSet NUSet;
 	TColor NUColor;
 
 	String CellValue;
+
+	void SetChanged(bool Value);
 
 	void CreateVansColumns();
 	void CreateTrainColumns();
@@ -83,17 +97,21 @@ private:
 	bool CheckIntValue(String Value);
 	bool CheckValues(int ARow = -1);
 
-	int TrainNum;
-
 	TVanList *GetVanList();
-	TTrain *GetTrain();
+	TTrain *GetTrain(int TrainNum);
 
 	bool SaveVans();
+
+	int SetVan(int Index, TVan *Van);
+
+	void UpdateVans(TTrain *Train);
 
 public:
 	__fastcall TfrmTrain(TComponent* Owner);
 
-	static bool Show(int TrainNum);
+	static bool Show(TTrain *Train);
+
+	__property bool Changed = {read = FChanged, write = SetChanged};
 };
 
 // ---------------------------------------------------------------------------

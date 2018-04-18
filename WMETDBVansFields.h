@@ -10,21 +10,20 @@
 #include "WMETDBTableFields.h"
 
 enum TDBVansFieldName {
-	fnVansTrnum, fnVansNum, fnVansWTime, fnVansDatetime, fnVansVannum,
-	fnVansCarrying, fnVansBrutto, fnVansTare, fnVansNetto, fnVansOverload,
-	fnVansOperator, fnVansOperatorTabNum, fnVansOperatorShiftNum
+	fnVansTrnum, fnVansNum, fnVansWTime, fnVansDatetime, fnVansVanNum,
+	fnVansVanType, fnVansCarrying, fnVansBrutto, fnVansTare, fnVansNetto,
+	fnVansOverload, fnVansOperator, fnVansOperatorTabNum, fnVansOperatorShiftNum
 };
 
 enum TDBVansDatabaseOp {
-	dboVansSaveTrain,
-	dboVansLoadTrain
+	dboVansSaveTrain, dboVansLoadTrain
 };
 
 class TDBVansFields : public TDBTableFields<TDBVansFieldName, TDBVansDatabaseOp>
 {
 public:
-	static const SAVE_TRAIN_FIELDS_COUNT = 13;
-	static const LOAD_TRAIN_FIELDS_COUNT = 13;
+	static const SAVE_TRAIN_FIELDS_COUNT = 14;
+	static const LOAD_TRAIN_FIELDS_COUNT = 14;
 
 	static const TDBVansFieldName SAVE_TRAIN_FIELDS[SAVE_TRAIN_FIELDS_COUNT];
 	static const TDBVansFieldName LOAD_TRAIN_FIELDS[LOAD_TRAIN_FIELDS_COUNT];

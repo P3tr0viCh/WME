@@ -28,7 +28,7 @@ __fastcall TTrain::~TTrain() {
 void TTrain::Init() {
 	FVanList = new TVanList();
 
-	FTrainNum = 0;
+	FTrainNum = TRAINNUM_NONE;
 
 	FUnixTime = 0;
 	FDateTime = NULL;

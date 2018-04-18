@@ -13,14 +13,15 @@ void StringGridClear(TStringGrid *Grid);
 void StringGridSelectCell(TStringGrid *Grid, int ACol, int ARow);
 void StringGridUpdateOrderNum(TStringGrid *Grid);
 void StringGridDeleteRow(TStringGrid *Grid, int ARow, int AColCount = -1);
-void StringGridSetHeader(TStringGrid *Grid, int Col, String ColName,
+void StringGridSetHeader(TStringGrid *Grid, int ACol, String ColName,
 	int ColWidth);
-void StringGridSetHeader(TStringGrid *Grid, int Col, NativeUInt ColNameIdent,
+void StringGridSetHeader(TStringGrid *Grid, int ACol, NativeUInt ColNameIdent,
 	int ColWidth);
 void StringGridDrawCell(TStringGrid *Grid, int ACol, int ARow, TRect Rect,
 	TGridDrawState State, TIntegerSet ColsReadOnly, TIntegerSet ColsLeftAlign,
 	TIntegerSet ColsCustomColor, TColor ReadOnlyColor, TColor CustomColor,
 	bool DrawFocusedOnInactive);
+void StringGridMouseToCell(TStringGrid *Grid, int &ACol, int &ARow);
 
 // ---------------------------------------------------------------------------
 String LoadSQL(NativeUInt Ident);
