@@ -9,6 +9,7 @@
 
 #include "WMETUser.h"
 #include "WMETConnectionInfo.h"
+#include "WMETVanCatalog.h"
 
 #define CFG_DIR_NAME "cfg"
 #define CFG_EXT ".cfg"
@@ -24,12 +25,20 @@ private:
 
 	TObjList<TUser> *FUserList;
 
+	TVanCatalogList *FVanTypeList;
+	TVanCatalogList *FCargoTypeList;
+
 	String GetConfigDir();
 	bool CheckConfigDir();
 	String GetConfigFileName(String ConfigName);
 
 	String EncryptPass(String S);
 	String DecryptPass(String S);
+
+	void LoadDatabase(String ConfigFileName);
+	void LoadUsers(String ConfigFileName);
+	void LoadVanTypes(String ConfigFileName);
+	void LoadCargoTypes(String ConfigFileName);
 
 public:
 	__fastcall TSettings();
@@ -46,6 +55,9 @@ public:
 
 	__property TConnectionInfo *Connection = {read = FConnection};
 	__property TObjList<TUser> *UserList = {read = FUserList};
+
+	__property TVanCatalogList *VanTypeList = {read = FVanTypeList};
+	__property TVanCatalogList *CargoTypeList = {read = FCargoTypeList};
 };
 
 // ---------------------------------------------------------------------------

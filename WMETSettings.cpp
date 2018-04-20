@@ -24,10 +24,16 @@ __fastcall TSettings::TSettings() {
 
 	FConnection = new TConnectionInfo();
 	FUserList = new TObjList<TUser>();
+
+	FVanTypeList = new TVanCatalogList();
+	FCargoTypeList = new TVanCatalogList();
 }
 
 // ---------------------------------------------------------------------------
 __fastcall TSettings::~TSettings() {
+	FCargoTypeList->Free();
+	FVanTypeList->Free();
+
 	FUserList->Free();
 	FConnection->Free();
 }
@@ -123,75 +129,100 @@ String TSettings::DecryptPass(String S) {
 }
 
 // ---------------------------------------------------------------------------
+void TSettings::LoadDatabase(String ConfigFileName) {
+	TIniFile* IniFile = new TIniFile(ConfigFileName);
+
+	String Section = "Connection";
+
+	try {
+		Connection->Host = IniFile->ReadString(Section, "host",
+		Connection->Host);
+		Connection->Port = IniFile->ReadString(Section, "port",
+			Connection->Port);
+		Connection->User = IniFile->ReadString(Section, "user",
+			Connection->User);
+		Connection->Password = IniFile->ReadString(Section, "pass",
+			EncryptPass(Connection->Password));
+	}
+	__finally {
+		delete IniFile;
+	}
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::LoadUsers(String ConfigFileName) {
+	TIniFile* IniFile = new TIniFile(ConfigFileName);
+
+	TUser* User;
+
+	String Section;
+
+	try {
+		int UserCount = IniFile->ReadInteger("Users", "Count", 0);
+
+		for (int i = 0; i < UserCount; i++) {
+			Section = "User_" + IntToStr(i);
+
+			User = new TUser();
+
+			User->Name = IniFile->ReadString(Section, "Name", "");
+			User->Pass = EncryptPass(IniFile->ReadString(Section, "Pass", ""));
+			User->TabNum = IniFile->ReadString(Section, "TabNum", "");
+			User->ShiftNum = IniFile->ReadString(Section, "ShiftNum", "");
+
+			User->IsAdmin = IniFile->ReadBool(Section, "IsAdmin", false);
+
+			FUserList->Add(User);
+		}
+
+		if (FUserList->IsEmpty()) {
+			User = new TUser();
+
+			User->Name = LoadStr(IDS_TXT_ADMIN_DEFAULT_NAME);
+			User->IsAdmin = true;
+
+			FUserList->Add(User);
+		}
+	}
+	__finally {
+		delete IniFile;
+	}
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::LoadVanTypes(String ConfigFileName) {
+	VanTypeList->Add(new TVanCatalog(100, "VanType 01"));
+	VanTypeList->Add(new TVanCatalog(101, "VanType 02"));
+	VanTypeList->Add(new TVanCatalog(102, "VanType 03"));
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::LoadCargoTypes(String ConfigFileName) {
+	CargoTypeList->Add(new TVanCatalog(200, "CargoType 01"));
+	CargoTypeList->Add(new TVanCatalog(201, "CargoType 02"));
+	CargoTypeList->Add(new TVanCatalog(202, "CargoType 03"));
+}
+
+// ---------------------------------------------------------------------------
 bool TSettings::Load() {
 	if (!CheckConfigDir()) {
 		return false;
 	}
 
-	TIniFile* IniFile;
-
 	String ConfigFileName;
 
-	String Section;
-
 	try {
-		// ---------------------
 		ConfigFileName = GetConfigFileName("Database");
+		LoadDatabase(ConfigFileName);
 
-		IniFile = new TIniFile(ConfigFileName);
-		try {
-			Section = "Connection";
-
-			Connection->Host = IniFile->ReadString(Section, "host",
-				Connection->Host);
-			Connection->Port = IniFile->ReadString(Section, "port",
-				Connection->Port);
-			Connection->User = IniFile->ReadString(Section, "user",
-				Connection->User);
-			Connection->Password = IniFile->ReadString(Section, "pass",
-				EncryptPass(Connection->Password));
-		}
-		__finally {
-			delete IniFile;
-		}
-
-		// ---------------------
 		ConfigFileName = GetConfigFileName("Users");
+		LoadUsers(ConfigFileName);
 
-		TUser* User;
+		ConfigFileName = GetConfigFileName("VanTypes");
+		LoadVanTypes(ConfigFileName);
 
-		IniFile = new TIniFile(ConfigFileName);
-		try {
-			int UserCount = IniFile->ReadInteger("Users", "Count", 0);
-
-			for (int i = 0; i < UserCount; i++) {
-				Section = "User_" + IntToStr(i);
-
-				User = new TUser();
-
-				User->Name = IniFile->ReadString(Section, "Name", "");
-				User->Pass =
-					EncryptPass(IniFile->ReadString(Section, "Pass", ""));
-				User->TabNum = IniFile->ReadString(Section, "TabNum", "");
-				User->ShiftNum = IniFile->ReadString(Section, "ShiftNum", "");
-
-				User->IsAdmin = IniFile->ReadBool(Section, "IsAdmin", false);
-
-				FUserList->Add(User);
-			}
-
-			if (FUserList->Count == 0) {
-				User = new TUser();
-
-				User->Name = LoadStr(IDS_TXT_ADMIN_DEFAULT_NAME);
-				User->IsAdmin = true;
-
-				FUserList->Add(User);
-			}
-		}
-		__finally {
-			delete IniFile;
-		}
+		ConfigFileName = GetConfigFileName("CargoTypes");
+		LoadCargoTypes(ConfigFileName);
 	}
 	catch (Exception *E) {
 		WriteToLog(Format(IDS_LOG_READ_FILE_FAIL,

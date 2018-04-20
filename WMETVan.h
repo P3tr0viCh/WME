@@ -9,6 +9,7 @@
 #include <ObjList.h>
 
 #include "WMETUser.h"
+#include "WMETVanCatalog.h"
 
 // ---------------------------------------------------------------------------
 class TVan : public TObject {
@@ -18,7 +19,8 @@ private:
 	TDateTime FDateTime;
 
 	String FVanNum;
-	String FVanType;
+
+	TVanCatalog *FVanType;
 
 	int FCarrying;
 	int FBrutto;
@@ -32,7 +34,7 @@ private:
 	int FNetto;
 	int FOverload;
 
-	String FCargoType;
+	TVanCatalog *FCargoType;
 
 	TUser *FUser;
 
@@ -66,7 +68,8 @@ public:
 	__property TDateTime DateTime = {read = FDateTime, write = FDateTime};
 
 	__property String VanNum = {read = FVanNum, write = FVanNum};
-	__property String VanType = {read = FVanType, write = FVanType};
+
+	__property TVanCatalog *VanType = {read = FVanType};
 
 	__property int Carrying = {read = FCarrying, write = SetCarrying};
 	__property int Brutto = {read = FBrutto, write = SetBrutto};
@@ -78,7 +81,7 @@ public:
 	__property int Netto = {read = FNetto};
 	__property int Overload = {read = FOverload};
 
-	__property String CargoType = {read = FCargoType, write = FCargoType};
+	__property TVanCatalog *CargoType = {read = FCargoType};
 
 	__property TUser *User = {read = FUser, write = SetUser};
 

@@ -27,7 +27,7 @@
 #pragma resource "*.dfm"
 
 // ---------------------------------------------------------------------------
-class TTrainsColumns {
+class TListTrainsColumns {
 public:
 	static const NUM = 0;
 	static const DATETIME = 1;
@@ -42,17 +42,17 @@ public:
 
 	static const COUNT = 8;
 
-	TTrainsColumns() {
+	TListTrainsColumns() {
 		LeftAlign = TIntegerSet() << DATETIME;
 	}
 
 	TIntegerSet LeftAlign;
 };
 
-static TTrainsColumns TrainsColumns;
+static TListTrainsColumns TrainsColumns;
 
 // ---------------------------------------------------------------------------
-class TVansColumns {
+class TListVansColumns {
 public:
 	static const NUM = 0;
 	static const DATETIME = 1;
@@ -78,7 +78,7 @@ public:
 
 	static const COUNT = 19;
 
-	TVansColumns() {
+	TListVansColumns() {
 		LeftAlign =
 			TIntegerSet() << DATETIME << VANNUM << VANTYPE << CARGOTYPE <<
 			DEPART_STATION << PURPOSE_STATION << INVOICE_NUM <<
@@ -90,7 +90,7 @@ public:
 	TIntegerSet LeftAlign;
 };
 
-static TVansColumns VansColumns;
+static TListVansColumns VansColumns;
 
 // ---------------------------------------------------------------------------
 __fastcall TfrmTrainList::TfrmTrainList(TComponent* Owner) : TForm(Owner) {
@@ -124,6 +124,9 @@ void __fastcall TfrmTrainList::FormCreate(TObject *Sender) {
 
 	TrainList = new TTrainList();
 
+	CreateTrainsColumns();
+	CreateVansColumns();
+
 	TFileIni* FileIni = TFileIni::GetNewInstance();
 	try {
 		FileIni->ReadFormBounds(this);
@@ -131,9 +134,6 @@ void __fastcall TfrmTrainList::FormCreate(TObject *Sender) {
 	__finally {
 		delete FileIni;
 	}
-
-	CreateTrainsColumns();
-	CreateVansColumns();
 }
 
 // ---------------------------------------------------------------------------
@@ -355,7 +355,7 @@ int TfrmTrainList::SetVan(int Index, TVan *Van) {
 
 	sgVans->Cells[VansColumns.VANNUM][Index] = Van->VanNum;
 
-	sgVans->Cells[VansColumns.VANTYPE][Index] = Van->VanType;
+	sgVans->Cells[VansColumns.VANTYPE][Index] = Van->VanType->Name;
 
 	sgVans->Cells[VansColumns.CARRYING][Index] = IntToStr(Van->Carrying);
 	sgVans->Cells[VansColumns.BRUTTO][Index] = IntToStr(Van->Brutto);
@@ -366,6 +366,8 @@ int TfrmTrainList::SetVan(int Index, TVan *Van) {
 	sgVans->Cells[VansColumns.TARE_INDEX][Index] = IntToStr(Van->TareIndex);
 	sgVans->Cells[VansColumns.NETTO][Index] = IntToStr(Van->Netto);
 	sgVans->Cells[VansColumns.OVERLOAD][Index] = IntToStr(Van->Overload);
+
+	sgVans->Cells[VansColumns.CARGOTYPE][Index] = Van->CargoType->Name;
 
 	return Index;
 }

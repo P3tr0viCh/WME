@@ -54,9 +54,9 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 	randomize();
 #endif
 
-	Settings = new TSettings();
+	FUser = new TUser();
 
-	User = new TUser();
+	FSettings = new TSettings();
 
 	Caption = Application->Title + " " + GetFileVer(Application->ExeName);
 	StatusBar->Panels->Items[0]->Text = LoadStr(IDS_COPYRIGHT_STATUS);
@@ -102,9 +102,9 @@ void __fastcall TMain::FormDestroy(TObject *Sender) {
 		delete FileIni;
 	}
 
-	User->Free();
+	FSettings->Free();
 
-	Settings->Free();
+	FUser->Free();
 
 	WriteToLog(IDS_LOG_STOP_PROGRAM);
 }

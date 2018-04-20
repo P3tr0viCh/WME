@@ -10,16 +10,16 @@
 const TDBVansFieldName TDBVansFields::SAVE_TRAIN_FIELDS
 	[TDBVansFields::SAVE_TRAIN_FIELDS_COUNT] = {
 	fnVansTrnum, fnVansNum, fnVansWTime, fnVansDatetime, fnVansVanNum,
-	fnVansVanType, fnVansCarrying, fnVansBrutto, fnVansTare, fnVansNetto,
-	fnVansOverload, fnVansOperator, fnVansOperatorTabNum, fnVansOperatorShiftNum
-};
+	fnVansVanType, fnVansVanTypeCode, fnVansCarrying, fnVansBrutto, fnVansTare,
+	fnVansNetto, fnVansOverload, fnVansCargoType, fnVansCargoTypeCode,
+	fnVansOperator, fnVansOperatorTabNum, fnVansOperatorShiftNum};
 
 const TDBVansFieldName TDBVansFields::LOAD_TRAIN_FIELDS
 	[TDBVansFields::LOAD_TRAIN_FIELDS_COUNT] = {
 	fnVansTrnum, fnVansNum, fnVansWTime, fnVansDatetime, fnVansVanNum,
-	fnVansVanType, fnVansCarrying, fnVansBrutto, fnVansTare, fnVansNetto,
-	fnVansOverload, fnVansOperator, fnVansOperatorTabNum, fnVansOperatorShiftNum
-};
+	fnVansVanType, fnVansVanTypeCode, fnVansCarrying, fnVansBrutto, fnVansTare,
+	fnVansNetto, fnVansOverload, fnVansCargoType, fnVansCargoTypeCode,
+	fnVansOperator, fnVansOperatorTabNum, fnVansOperatorShiftNum};
 
 // ---------------------------------------------------------------------------
 String TDBVansFields::GetFieldName(TDBVansFieldName Name) {
@@ -40,6 +40,8 @@ String TDBVansFields::GetFieldName(TDBVansFieldName Name) {
 
 	case fnVansVanType:
 		return "vantype";
+	case fnVansVanTypeCode:
+		return "vantype_code";
 
 	case fnVansCarrying:
 		return "carrying";
@@ -51,6 +53,11 @@ String TDBVansFields::GetFieldName(TDBVansFieldName Name) {
 		return "netto";
 	case fnVansOverload:
 		return "overload";
+
+	case fnVansCargoType:
+		return "cargotype";
+	case fnVansCargoTypeCode:
+		return "cargotype_code";
 
 	case fnVansOperator:
 		return "operator_name";
@@ -88,10 +95,18 @@ TFieldType TDBVansFields::GetFieldType(TDBVansFieldName Name) {
 	case fnVansOverload:
 		return ftInteger;
 
+	case fnVansCargoType:
+		return ftString;
+
 	case fnVansOperator:
 	case fnVansOperatorTabNum:
 	case fnVansOperatorShiftNum:
 		return ftString;
+
+	case fnVansVanTypeCode:
+	case fnVansCargoTypeCode:
+		return ftInteger;
+
 	default:
 		throw Exception("TDBVansFields: unknown Name");
 	}

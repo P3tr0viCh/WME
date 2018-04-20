@@ -45,6 +45,14 @@ void TDBLoadTrain::OperationEndFail() {
 }
 
 // ---------------------------------------------------------------------------
+int TDBLoadTrain::GetFieldAsInteger(TADOQuery *Query, String FieldName,
+	int Default) {
+	TField *Field = Query->FieldByName(FieldName);
+
+	return Field->IsNull ? Default : Field->AsInteger;
+}
+
+// ---------------------------------------------------------------------------
 void TDBLoadTrain::Operation() {
 	UseDatabase = true;
 
@@ -89,9 +97,13 @@ void TDBLoadTrain::Operation() {
 				Query->FieldByName(VansFields->GetFieldName(fnVansVanNum))
 				->AsString;
 
-			Van->VanType =
+			Van->VanType->Name =
 				Query->FieldByName(VansFields->GetFieldName(fnVansVanType))
 				->AsString;
+			Van->VanType->Code =
+				GetFieldAsInteger(Query,
+				VansFields->GetFieldName(fnVansVanTypeCode),
+				Van->VanType->Code);
 
 			Van->Carrying =
 				Query->FieldByName(VansFields->GetFieldName(fnVansCarrying))
@@ -111,6 +123,14 @@ void TDBLoadTrain::Operation() {
 			// Van->Overload =
 			// Query->FieldByName(VansFields->GetFieldName(fnVansOverload))
 			// ->AsInteger;
+
+			Van->CargoType->Name =
+				Query->FieldByName(VansFields->GetFieldName(fnVansCargoType))
+				->AsString;
+			Van->CargoType->Code =
+				GetFieldAsInteger(Query,
+				VansFields->GetFieldName(fnVansCargoTypeCode),
+				Van->CargoType->Code);
 
 			FVanList->Add(Van);
 

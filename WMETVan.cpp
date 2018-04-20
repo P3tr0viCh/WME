@@ -16,6 +16,9 @@ __fastcall TVan::TVan() {
 void TVan::Init() {
 	FUser = new TUser();
 
+	FVanType = new TVanCatalog();
+	FCargoType = new TVanCatalog();
+
 	FNum = 0;
 	FDateTime = NULL;
 	FTareIndex = 0;
@@ -23,6 +26,8 @@ void TVan::Init() {
 
 // ---------------------------------------------------------------------------
 __fastcall TVan::~TVan() {
+	FCargoType->Free();
+	FVanType->Free();
 	FUser->Free();
 }
 
@@ -121,7 +126,8 @@ void __fastcall TVan::Assign(TVan* Source) {
 	DateTime = Source->DateTime;
 
 	VanNum = Source->VanNum;
-	VanType = Source->VanType;
+
+	VanType->Assign(Source->VanType);
 
 	Carrying = Source->Carrying;
 	Brutto = Source->Brutto;
@@ -130,7 +136,7 @@ void __fastcall TVan::Assign(TVan* Source) {
 	TareSta = Source->TareSta;
 	TareIndex = Source->TareIndex;
 
-	CargoType = Source->CargoType;
+	CargoType->Assign(Source->CargoType);
 
 	User->Assign(Source->User);
 
@@ -152,7 +158,9 @@ String __fastcall TVan::ToString() {
 	S += ",";
 	S += "VanNum='" + VanNum + "'";
 	S += ",";
-	S += "VanType='" + VanType + "'";
+	S += "VanType='" + VanType->Name + "'";
+	S += ",";
+	S += "VanTypeCode='" + IntToStr(VanType->Code) + "'";
 	S += ",";
 	S += "Carrying='" + IntToStr(Carrying) + "'";
 	S += ",";
@@ -172,7 +180,9 @@ String __fastcall TVan::ToString() {
 	S += ",";
 	S += "Overload='" + IntToStr(Overload) + "'";
 	S += ",";
-	S += "CargoType='" + CargoType + "'";
+	S += "CargoType='" + CargoType->Name + "'";
+	S += ",";
+	S += "CargoTypeCode='" + IntToStr(CargoType->Code) + "'";
 	S += ",";
 	S += "User Name='" + User->Name + "'";
 	S += ",";

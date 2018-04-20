@@ -18,6 +18,8 @@ private:
 
 	TDBVansFields *VansFields;
 
+	int GetFieldAsInteger(TADOQuery *Query, String FieldName, int Default);
+
 public:
 	__fastcall TDBLoadTrain(TConnectionInfo *ConnectionInfo, int TrainNum);
 	__fastcall ~TDBLoadTrain();

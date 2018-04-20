@@ -155,10 +155,6 @@ object frmTrain: TfrmTrain
       OnExit = ComboBoxExit
       OnKeyDown = ComboBoxKeyDown
       OnKeyPress = ComboBoxKeyPress
-      Items.Strings = (
-        'VanType 1'
-        'VanType 2'
-        'VanType 3')
     end
   end
 end

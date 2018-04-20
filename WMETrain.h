@@ -15,6 +15,7 @@
 
 #include "WMETVan.h"
 #include "WMETTrain.h"
+#include "WMETVanCatalog.h"
 
 // ---------------------------------------------------------------------------
 class TfrmTrain : public TForm {
@@ -59,12 +60,12 @@ __published:
 	void __fastcall sgVansDblClick(TObject *Sender);
 	void __fastcall ComboBoxExit(TObject *Sender);
 	void __fastcall ComboBoxEnter(TObject *Sender);
-	void __fastcall ComboBoxKeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
+	void __fastcall ComboBoxKeyDown(TObject *Sender, WORD &Key,
+		TShiftState Shift);
 	void __fastcall ComboBoxKeyPress(TObject *Sender, System::WideChar &Key);
-	void __fastcall ToolBarMouseActivate(TObject *Sender, TMouseButton Button, TShiftState Shift,
-          int X, int Y, int HitTest, TMouseActivate &MouseActivate);
-
-
+	void __fastcall ToolBarMouseActivate(TObject *Sender, TMouseButton Button,
+		TShiftState Shift, int X, int Y, int HitTest,
+		TMouseActivate &MouseActivate);
 
 private:
 	bool FChanged;
@@ -97,6 +98,8 @@ private:
 	bool CheckIntValue(String Value);
 	bool CheckValues(int ARow = -1);
 
+	int GetVanCatalogCode(int CatalogIdent, String Name);
+
 	TVanList *GetVanList();
 	TTrain *GetTrain(int TrainNum);
 
@@ -105,6 +108,9 @@ private:
 	int SetVan(int Index, TVan *Van);
 
 	void UpdateVans(TTrain *Train);
+
+	void UpdateVanComboBox(TVanCatalogList *VanCatalogList);
+	bool ShowVanComboBox(int Col);
 
 public:
 	__fastcall TfrmTrain(TComponent* Owner);

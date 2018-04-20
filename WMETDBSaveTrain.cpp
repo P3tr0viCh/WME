@@ -130,7 +130,9 @@ void TDBSaveTrain::Operation() {
 				Train->VanList->Items[i]->VanNum);
 
 			SetVansParam(Query, fnVansVanType, i,
-				Train->VanList->Items[i]->VanType);
+				Train->VanList->Items[i]->VanType->Name);
+			SetVansParam(Query, fnVansVanTypeCode, i,
+				Train->VanList->Items[i]->VanType->Code);
 
 			SetVansParam(Query, fnVansCarrying, i,
 				Train->VanList->Items[i]->Carrying);
@@ -141,6 +143,11 @@ void TDBSaveTrain::Operation() {
 				Train->VanList->Items[i]->Netto);
 			SetVansParam(Query, fnVansOverload, i,
 				Train->VanList->Items[i]->Overload);
+
+			SetVansParam(Query, fnVansCargoType, i,
+				Train->VanList->Items[i]->CargoType->Name);
+			SetVansParam(Query, fnVansCargoTypeCode, i,
+				Train->VanList->Items[i]->CargoType->Code);
 
 			SetVansParam(Query, fnVansOperator, i,
 				Train->VanList->Items[i]->User->Name);

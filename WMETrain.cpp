@@ -53,8 +53,10 @@ public:
 
 	TVansColumns() {
 		ReadOnly =
-			TIntegerSet() << NUM << VANTYPE << TARE << TARE_D << TARE_S <<
-			TARE_INDEX << NETTO << OVERLOAD;
+			TIntegerSet() << NUM << TARE << TARE_D << TARE_S << TARE_INDEX <<
+			NETTO << OVERLOAD << DEPART_STATION << PURPOSE_STATION <<
+			INVOICE_SUPPLIER << INVOICE_RECIPIENT;
+		ComboBox = TIntegerSet() << VANTYPE << CARGOTYPE;
 		LeftAlign =
 			TIntegerSet() << DATETIME << VANNUM << VANTYPE << CARGOTYPE <<
 			DEPART_STATION << PURPOSE_STATION << INVOICE_NUM <<
@@ -62,6 +64,8 @@ public:
 	}
 
 	TIntegerSet ReadOnly;
+
+	TIntegerSet ComboBox;
 
 	TIntegerSet LeftAlign;
 };
@@ -126,6 +130,9 @@ bool TfrmTrain::Show(TTrain *Train) {
 void __fastcall TfrmTrain::FormCreate(TObject *Sender) {
 	WriteToLogForm(true, ClassName());
 
+	CreateVansColumns();
+	CreateTrainColumns();
+
 	TFileIni* FileIni = TFileIni::GetNewInstance();
 	try {
 		FileIni->ReadFormBounds(this);
@@ -133,9 +140,6 @@ void __fastcall TfrmTrain::FormCreate(TObject *Sender) {
 	__finally {
 		delete FileIni;
 	}
-
-	CreateVansColumns();
-	CreateTrainColumns();
 
 	if (Main->User->IsAdmin) {
 		sgVans->Options = sgVans->Options << goColSizing;
@@ -333,7 +337,8 @@ void __fastcall TfrmTrain::sgVansSelectCell(TObject *Sender, int ACol, int ARow,
 		return;
 	}
 
-	if (VansColumns.ReadOnly.Contains(ACol)) {
+	if (VansColumns.ReadOnly.Contains(ACol) || VansColumns.ComboBox.Contains
+		(ACol)) {
 		sgVans->Options = sgVans->Options >> goEditing;
 	}
 	else {
@@ -351,6 +356,40 @@ void __fastcall TfrmTrain::sgVansSetEditText(TObject *Sender, int ACol,
 }
 
 // ---------------------------------------------------------------------------
+void TfrmTrain::UpdateVanComboBox(TVanCatalogList *VanCatalogList) {
+	ComboBox->Items->Clear();
+
+	for (int i = 0; i < VanCatalogList->Count; i++) {
+		ComboBox->Items->Add(VanCatalogList->Items[i]->Name);
+	}
+}
+
+// ---------------------------------------------------------------------------
+bool TfrmTrain::ShowVanComboBox(int Col) {
+	switch (Col) {
+	case VansColumns.VANTYPE:
+		UpdateVanComboBox(Main->Settings->VanTypeList);
+		break;
+	case VansColumns.CARGOTYPE:
+		UpdateVanComboBox(Main->Settings->CargoTypeList);
+		break;
+	default:
+		return false;
+	}
+
+	TRect Rect = sgVans->CellRect(sgVans->Col, sgVans->Row);
+
+	ComboBox->SetBounds(sgVans->Left + Rect.Left + sgVans->GridLineWidth + 1,
+		sgVans->Top + Rect.Top + sgVans->GridLineWidth,
+		sgVans->ColWidths[sgVans->Col], sgVans->DefaultRowHeight);
+
+	ComboBox->Visible = true;
+	ComboBox->SetFocus();
+
+	return true;
+}
+
+// ---------------------------------------------------------------------------
 void __fastcall TfrmTrain::sgVansKeyDown(TObject *Sender, WORD &Key,
 	TShiftState Shift) {
 	if (StringGridIsEmpty(sgVans)) {
@@ -358,17 +397,7 @@ void __fastcall TfrmTrain::sgVansKeyDown(TObject *Sender, WORD &Key,
 	}
 
 	if (Shift.Empty() && Key == VK_RETURN) {
-		if (sgVans->Col == VansColumns.VANTYPE) {
-			TRect Rect = sgVans->CellRect(sgVans->Col, sgVans->Row);
-
-			ComboBox->SetBounds(sgVans->Left + Rect.Left +
-				sgVans->GridLineWidth + 1,
-				sgVans->Top + Rect.Top + sgVans->GridLineWidth,
-				sgVans->ColWidths[sgVans->Col], sgVans->DefaultRowHeight);
-
-			ComboBox->Visible = true;
-			ComboBox->SetFocus();
-
+		if (ShowVanComboBox(sgVans->Col)) {
 			return;
 		}
 	}
@@ -535,6 +564,30 @@ bool TfrmTrain::CheckValues(int ARow) {
 }
 
 // ---------------------------------------------------------------------------
+int TfrmTrain::GetVanCatalogCode(int CatalogIdent, String Name) {
+	TVanCatalogList *VanCatalogList;
+
+	switch (CatalogIdent) {
+	case VansColumns.VANTYPE:
+		VanCatalogList = Main->Settings->VanTypeList;
+		break;
+	case VansColumns.CARGOTYPE:
+		VanCatalogList = Main->Settings->CargoTypeList;
+		break;
+	default:
+		return VAN_CATALOG_CODE_NONE;
+	}
+
+	for (int i = 0; i < VanCatalogList->Count; i++) {
+		if (AnsiSameStr(VanCatalogList->Items[i]->Name, Name)) {
+			return VanCatalogList->Items[i]->Code;
+		}
+	}
+
+	return VAN_CATALOG_CODE_NONE;
+}
+
+// ---------------------------------------------------------------------------
 TVanList *TfrmTrain::GetVanList() {
 	TVanList *VanList = new TVanList();
 
@@ -548,7 +601,10 @@ TVanList *TfrmTrain::GetVanList() {
 		Van->DateTime = sgVans->Cells[VansColumns.DATETIME][i];
 
 		Van->VanNum = sgVans->Cells[VansColumns.VANNUM][i];
-		Van->VanType = sgVans->Cells[VansColumns.VANTYPE][i];
+
+		Van->VanType->Name = sgVans->Cells[VansColumns.VANTYPE][i];
+		Van->VanType->Code = GetVanCatalogCode(VansColumns.VANTYPE,
+			Van->VanType->Name);
 
 		Van->Carrying = StrToInt(sgVans->Cells[VansColumns.CARRYING][i]);
 		Van->Brutto = StrToInt(sgVans->Cells[VansColumns.BRUTTO][i]);
@@ -558,7 +614,9 @@ TVanList *TfrmTrain::GetVanList() {
 		Van->TareSta = StrToInt(sgVans->Cells[VansColumns.TARE_S][i]);
 		Van->TareIndex = 0; // sgVans->Cells[VansColumns.TARE_INDEX][i];
 
-		Van->CargoType = sgVans->Cells[VansColumns.CARGOTYPE][i];
+		Van->CargoType->Name = sgVans->Cells[VansColumns.CARGOTYPE][i];
+		Van->CargoType->Code = GetVanCatalogCode(VansColumns.CARGOTYPE,
+			Van->CargoType->Name);
 
 		Van->User = Main->User;
 
@@ -659,7 +717,7 @@ int TfrmTrain::SetVan(int Index, TVan *Van) {
 
 	sgVans->Cells[VansColumns.VANNUM][Index] = Van->VanNum;
 
-	sgVans->Cells[VansColumns.VANTYPE][Index] = Van->VanType;
+	sgVans->Cells[VansColumns.VANTYPE][Index] = Van->VanType->Name;
 
 	sgVans->Cells[VansColumns.CARRYING][Index] = IntToStr(Van->Carrying);
 	sgVans->Cells[VansColumns.BRUTTO][Index] = IntToStr(Van->Brutto);
@@ -670,6 +728,8 @@ int TfrmTrain::SetVan(int Index, TVan *Van) {
 	sgVans->Cells[VansColumns.TARE_INDEX][Index] = IntToStr(Van->TareIndex);
 	sgVans->Cells[VansColumns.NETTO][Index] = IntToStr(Van->Netto);
 	sgVans->Cells[VansColumns.OVERLOAD][Index] = IntToStr(Van->Overload);
+
+	sgVans->Cells[VansColumns.CARGOTYPE][Index] = Van->CargoType->Name;
 
 	return Index;
 }
@@ -769,15 +829,8 @@ void __fastcall TfrmTrain::sgVansDblClick(TObject *Sender) {
 
 	StringGridMouseToCell(sgVans, Col, Row);
 
-	if (Col == VansColumns.VANTYPE) {
-		TRect Rect = sgVans->CellRect(Col, Row);
-
-		ComboBox->SetBounds(sgVans->Left + Rect.Left + sgVans->GridLineWidth +
-			1, sgVans->Top + Rect.Top + sgVans->GridLineWidth,
-			sgVans->ColWidths[Col], sgVans->DefaultRowHeight);
-
-		ComboBox->Visible = true;
-		ComboBox->SetFocus();
+	if (ShowVanComboBox(Col)) {
+		return;
 	}
 }
 
@@ -787,8 +840,8 @@ void __fastcall TfrmTrain::ComboBoxExit(TObject *Sender) {
 		return;
 	}
 
-	if (sgVans->Cells[VansColumns.VANTYPE][sgVans->Row] != ComboBox->Text) {
-		sgVans->Cells[VansColumns.VANTYPE][sgVans->Row] = ComboBox->Text;
+	if (sgVans->Cells[sgVans->Col][sgVans->Row] != ComboBox->Text) {
+		sgVans->Cells[sgVans->Col][sgVans->Row] = ComboBox->Text;
 
 		Changed = true;
 	}
@@ -802,14 +855,14 @@ void __fastcall TfrmTrain::ComboBoxEnter(TObject *Sender) {
 		return;
 	}
 
-	ComboBox->Text = sgVans->Cells[VansColumns.VANTYPE][sgVans->Row];
+	ComboBox->Text = sgVans->Cells[sgVans->Col][sgVans->Row];
 }
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmTrain::ComboBoxKeyDown(TObject *Sender, WORD &Key,
 	TShiftState Shift) {
 	if (Key == VK_ESCAPE) {
-		ComboBox->Text = sgVans->Cells[VansColumns.VANTYPE][sgVans->Row];
+		ComboBox->Text = sgVans->Cells[sgVans->Col][sgVans->Row];
 		sgVans->SetFocus();
 		return;
 	}
