@@ -10,6 +10,7 @@
 
 #include "WMETUser.h"
 #include "WMETVanCatalog.h"
+#include "WMETVanType.h"
 
 // ---------------------------------------------------------------------------
 class TVan : public TObject {
@@ -20,7 +21,7 @@ private:
 
 	String FVanNum;
 
-	TVanCatalog *FVanType;
+	TVanType * FVanType;
 
 	int FCarrying;
 	int FBrutto;
@@ -34,9 +35,9 @@ private:
 	int FNetto;
 	int FOverload;
 
-	TVanCatalog *FCargoType;
+	TVanCatalog * FCargoType;
 
-	TUser *FUser;
+	TUser * FUser;
 
 	String FDepartStation;
 	String FPurposeStation;
@@ -53,14 +54,14 @@ private:
 	void SetTareSta(int Value);
 	void SetTareIndex(int Value);
 
-	void SetUser(TUser *Value);
+	void SetUser(TUser * Value);
 
 public:
 	__fastcall TVan();
 	__fastcall ~TVan();
 
-	bool __fastcall Equals(TObject* Obj);
-	void __fastcall Assign(TVan* Source);
+	bool __fastcall Equals(TObject * Obj);
+	void __fastcall Assign(TVan * Source);
 	String __fastcall ToString();
 
 	__property int Num = {read = FNum, write = FNum};
@@ -69,7 +70,7 @@ public:
 
 	__property String VanNum = {read = FVanNum, write = FVanNum};
 
-	__property TVanCatalog *VanType = {read = FVanType};
+	__property TVanType * VanType = {read = FVanType};
 
 	__property int Carrying = {read = FCarrying, write = SetCarrying};
 	__property int Brutto = {read = FBrutto, write = SetBrutto};
@@ -83,7 +84,7 @@ public:
 
 	__property TVanCatalog *CargoType = {read = FCargoType};
 
-	__property TUser *User = {read = FUser, write = SetUser};
+	__property TUser * User = {read = FUser, write = SetUser};
 
 	__property String DepartStation = {
 		read = FDepartStation, write = FDepartStation};

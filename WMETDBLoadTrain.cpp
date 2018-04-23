@@ -81,7 +81,7 @@ void TDBLoadTrain::Operation() {
 
 		Query->Open();
 
-		TVan *Van;
+		TVan * Van;
 
 		while (!Query->Eof) {
 			Van = new TVan();
@@ -104,6 +104,10 @@ void TDBLoadTrain::Operation() {
 				GetFieldAsInteger(Query,
 				VansFields->GetFieldName(fnVansVanTypeCode),
 				Van->VanType->Code);
+			Van->VanType->AxisCount =
+				GetFieldAsInteger(Query,
+				VansFields->GetFieldName(fnVansAxisCount),
+				Van->VanType->AxisCount);
 
 			Van->Carrying =
 				Query->FieldByName(VansFields->GetFieldName(fnVansCarrying))

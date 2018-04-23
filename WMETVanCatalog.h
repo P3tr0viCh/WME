@@ -21,6 +21,7 @@ public:
 
 	bool __fastcall Equals(TObject* Obj);
 	void __fastcall Assign(TVanCatalog* Source);
+	String __fastcall ToString();
 
 	__property int Code = {read = FCode, write = FCode};
 	__property String Name = {read = FName, write = FName};

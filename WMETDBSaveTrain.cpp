@@ -149,6 +149,9 @@ void TDBSaveTrain::Operation() {
 			SetVansParam(Query, fnVansCargoTypeCode, i,
 				Train->VanList->Items[i]->CargoType->Code);
 
+			SetVansParam(Query, fnVansAxisCount, i,
+				Train->VanList->Items[i]->VanType->AxisCount);
+
 			SetVansParam(Query, fnVansOperator, i,
 				Train->VanList->Items[i]->User->Name);
 			SetVansParam(Query, fnVansOperatorTabNum, i,

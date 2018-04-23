@@ -91,6 +91,8 @@ IDS_LOG_WRITE_FILE_FAIL,
         "write file fail: %s; e = %s"
 IDS_LOG_READ_FILE_FAIL,
         "read file fail: %s; e = %s"
+IDS_LOG_DELETE_FILE_FAIL,
+        "unable to delete file"
 IDS_LOG_EXCEPTION,
         "exception: %s"
 

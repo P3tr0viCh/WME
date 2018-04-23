@@ -28,8 +28,15 @@
 
 // ---------------------------------------------------------------------------
 struct {
+	static const USERS = 10;
+	static const VANTYPES = 11;
+	static const CARGOTYPES = 12;
+} StringGrids;
+
+// ---------------------------------------------------------------------------
+struct {
 	static const NUM = 0;
-	static const NAME = 1;
+	static const USER_NAME = 1;
 	static const HAS_PASS = 2;
 	static const IS_ADMIN = 3;
 	static const TABNUM = 4;
@@ -40,6 +47,29 @@ struct {
 
 	static const COUNT = 7;
 } UsersColumns;
+
+// ---------------------------------------------------------------------------
+struct {
+	static const NUM = 0;
+	static const CODE = 1;
+	static const NAME = 2;
+	static const AXIS_COUNT = 3;
+
+	static const VISIBLE_COUNT = 4;
+
+	static const COUNT = 4;
+} VanTypesColumns;
+
+// ---------------------------------------------------------------------------
+struct {
+	static const NUM = 0;
+	static const CODE = 1;
+	static const NAME = 2;
+
+	static const VISIBLE_COUNT = 3;
+
+	static const COUNT = 3;
+} VanCatalogColumns;
 
 // ---------------------------------------------------------------------------
 __fastcall TfrmOptions::TfrmOptions(TComponent* Owner) : TForm(Owner) {
@@ -80,6 +110,25 @@ bool TfrmOptions::Show(TSettings *Settings, bool ReadOnly) {
 void __fastcall TfrmOptions::FormCreate(TObject *Sender) {
 	WriteToLogForm(true, ClassName());
 
+	sgUsers->Tag = StringGrids.USERS;
+	btnUsersAdd->Tag = StringGrids.USERS;
+	btnUsersChange->Tag = StringGrids.USERS;
+	btnUsersDelete->Tag = StringGrids.USERS;
+
+	sgVanTypes->Tag = StringGrids.VANTYPES;
+	btnVanTypesAdd->Tag = StringGrids.VANTYPES;
+	btnVanTypesChange->Tag = StringGrids.VANTYPES;
+	btnVanTypesDelete->Tag = StringGrids.VANTYPES;
+
+	sgCargoTypes->Tag = StringGrids.CARGOTYPES;
+	btnCargoTypesAdd->Tag = StringGrids.CARGOTYPES;
+	btnCargoTypesChange->Tag = StringGrids.CARGOTYPES;
+	btnCargoTypesDelete->Tag = StringGrids.CARGOTYPES;
+
+	CreateUsersColumns();
+	CreateVanTypesColumns();
+	CreateVanCatalogColumns(sgCargoTypes);
+
 	PerformSave = false;
 
 	Settings = new TSettings();
@@ -91,8 +140,6 @@ void __fastcall TfrmOptions::FormCreate(TObject *Sender) {
 	__finally {
 		delete FileIni;
 	}
-
-	CreateUsersColumns();
 }
 
 // ---------------------------------------------------------------------------
@@ -115,15 +162,38 @@ void TfrmOptions::CreateUsersColumns() {
 	sgUsers->ColCount = UsersColumns.VISIBLE_COUNT;
 
 	StringGridSetHeader(sgUsers, UsersColumns.NUM, IDS_GRID_HEADER_NUM, 50);
-	StringGridSetHeader(sgUsers, UsersColumns.NAME, IDS_GRID_HEADER_NAME, 190);
+	StringGridSetHeader(sgUsers, UsersColumns.USER_NAME,
+		IDS_GRID_HEADER_USER_NAME, 190);
 	StringGridSetHeader(sgUsers, UsersColumns.HAS_PASS,
 		IDS_GRID_HEADER_HAS_PASS, 70);
 	StringGridSetHeader(sgUsers, UsersColumns.IS_ADMIN,
 		IDS_GRID_HEADER_IS_ADMIN, 60);
 	StringGridSetHeader(sgUsers, UsersColumns.TABNUM,
 		IDS_GRID_HEADER_TABNUM, 100);
-	StringGridSetHeader(sgUsers, UsersColumns.SHIFTNUM,
-		IDS_GRID_HEADER_SHIFTNUM, 60);
+}
+
+// ---------------------------------------------------------------------------
+void TfrmOptions::CreateVanTypesColumns() {
+	sgVanTypes->ColCount = VanTypesColumns.VISIBLE_COUNT;
+
+	StringGridSetHeader(sgVanTypes, VanTypesColumns.NUM,
+		IDS_GRID_HEADER_NUM, 50);
+	StringGridSetHeader(sgVanTypes, VanTypesColumns.CODE,
+		IDS_GRID_HEADER_CODE, 70);
+	StringGridSetHeader(sgVanTypes, VanTypesColumns.NAME,
+		IDS_GRID_HEADER_NAME, 190);
+	StringGridSetHeader(sgVanTypes, VanTypesColumns.AXIS_COUNT,
+		IDS_GRID_HEADER_AXIS_COUNT, 100);
+}
+
+// ---------------------------------------------------------------------------
+void TfrmOptions::CreateVanCatalogColumns(TStringGrid * Grid) {
+	Grid->ColCount = VanCatalogColumns.VISIBLE_COUNT;
+
+	StringGridSetHeader(Grid, VanCatalogColumns.NUM, IDS_GRID_HEADER_NUM, 50);
+	StringGridSetHeader(Grid, VanCatalogColumns.CODE, IDS_GRID_HEADER_CODE, 70);
+	StringGridSetHeader(Grid, VanCatalogColumns.NAME,
+		IDS_GRID_HEADER_NAME, 190);
 }
 
 // ---------------------------------------------------------------------------
@@ -161,6 +231,37 @@ void TfrmOptions::UpdateForm() {
 		SetUser(-1, Settings->UserList->Items[i]);
 	}
 	sgUsers->Row = 1;
+
+	// VanTypes
+	for (int i = 0; i < Settings->VanTypeList->Count; i++) {
+		SetVanType(-1, Settings->VanTypeList->Items[i]);
+	}
+	sgVanTypes->Row = 1;
+
+	// CargoTypes
+	for (int i = 0; i < Settings->CargoTypeList->Count; i++) {
+		SetVanCatalog(sgCargoTypes, -1, Settings->CargoTypeList->Items[i]);
+	}
+	sgCargoTypes->Row = 1;
+}
+
+// ---------------------------------------------------------------------------
+void TfrmOptions::UpdateSettingsVanCatalog(TStringGrid * Grid,
+	TVanCatalogList * VanCatalogList) {
+	VanCatalogList->Clear();
+
+	if (!StringGridIsEmpty(Grid)) {
+		TVanCatalog * VanCatalog;
+
+		for (int i = 1; i < Grid->RowCount; i++) {
+			VanCatalog = new TVanCatalog();
+
+			VanCatalog->Code = StrToInt(Grid->Cells[VanCatalogColumns.CODE][i]);
+			VanCatalog->Name = Grid->Cells[VanCatalogColumns.NAME][i];
+
+			VanCatalogList->Add(VanCatalog);
+		}
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -172,16 +273,15 @@ void TfrmOptions::UpdateSettings() {
 	Settings->Connection->Password = eDBPass->Text;
 
 	// Users
-
 	Settings->UserList->Clear();
 
 	if (!StringGridIsEmpty(sgUsers)) {
-		TUser *User;
+		TUser * User;
 
 		for (int i = 1; i < sgUsers->RowCount; i++) {
 			User = new TUser();
 
-			User->Name = sgUsers->Cells[UsersColumns.NAME][i];
+			User->Name = sgUsers->Cells[UsersColumns.USER_NAME][i];
 			User->Pass = sgUsers->Cells[UsersColumns.PASS][i];
 			User->TabNum = sgUsers->Cells[UsersColumns.TABNUM][i];
 			User->ShiftNum = sgUsers->Cells[UsersColumns.SHIFTNUM][i];
@@ -191,6 +291,27 @@ void TfrmOptions::UpdateSettings() {
 			Settings->UserList->Add(User);
 		}
 	}
+
+	// VanTypes
+	Settings->VanTypeList->Clear();
+
+	if (!StringGridIsEmpty(sgVanTypes)) {
+		TVanType * VanType;
+
+		for (int i = 1; i < sgVanTypes->RowCount; i++) {
+			VanType = new TVanType();
+
+			VanType->Code =
+				StrToInt(sgVanTypes->Cells[VanTypesColumns.CODE][i]);
+			VanType->Name = sgVanTypes->Cells[VanTypesColumns.NAME][i];
+			VanType->AxisCount =
+				StrToInt(sgVanTypes->Cells[VanTypesColumns.AXIS_COUNT][i]);
+
+			Settings->VanTypeList->Add(VanType);
+		}
+	}
+
+	UpdateSettingsVanCatalog(sgCargoTypes, Settings->CargoTypeList);
 }
 
 // ---------------------------------------------------------------------------
@@ -349,7 +470,7 @@ void __fastcall TfrmOptions::btnOkClick(TObject *Sender) {
 TUser* TfrmOptions::GetUser(int Index) {
 	TUser *User = new TUser();
 
-	User->Name = sgUsers->Cells[UsersColumns.NAME][Index];
+	User->Name = sgUsers->Cells[UsersColumns.USER_NAME][Index];
 	User->Pass = sgUsers->Cells[UsersColumns.PASS][Index];
 	User->TabNum = sgUsers->Cells[UsersColumns.TABNUM][Index];
 	User->ShiftNum = sgUsers->Cells[UsersColumns.SHIFTNUM][Index];
@@ -369,7 +490,7 @@ int TfrmOptions::SetUser(int Index, TUser *User) {
 	}
 
 	sgUsers->Cells[UsersColumns.NUM][Index] = IntToStr(Index);
-	sgUsers->Cells[UsersColumns.NAME][Index] = User->Name;
+	sgUsers->Cells[UsersColumns.USER_NAME][Index] = User->Name;
 	sgUsers->Cells[UsersColumns.HAS_PASS][Index] = IsEmpty(User->Pass) ?
 		"" : "###";
 	sgUsers->Cells[UsersColumns.IS_ADMIN][Index] = User->IsAdmin ? "Да" : "";
@@ -381,68 +502,267 @@ int TfrmOptions::SetUser(int Index, TUser *User) {
 }
 
 // ---------------------------------------------------------------------------
+TVanType * TfrmOptions::GetVanType(int Index) {
+	TVanType * VanType = new TVanType();
+
+	VanType->Code = StrToInt(sgVanTypes->Cells[VanTypesColumns.CODE][Index]);
+	VanType->Name = sgVanTypes->Cells[VanTypesColumns.NAME][Index];
+	VanType->AxisCount =
+		StrToInt(sgVanTypes->Cells[VanTypesColumns.AXIS_COUNT][Index]);
+
+	return VanType;
+}
+
+// ---------------------------------------------------------------------------
+int TfrmOptions::SetVanType(int Index, TVanType * VanType) {
+	if (Index < 0) {
+		if (!StringGridIsEmpty(sgVanTypes)) {
+			sgVanTypes->RowCount++;
+		}
+		Index = sgVanTypes->RowCount - 1;
+	}
+
+	sgVanTypes->Cells[VanTypesColumns.NUM][Index] = IntToStr(Index);
+	sgVanTypes->Cells[VanTypesColumns.CODE][Index] = IntToStr(VanType->Code);
+	sgVanTypes->Cells[VanTypesColumns.NAME][Index] = VanType->Name;
+	sgVanTypes->Cells[VanTypesColumns.AXIS_COUNT][Index] =
+		IntToStr(VanType->AxisCount);
+
+	return Index;
+}
+
+// ---------------------------------------------------------------------------
+TVanCatalog * TfrmOptions::GetVanCatalog(TStringGrid * Grid, int Index) {
+	TVanCatalog * VanCatalog = new TVanCatalog();
+
+	VanCatalog->Code = StrToInt(Grid->Cells[VanCatalogColumns.CODE][Index]);
+	VanCatalog->Name = Grid->Cells[VanCatalogColumns.NAME][Index];
+
+	return VanCatalog;
+}
+
+// ---------------------------------------------------------------------------
+int TfrmOptions::SetVanCatalog(TStringGrid * Grid, int Index,
+	TVanCatalog * VanCatalog) {
+	if (Index < 0) {
+		if (!StringGridIsEmpty(Grid)) {
+			Grid->RowCount++;
+		}
+		Index = Grid->RowCount - 1;
+	}
+
+	Grid->Cells[VanCatalogColumns.NUM][Index] = IntToStr(Index);
+	Grid->Cells[VanCatalogColumns.CODE][Index] = IntToStr(VanCatalog->Code);
+	Grid->Cells[VanCatalogColumns.NAME][Index] = VanCatalog->Name;
+
+	return Index;
+}
+
+// ---------------------------------------------------------------------------
 bool TfrmOptions::IsUserAdmin(int Index) {
 	return !IsEmpty(sgUsers->Cells[UsersColumns.IS_ADMIN][Index]);
 }
 
 // ---------------------------------------------------------------------------
+TStringGrid* TfrmOptions::GetStringGrid(TObject *Sender) {
+	switch (((TControl*)Sender)->Tag) {
+	case StringGrids.USERS:
+		return sgUsers;
+	case StringGrids.VANTYPES:
+		return sgVanTypes;
+	case StringGrids.CARGOTYPES:
+		return sgCargoTypes;
+	default:
+		throw Exception("GetStringGrid: unknown Sender (" + ((TControl*)Sender)
+			->Name + ")");
+	}
+}
+
+// ---------------------------------------------------------------------------
 void __fastcall TfrmOptions::btnUsersAddClick(TObject * Sender) {
-	TUser *User = new TUser();
+	TStringGrid *SG = GetStringGrid(Sender);
+
+	TUser * User;
+	TVanType * VanType;
+	TVanCatalog * VanCatalog;
+
+	switch (SG->Tag) {
+	case StringGrids.USERS:
+		User = new TUser();
+		try {
 #ifdef _DEBUG
-	User->Name = "Name " + IntToStr(rand());
+			User->Name = "Name " + IntToStr(rand());
 #endif
 
-	if (TfrmOptionsUser::Show(this, User, AdminCount())) {
-		sgUsers->Row = SetUser(-1, User);
-	}
+			if (TfrmOptionsUser::Show(this, User, AdminCount())) {
+				sgUsers->Row = SetUser(-1, User);
+			}
+		}
+		__finally {
+			User->Free();
+		}
+		break;
 
-	User->Free();
+	case StringGrids.VANTYPES:
+		VanType = new TVanType();
+		try {
+#ifdef _DEBUG
+			VanType->Code = rand();
+			VanType->Name = "Name " + IntToStr(VanType->Code);
+			VanType->AxisCount = random(3) + 1;
+#endif
+			sgVanTypes->Row = SetVanType(-1, VanType);
+
+			// TODO
+			// if (TfrmOptionsUser::Show(this, User, AdminCount())) {
+			// sgVanTypes->Row = SetVanType(-1, VanCatalog);
+			// }
+		}
+		__finally {
+			VanType->Free();
+		}
+		break;
+
+	case StringGrids.CARGOTYPES:
+		VanCatalog = new TVanCatalog();
+		try {
+#ifdef _DEBUG
+			VanCatalog->Code = rand();
+			VanCatalog->Name = "Name " + IntToStr(VanCatalog->Code);
+#endif
+			SG->Row = SetVanCatalog(SG, -1, VanCatalog);
+			// TODO
+			// if (TfrmOptionsUser::Show(this, User, AdminCount())) {
+			// sgVanTypes->Row = SetVanType(-1, VanCatalog);
+			// }
+		}
+		__finally {
+			VanCatalog->Free();
+		}
+		break;
+	}
 }
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmOptions::btnUsersChangeClick(TObject * Sender) {
-	TUser *User = GetUser(sgUsers->Row);
+	TStringGrid *SG = GetStringGrid(Sender);
 
-	if (TfrmOptionsUser::Show(this, User, AdminCount())) {
-		SetUser(sgUsers->Row, User);
+	if (StringGridIsEmpty(SG)) {
+		return;
 	}
 
-	User->Free();
+	TUser * User;
+	TVanType * VanType;
+	TVanCatalog * VanCatalog;
+
+	switch (SG->Tag) {
+	case StringGrids.USERS:
+		User = GetUser(sgUsers->Row);
+		try {
+			if (TfrmOptionsUser::Show(this, User, AdminCount())) {
+				SetUser(sgUsers->Row, User);
+			}
+		}
+		__finally {
+			User->Free();
+		}
+		break;
+
+	case StringGrids.VANTYPES:
+		VanType = GetVanType(sgVanTypes->Row);
+		try {
+			VanType->Code = VanType->Code + 1;
+			SetVanType(sgVanTypes->Row, VanType);
+		}
+		__finally {
+			VanType->Free();
+		}
+		break;
+
+	case StringGrids.CARGOTYPES:
+		VanCatalog = GetVanCatalog(SG, SG->Row);
+		try {
+			VanCatalog->Code = VanCatalog->Code + 1;
+			SetVanCatalog(SG, SG->Row, VanCatalog);
+		}
+		__finally {
+			VanCatalog->Free();
+		}
+		break;
+	}
 }
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmOptions::btnUsersDeleteClick(TObject *Sender) {
-	if (IsUserAdmin(sgUsers->Row) && (AdminCount() == 1)) {
-		MsgBoxErr(IDS_ERROR_USERS_LAST_ADMIN);
+	TStringGrid *SG = GetStringGrid(Sender);
 
-		return;
+	int ColumnCount;
+
+	switch (SG->Tag) {
+	case StringGrids.USERS:
+		if (IsUserAdmin(sgUsers->Row) && (AdminCount() == 1)) {
+			MsgBoxErr(IDS_ERROR_USERS_LAST_ADMIN);
+
+			return;
+		}
+
+		ColumnCount = UsersColumns.COUNT;
+		break;
+	case StringGrids.VANTYPES:
+		ColumnCount = VanTypesColumns.COUNT;
+		break;
+	case StringGrids.CARGOTYPES:
+		ColumnCount = VanCatalogColumns.COUNT;
+		break;
 	}
 
-	StringGridDeleteRow(sgUsers, sgUsers->Row, UsersColumns.COUNT);
+	StringGridDeleteRow(SG, SG->Row, ColumnCount);
 
-	StringGridUpdateOrderNum(sgUsers);
+	if (!StringGridIsEmpty(SG)) {
+		StringGridUpdateOrderNum(SG);
+	}
 }
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmOptions::sgUsersDblClick(TObject *Sender) {
-	if (!btnUsersAdd->Enabled) {
+	TStringGrid *SG = GetStringGrid(Sender);
+
+	TButton * btnAdd;
+	TButton * btnChange;
+
+	switch (SG->Tag) {
+	case StringGrids.USERS:
+		btnAdd = btnUsersAdd;
+		btnChange = btnUsersChange;
+		break;
+	case StringGrids.VANTYPES:
+		btnAdd = btnVanTypesAdd;
+		btnChange = btnVanTypesChange;
+		break;
+	case StringGrids.CARGOTYPES:
+		btnAdd = btnCargoTypesAdd;
+		btnChange = btnCargoTypesChange;
+		break;
+	}
+
+	if (!btnAdd->Enabled) {
 		return;
 	}
 
-	if (StringGridIsEmpty(sgUsers)) {
-		btnUsersAdd->Click();
+	if (StringGridIsEmpty(SG)) {
+		btnAdd->Click();
 		return;
 	}
 
 	int Col, Row;
 
-	StringGridMouseToCell(sgUsers, Col, Row);
+	StringGridMouseToCell(SG, Col, Row);
 
 	if (Col < 0 || Row < 0) {
-		btnUsersAdd->Click();
+		btnAdd->Click();
 	}
 	else {
-		btnUsersChange->Click();
+		btnChange->Click();
 	}
 }
 
@@ -453,11 +773,13 @@ void __fastcall TfrmOptions::sgUsersFixedCellClick(TObject *Sender, int ACol,
 		return;
 	}
 
-	if (StringGridIsEmpty(sgUsers)) {
+	TStringGrid *SG = GetStringGrid(Sender);
+
+	if (StringGridIsEmpty(SG)) {
 		return;
 	}
 
-	sgUsers->Row = ARow;
+	SG->Row = ARow;
 }
 
 // ---------------------------------------------------------------------------

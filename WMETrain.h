@@ -16,6 +16,7 @@
 #include "WMETVan.h"
 #include "WMETTrain.h"
 #include "WMETVanCatalog.h"
+#include "WMETVanType.h"
 
 // ---------------------------------------------------------------------------
 class TfrmTrain : public TForm {
@@ -99,6 +100,8 @@ private:
 	bool CheckValues(int ARow = -1);
 
 	int GetVanCatalogCode(int CatalogIdent, String Name);
+
+	TVanType * GetVanType(String Name);
 
 	TVanList *GetVanList();
 	TTrain *GetTrain(int TrainNum);

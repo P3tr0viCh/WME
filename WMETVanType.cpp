@@ -4,31 +4,30 @@
 
 #include "WMEAdd.h"
 
-#include "WMETVanCatalog.h"
+#include "WMETVanType.h"
 
 // ---------------------------------------------------------------------------
 #pragma package(smart_init)
 
 // ---------------------------------------------------------------------------
-__fastcall TVanCatalog::TVanCatalog() {
-	FCode = VAN_CATALOG_CODE_NONE;
-	FName = "";
+__fastcall TVanType::TVanType() {
+	FAxisCount = VAN_TYPE_AXIS_NONE;
 }
 
 // ---------------------------------------------------------------------------
-__fastcall TVanCatalog::TVanCatalog(int Code, String Name) {
-	FCode = Code;
-	FName = Name;
+__fastcall TVanType::TVanType(int Code, String Name, int AxisCount)
+	: TVanCatalog(Code, Name) {
+	FAxisCount = AxisCount;
 }
 
 // ---------------------------------------------------------------------------
-bool __fastcall TVanCatalog::Equals(TObject* Obj) {
+bool __fastcall TVanType::Equals(TObject * Obj) {
 	if (this == Obj)
 		return true;
 	if (Obj == NULL || ClassType() != Obj->ClassType())
 		return false;
 
-	TVanCatalog *VanCatalog = (TVanCatalog*) Obj;
+	TVanType *VanCatalog = (TVanType*) Obj;
 
 	if (Code != VanCatalog->Code || Name != VanCatalog->Name)
 		return false;
@@ -37,19 +36,22 @@ bool __fastcall TVanCatalog::Equals(TObject* Obj) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TVanCatalog::Assign(TVanCatalog* Source) {
+void __fastcall TVanType::Assign(TVanType * Source) {
 	Code = Source->Code;
 	Name = Source->Name;
+	AxisCount = Source->AxisCount;
 }
 
 // ---------------------------------------------------------------------------
-String __fastcall TVanCatalog::ToString() {
+String __fastcall TVanType::ToString() {
 	String S;
 
-	S = "TVanCatalog{";
+	S = "TVanType{";
 	S += "Code='" + IntToStr(Code) + "'";
 	S += ",";
 	S += "Name='" + Name + "'";
+	S += ",";
+	S += "AxisCount='" + IntToStr(AxisCount) + "'";
 	S += "}";
 
 	return S;

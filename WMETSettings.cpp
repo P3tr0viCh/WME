@@ -25,7 +25,7 @@ __fastcall TSettings::TSettings() {
 	FConnection = new TConnectionInfo();
 	FUserList = new TObjList<TUser>();
 
-	FVanTypeList = new TVanCatalogList();
+	FVanTypeList = new TVanTypeList();
 	FCargoTypeList = new TVanCatalogList();
 }
 
@@ -64,8 +64,10 @@ bool __fastcall TSettings::Equals(TObject* Obj) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TSettings::Assign(TSettings* Source) {
-	FConnection->Assign(Source->FConnection);
-	FUserList->Assign(Source->FUserList);
+	FConnection->Assign(Source->Connection);
+	FUserList->Assign(Source->UserList);
+	FVanTypeList->Assign(Source->VanTypeList);
+	FCargoTypeList->Assign(Source->CargoTypeList);
 }
 
 // ---------------------------------------------------------------------------
@@ -75,6 +77,8 @@ String __fastcall TSettings::ToString() {
 	S = "TSettings{";
 	S += "Connection='" + Connection->ToString() + "'";
 	S += "UserList->Count='" + IntToStr(UserList->Count) + "'";
+	S += "VanTypeList->Count='" + IntToStr(VanTypeList->Count) + "'";
+	S += "CargoTypeList->Count='" + IntToStr(CargoTypeList->Count) + "'";
 	S += "}";
 
 	return S;
@@ -82,8 +86,8 @@ String __fastcall TSettings::ToString() {
 
 // ---------------------------------------------------------------------------
 int __fastcall UserListSort(void* Item1, void* Item2) {
-	TUser* User1 = (TUser*)Item1;
-	TUser* User2 = (TUser*)Item2;
+	TUser * User1 = (TUser*)Item1;
+	TUser * User2 = (TUser*)Item2;
 
 	if (User1->IsAdmin && !User2->IsAdmin) {
 		return -1;
@@ -94,6 +98,22 @@ int __fastcall UserListSort(void* Item1, void* Item2) {
 	}
 
 	return AnsiCompareStr(User1->Name, User2->Name);
+}
+
+// ---------------------------------------------------------------------------
+int __fastcall VanTypeListSort(void* Item1, void* Item2) {
+	TVanType * VanType1 = (TVanType*)Item1;
+	TVanType * VanType2 = (TVanType*)Item2;
+
+	return AnsiCompareStr(VanType1->Name, VanType2->Name);
+}
+
+// ---------------------------------------------------------------------------
+int __fastcall VanCatalogListSort(void* Item1, void* Item2) {
+	TVanCatalog * VanCatalog1 = (TVanCatalog*)Item1;
+	TVanCatalog * VanCatalog2 = (TVanCatalog*)Item2;
+
+	return AnsiCompareStr(VanCatalog1->Name, VanCatalog2->Name);
 }
 
 // ---------------------------------------------------------------------------
@@ -129,8 +149,15 @@ String TSettings::DecryptPass(String S) {
 }
 
 // ---------------------------------------------------------------------------
+void TSettings::DeleteConfigFile(String ConfigFileName) {
+	if (FileExists(ConfigFileName) && !DeleteFile(ConfigFileName)) {
+		throw Exception(IDS_LOG_DELETE_FILE_FAIL);
+	}
+}
+
+// ---------------------------------------------------------------------------
 void TSettings::LoadDatabase(String ConfigFileName) {
-	TIniFile* IniFile = new TIniFile(ConfigFileName);
+	TIniFile * IniFile = new TIniFile(ConfigFileName);
 
 	String Section = "Connection";
 
@@ -151,16 +178,16 @@ void TSettings::LoadDatabase(String ConfigFileName) {
 
 // ---------------------------------------------------------------------------
 void TSettings::LoadUsers(String ConfigFileName) {
-	TIniFile* IniFile = new TIniFile(ConfigFileName);
+	TIniFile * IniFile = new TIniFile(ConfigFileName);
 
-	TUser* User;
+	TUser * User;
 
 	String Section;
 
 	try {
-		int UserCount = IniFile->ReadInteger("Users", "Count", 0);
+		int Count = IniFile->ReadInteger("Users", "Count", 0);
 
-		for (int i = 0; i < UserCount; i++) {
+		for (int i = 0; i < Count; i++) {
 			Section = "User_" + IntToStr(i);
 
 			User = new TUser();
@@ -172,16 +199,16 @@ void TSettings::LoadUsers(String ConfigFileName) {
 
 			User->IsAdmin = IniFile->ReadBool(Section, "IsAdmin", false);
 
-			FUserList->Add(User);
+			UserList->Add(User);
 		}
 
-		if (FUserList->IsEmpty()) {
+		if (UserList->IsEmpty()) {
 			User = new TUser();
 
 			User->Name = LoadStr(IDS_TXT_ADMIN_DEFAULT_NAME);
 			User->IsAdmin = true;
 
-			FUserList->Add(User);
+			UserList->Add(User);
 		}
 	}
 	__finally {
@@ -191,16 +218,67 @@ void TSettings::LoadUsers(String ConfigFileName) {
 
 // ---------------------------------------------------------------------------
 void TSettings::LoadVanTypes(String ConfigFileName) {
-	VanTypeList->Add(new TVanCatalog(100, "VanType 01"));
-	VanTypeList->Add(new TVanCatalog(101, "VanType 02"));
-	VanTypeList->Add(new TVanCatalog(102, "VanType 03"));
+	TIniFile * IniFile = new TIniFile(ConfigFileName);
+
+	TVanType * VanType;
+
+	String Section;
+
+	try {
+		int Count = IniFile->ReadInteger("VanTypes", "Count", 0);
+
+		for (int i = 0; i < Count; i++) {
+			Section = "VanType_" + IntToStr(i);
+
+			VanType = new TVanType();
+
+			VanType->Code = IniFile->ReadInteger(Section, "Code",
+				VanType->Code);
+			VanType->Name = IniFile->ReadString(Section, "Name", VanType->Name);
+			VanType->AxisCount = IniFile->ReadInteger(Section, "AxisCount",
+				VanType->AxisCount);
+
+			VanTypeList->Add(VanType);
+		}
+	}
+	__finally {
+		delete IniFile;
+	}
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::LoadVanCatalog(String ConfigFileName, String SCount,
+	String SSection, TVanCatalogList * VanCatalogList) {
+	TIniFile * IniFile = new TIniFile(ConfigFileName);
+
+	TVanCatalog * VanCatalog;
+
+	String Section;
+
+	try {
+		int Count = IniFile->ReadInteger(SCount, "Count", 0);
+
+		for (int i = 0; i < Count; i++) {
+			Section = SSection + IntToStr(i);
+
+			VanCatalog = new TVanCatalog();
+
+			VanCatalog->Code = IniFile->ReadInteger(Section, "Code",
+				VanCatalog->Code);
+			VanCatalog->Name = IniFile->ReadString(Section, "Name",
+				VanCatalog->Name);
+
+			VanCatalogList->Add(VanCatalog);
+		}
+	}
+	__finally {
+		delete IniFile;
+	}
 }
 
 // ---------------------------------------------------------------------------
 void TSettings::LoadCargoTypes(String ConfigFileName) {
-	CargoTypeList->Add(new TVanCatalog(200, "CargoType 01"));
-	CargoTypeList->Add(new TVanCatalog(201, "CargoType 02"));
-	CargoTypeList->Add(new TVanCatalog(202, "CargoType 03"));
+	LoadVanCatalog(ConfigFileName, "CargoTypes", "CargoType_", CargoTypeList);
 }
 
 // ---------------------------------------------------------------------------
@@ -235,6 +313,109 @@ bool TSettings::Load() {
 }
 
 // ---------------------------------------------------------------------------
+void TSettings::SaveDatabase(String ConfigFileName) {
+	TIniFile * IniFile = new TIniFile(ConfigFileName);
+	try {
+		String Section = "Connection";
+
+		IniFile->WriteString(Section, "host", Connection->Host);
+		IniFile->WriteString(Section, "port", Connection->Port);
+		IniFile->WriteString(Section, "user", Connection->User);
+		IniFile->WriteString(Section, "pass",
+			DecryptPass(Connection->Password));
+	}
+	__finally {
+		delete IniFile;
+	}
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::SaveUsers(String ConfigFileName) {
+	DeleteConfigFile(ConfigFileName);
+
+	UserList->Sort(UserListSort);
+
+	String Section;
+
+	TIniFile * IniFile = new TIniFile(ConfigFileName);
+	try {
+		IniFile->WriteInteger("Users", "Count", UserList->Count);
+
+		for (int i = 0; i < UserList->Count; i++) {
+			Section = "User_" + IntToStr(i);
+
+			IniFile->WriteString(Section, "Name", UserList->Items[i]->Name);
+			IniFile->WriteString(Section, "Pass",
+				EncryptPass(UserList->Items[i]->Pass));
+			IniFile->WriteString(Section, "TabNum", UserList->Items[i]->TabNum);
+			IniFile->WriteString(Section, "ShiftNum",
+				UserList->Items[i]->ShiftNum);
+
+			IniFile->WriteBool(Section, "IsAdmin", UserList->Items[i]->IsAdmin);
+		}
+	}
+	__finally {
+		delete IniFile;
+	}
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::SaveVanTypes(String ConfigFileName) {
+	DeleteConfigFile(ConfigFileName);
+
+	VanTypeList->Sort(VanTypeListSort);
+
+	String Section;
+
+	TIniFile * IniFile = new TIniFile(ConfigFileName);
+	try {
+		IniFile->WriteInteger("VanTypes", "Count", VanTypeList->Count);
+
+		for (int i = 0; i < VanTypeList->Count; i++) {
+			Section = "VanType_" + IntToStr(i);
+
+			IniFile->WriteInteger(Section, "Code", VanTypeList->Items[i]->Code);
+			IniFile->WriteString(Section, "Name", VanTypeList->Items[i]->Name);
+			IniFile->WriteInteger(Section, "AxisCount",
+				VanTypeList->Items[i]->AxisCount);
+		}
+	}
+	__finally {
+		delete IniFile;
+	}
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::SaveVanCatalog(String ConfigFileName, String SCount,
+	String SSection, TVanCatalogList * VanCatalogList) {
+	DeleteConfigFile(ConfigFileName);
+
+	VanCatalogList->Sort(VanCatalogListSort);
+
+	String Section;
+
+	TIniFile * IniFile = new TIniFile(ConfigFileName);
+	try {
+		IniFile->WriteInteger(SCount, "Count", VanCatalogList->Count);
+
+		for (int i = 0; i < VanCatalogList->Count; i++) {
+			Section = SSection + IntToStr(i);
+
+			IniFile->WriteInteger(Section, "Code", VanCatalogList->Items[i]->Code);
+			IniFile->WriteString(Section, "Name", VanCatalogList->Items[i]->Name);
+		}
+	}
+	__finally {
+		delete IniFile;
+	}
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::SaveCargoTypes(String ConfigFileName) {
+	SaveVanCatalog(ConfigFileName, "CargoTypes", "CargoType_", CargoTypeList);
+}
+
+// ---------------------------------------------------------------------------
 bool TSettings::Save() {
 	if (!CheckConfigDir()) {
 		return false;
@@ -246,58 +427,18 @@ bool TSettings::Save() {
 
 	String Section;
 
-	String SE = EncryptPass(Connection->Password);
-	String SD = DecryptPass(SE);
-
 	try {
-		// ---------------------
 		ConfigFileName = GetConfigFileName("Database");
+		SaveDatabase(ConfigFileName);
 
-		IniFile = new TIniFile(ConfigFileName);
-		try {
-			Section = "Connection";
-
-			IniFile->WriteString(Section, "host", Connection->Host);
-			IniFile->WriteString(Section, "port", Connection->Port);
-			IniFile->WriteString(Section, "user", Connection->User);
-			IniFile->WriteString(Section, "pass",
-				DecryptPass(Connection->Password));
-		}
-		__finally {
-			delete IniFile;
-		}
-
-		// ---------------------
 		ConfigFileName = GetConfigFileName("Users");
+		SaveUsers(ConfigFileName);
 
-		if (FileExists(ConfigFileName) && !DeleteFile(ConfigFileName)) {
-			throw Exception("error delete file");
-		}
+		ConfigFileName = GetConfigFileName("VanTypes");
+		SaveVanTypes(ConfigFileName);
 
-		IniFile = new TIniFile(ConfigFileName);
-		try {
-			UserList->Sort(UserListSort);
-
-			IniFile->WriteInteger("Users", "Count", UserList->Count);
-
-			for (int i = 0; i < UserList->Count; i++) {
-				Section = "User_" + IntToStr(i);
-
-				IniFile->WriteString(Section, "Name", UserList->Items[i]->Name);
-				IniFile->WriteString(Section, "Pass",
-					EncryptPass(UserList->Items[i]->Pass));
-				IniFile->WriteString(Section, "TabNum",
-					UserList->Items[i]->TabNum);
-				IniFile->WriteString(Section, "ShiftNum",
-					UserList->Items[i]->ShiftNum);
-
-				IniFile->WriteBool(Section, "IsAdmin",
-					UserList->Items[i]->IsAdmin);
-			}
-		}
-		__finally {
-			delete IniFile;
-		}
+		ConfigFileName = GetConfigFileName("CargoTypes");
+		SaveCargoTypes(ConfigFileName);
 	}
 	catch (Exception *E) {
 		WriteToLog(Format(IDS_LOG_WRITE_FILE_FAIL,

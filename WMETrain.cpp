@@ -368,7 +368,7 @@ void TfrmTrain::UpdateVanComboBox(TVanCatalogList *VanCatalogList) {
 bool TfrmTrain::ShowVanComboBox(int Col) {
 	switch (Col) {
 	case VansColumns.VANTYPE:
-		UpdateVanComboBox(Main->Settings->VanTypeList);
+		UpdateVanComboBox((TVanCatalogList *)Main->Settings->VanTypeList);
 		break;
 	case VansColumns.CARGOTYPE:
 		UpdateVanComboBox(Main->Settings->CargoTypeList);
@@ -565,11 +565,11 @@ bool TfrmTrain::CheckValues(int ARow) {
 
 // ---------------------------------------------------------------------------
 int TfrmTrain::GetVanCatalogCode(int CatalogIdent, String Name) {
-	TVanCatalogList *VanCatalogList;
+	TVanCatalogList * VanCatalogList;
 
 	switch (CatalogIdent) {
 	case VansColumns.VANTYPE:
-		VanCatalogList = Main->Settings->VanTypeList;
+		VanCatalogList = (TVanCatalogList*)Main->Settings->VanTypeList;
 		break;
 	case VansColumns.CARGOTYPE:
 		VanCatalogList = Main->Settings->CargoTypeList;
@@ -588,7 +588,21 @@ int TfrmTrain::GetVanCatalogCode(int CatalogIdent, String Name) {
 }
 
 // ---------------------------------------------------------------------------
-TVanList *TfrmTrain::GetVanList() {
+TVanType * TfrmTrain::GetVanType(String Name) {
+	for (int i = 0; i < Main->Settings->VanTypeList->Count; i++) {
+		if (AnsiSameStr(Main->Settings->VanTypeList->Items[i]->Name, Name)) {
+			return Main->Settings->VanTypeList->Items[i];
+		}
+	}
+
+	TVanType * VanType = new TVanType();
+	VanType->Name = Name;
+
+	return VanType;
+}
+
+// ---------------------------------------------------------------------------
+TVanList * TfrmTrain::GetVanList() {
 	TVanList *VanList = new TVanList();
 
 	TVan *Van;
@@ -602,9 +616,11 @@ TVanList *TfrmTrain::GetVanList() {
 
 		Van->VanNum = sgVans->Cells[VansColumns.VANNUM][i];
 
-		Van->VanType->Name = sgVans->Cells[VansColumns.VANTYPE][i];
-		Van->VanType->Code = GetVanCatalogCode(VansColumns.VANTYPE,
-			Van->VanType->Name);
+		// Van->VanType->Name = sgVans->Cells[VansColumns.VANTYPE][i];
+		// Van->VanType->Code = GetVanCatalogCode(VansColumns.VANTYPE,
+		// Van->VanType->Name);
+
+		Van->VanType->Assign(GetVanType(sgVans->Cells[VansColumns.VANTYPE][i]));
 
 		Van->Carrying = StrToInt(sgVans->Cells[VansColumns.CARRYING][i]);
 		Van->Brutto = StrToInt(sgVans->Cells[VansColumns.BRUTTO][i]);

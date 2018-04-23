@@ -12,14 +12,16 @@ const TDBVansFieldName TDBVansFields::SAVE_TRAIN_FIELDS
 	fnVansTrnum, fnVansNum, fnVansWTime, fnVansDatetime, fnVansVanNum,
 	fnVansVanType, fnVansVanTypeCode, fnVansCarrying, fnVansBrutto, fnVansTare,
 	fnVansNetto, fnVansOverload, fnVansCargoType, fnVansCargoTypeCode,
-	fnVansOperator, fnVansOperatorTabNum, fnVansOperatorShiftNum};
+	fnVansAxisCount, fnVansOperator, fnVansOperatorTabNum,
+	fnVansOperatorShiftNum};
 
 const TDBVansFieldName TDBVansFields::LOAD_TRAIN_FIELDS
 	[TDBVansFields::LOAD_TRAIN_FIELDS_COUNT] = {
 	fnVansTrnum, fnVansNum, fnVansWTime, fnVansDatetime, fnVansVanNum,
 	fnVansVanType, fnVansVanTypeCode, fnVansCarrying, fnVansBrutto, fnVansTare,
 	fnVansNetto, fnVansOverload, fnVansCargoType, fnVansCargoTypeCode,
-	fnVansOperator, fnVansOperatorTabNum, fnVansOperatorShiftNum};
+	fnVansAxisCount, fnVansOperator, fnVansOperatorTabNum,
+	fnVansOperatorShiftNum};
 
 // ---------------------------------------------------------------------------
 String TDBVansFields::GetFieldName(TDBVansFieldName Name) {
@@ -59,6 +61,9 @@ String TDBVansFields::GetFieldName(TDBVansFieldName Name) {
 	case fnVansCargoTypeCode:
 		return "cargotype_code";
 
+	case fnVansAxisCount:
+		return "naxis";
+
 	case fnVansOperator:
 		return "operator_name";
 	case fnVansOperatorTabNum:
@@ -97,6 +102,9 @@ TFieldType TDBVansFields::GetFieldType(TDBVansFieldName Name) {
 
 	case fnVansCargoType:
 		return ftString;
+
+	case fnVansAxisCount:
+		return ftInteger;
 
 	case fnVansOperator:
 	case fnVansOperatorTabNum:

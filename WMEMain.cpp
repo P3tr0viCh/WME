@@ -119,8 +119,8 @@ void __fastcall TMain::btnManualClick(TObject *Sender) {
 // ---------------------------------------------------------------------------
 void __fastcall TMain::btnDatabaseClick(TObject *Sender) {
 	TfrmTrainList::Show();
-
-	Application->Terminate();
+	//
+	// Application->Terminate();
 }
 
 // ---------------------------------------------------------------------------
@@ -150,6 +150,8 @@ void TMain::ChangeUser() {
 // ---------------------------------------------------------------------------
 void __fastcall TMain::btnOptionsClick(TObject *Sender) {
 	TfrmOptions::Show(Settings, !User->IsAdmin);
+
+	Application->Terminate();
 }
 
 // ---------------------------------------------------------------------------

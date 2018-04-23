@@ -16,7 +16,7 @@ __fastcall TVan::TVan() {
 void TVan::Init() {
 	FUser = new TUser();
 
-	FVanType = new TVanCatalog();
+	FVanType = new TVanType();
 	FCargoType = new TVanCatalog();
 
 	FNum = 0;

@@ -40,6 +40,20 @@ __published:
 	TPanel *PanelButtons;
 	TButton *btnOk;
 	TButton *btnCancel;
+	TTabSheet *tsVanTypes;
+	TTabSheet *tsCargoTypes;
+	TTabSheet *tsDepartStations;
+	TTabSheet *tsPurposeStations;
+	TTabSheet *tsInvoiceSuppliers;
+	TTabSheet *tsInvoiceRecipients;
+	TStringGrid *sgVanTypes;
+	TButton *btnVanTypesAdd;
+	TButton *btnVanTypesChange;
+	TButton *btnVanTypesDelete;
+	TStringGrid *sgCargoTypes;
+	TButton *btnCargoTypesAdd;
+	TButton *btnCargoTypesChange;
+	TButton *btnCargoTypesDelete;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -56,31 +70,43 @@ __published:
 	void __fastcall btnDBDeleteClick(TObject *Sender);
 
 private:
-	TSettings *Settings;
+	TSettings * Settings;
 
 	bool IsReadOnly;
 
 	bool PerformSave;
 
 	void CreateUsersColumns();
+	void CreateVanTypesColumns();
+	void CreateVanCatalogColumns(TStringGrid * Grid);
 
-	void SetReadOnly(TComponent *Parent, bool ReadOnly);
+	void SetReadOnly(TComponent * Parent, bool ReadOnly);
 
 	void UpdateForm();
+	void UpdateSettingsVanCatalog(TStringGrid * Grid,
+		TVanCatalogList * VanCatalogList);
 	void UpdateSettings();
 
-	TUser* GetUser(int Index);
-	int SetUser(int Index, TUser *User);
+	TUser * GetUser(int Index);
+	int SetUser(int Index, TUser * User);
+
+	TVanType * GetVanType(int Index);
+	int SetVanType(int Index, TVanType * VanType);
+
+	TVanCatalog * GetVanCatalog(TStringGrid * Grid, int Index);
+	int SetVanCatalog(TStringGrid * Grid, int Index, TVanCatalog * VanCatalog);
 
 	bool IsUserAdmin(int Index);
 
-	TConnectionInfo* GetConnection();
+	TConnectionInfo * GetConnection();
 
 	static const int DB_ACTION_CHECK = 0;
 	static const int DB_ACTION_CREATE = 1;
 	static const int DB_ACTION_DROP = 2;
 
 	void DatabaseAction(int Action);
+
+	TStringGrid * GetStringGrid(TObject * Sender);
 
 public:
 	__fastcall TfrmOptions(TComponent* Owner);

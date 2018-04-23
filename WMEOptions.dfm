@@ -4,7 +4,7 @@ object frmOptions: TfrmOptions
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080
-  ClientHeight = 448
+  ClientHeight = 472
   ClientWidth = 640
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -26,7 +26,7 @@ object frmOptions: TfrmOptions
     Left = 16
     Top = 16
     Width = 608
-    Height = 368
+    Height = 392
     Align = alClient
     BevelOuter = bvLowered
     TabOrder = 0
@@ -34,8 +34,8 @@ object frmOptions: TfrmOptions
       Left = 1
       Top = 1
       Width = 606
-      Height = 366
-      ActivePage = tsDatabase
+      Height = 390
+      ActivePage = tsCargoTypes
       Align = alClient
       MultiLine = True
       TabOrder = 0
@@ -44,7 +44,7 @@ object frmOptions: TfrmOptions
         Caption = #1041#1072#1079#1072' '#1076#1072#1085#1085#1099#1093
         DesignSize = (
           598
-          330)
+          328)
         object lblDBConnection: TLabel
           Left = 16
           Top = 8
@@ -189,11 +189,113 @@ object frmOptions: TfrmOptions
           OnClick = btnUsersDeleteClick
         end
       end
+      object tsVanTypes: TTabSheet
+        Caption = #1056#1086#1076' '#1074#1072#1075#1086#1085#1072
+        ImageIndex = 2
+        object sgVanTypes: TStringGrid
+          Left = 16
+          Top = 16
+          Width = 566
+          Height = 250
+          ColCount = 2
+          RowCount = 2
+          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected, goColSizing, goFixedColClick]
+          TabOrder = 0
+          OnDblClick = sgUsersDblClick
+          OnFixedCellClick = sgUsersFixedCellClick
+        end
+        object btnVanTypesAdd: TButton
+          Left = 16
+          Top = 282
+          Width = 96
+          Height = 32
+          Caption = #1044#1086#1073#1072#1074#1080#1090#1100
+          TabOrder = 1
+          OnClick = btnUsersAddClick
+        end
+        object btnVanTypesChange: TButton
+          Left = 128
+          Top = 282
+          Width = 96
+          Height = 32
+          Caption = #1048#1079#1084#1077#1085#1080#1090#1100
+          TabOrder = 2
+          OnClick = btnUsersChangeClick
+        end
+        object btnVanTypesDelete: TButton
+          Left = 240
+          Top = 282
+          Width = 96
+          Height = 32
+          Caption = #1059#1076#1072#1083#1080#1090#1100
+          TabOrder = 3
+          OnClick = btnUsersDeleteClick
+        end
+      end
+      object tsCargoTypes: TTabSheet
+        Caption = #1056#1086#1076' '#1075#1088#1091#1079#1072
+        ImageIndex = 3
+        object sgCargoTypes: TStringGrid
+          Left = 16
+          Top = 16
+          Width = 566
+          Height = 250
+          ColCount = 2
+          RowCount = 2
+          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected, goColSizing, goFixedColClick]
+          TabOrder = 0
+          OnDblClick = sgUsersDblClick
+          OnFixedCellClick = sgUsersFixedCellClick
+        end
+        object btnCargoTypesAdd: TButton
+          Left = 16
+          Top = 282
+          Width = 96
+          Height = 32
+          Caption = #1044#1086#1073#1072#1074#1080#1090#1100
+          TabOrder = 1
+          OnClick = btnUsersAddClick
+        end
+        object btnCargoTypesChange: TButton
+          Left = 128
+          Top = 282
+          Width = 96
+          Height = 32
+          Caption = #1048#1079#1084#1077#1085#1080#1090#1100
+          TabOrder = 2
+          OnClick = btnUsersChangeClick
+        end
+        object btnCargoTypesDelete: TButton
+          Left = 240
+          Top = 282
+          Width = 96
+          Height = 32
+          Caption = #1059#1076#1072#1083#1080#1090#1100
+          TabOrder = 3
+          OnClick = btnUsersDeleteClick
+        end
+      end
+      object tsDepartStations: TTabSheet
+        Caption = #1057#1090#1072#1085#1094#1080#1103' '#1086#1090#1087#1088#1072#1074#1083#1077#1085#1080#1103
+        ImageIndex = 4
+      end
+      object tsPurposeStations: TTabSheet
+        Caption = #1057#1090#1072#1085#1094#1080#1103' '#1085#1072#1079#1085#1072#1095#1077#1085#1080#1103
+        ImageIndex = 5
+      end
+      object tsInvoiceSuppliers: TTabSheet
+        Caption = #1043#1088#1091#1079#1086#1086#1090#1087#1088#1072#1074#1080#1090#1077#1083#1100
+        ImageIndex = 6
+      end
+      object tsInvoiceRecipients: TTabSheet
+        Caption = #1043#1088#1091#1079#1086#1087#1086#1083#1091#1095#1072#1090#1077#1083#1100
+        ImageIndex = 7
+      end
     end
   end
   object PanelButtons: TPanel
     Left = 16
-    Top = 384
+    Top = 408
     Width = 608
     Height = 48
     Align = alBottom
