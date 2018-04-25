@@ -64,7 +64,7 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 	WriteToLog(Format(IDS_LOG_START_PROGRAM,
 		ARRAYOFCONST((GetFileVer(Application->ExeName, false)))));
 
-	TFileIni* FileIni = TFileIni::GetNewInstance();
+	TFileIni * FileIni = TFileIni::GetNewInstance();
 	try {
 		FileIni->ReadFormPosition(this);
 	}
@@ -94,7 +94,7 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::FormDestroy(TObject *Sender) {
-	TFileIni* FileIni = TFileIni::GetNewInstance();
+	TFileIni * FileIni = TFileIni::GetNewInstance();
 	try {
 		FileIni->WriteFormPosition(this);
 	}
@@ -157,7 +157,7 @@ void __fastcall TMain::btnOptionsClick(TObject *Sender) {
 // ---------------------------------------------------------------------------
 void __fastcall TMain::FormCloseQuery(TObject *Sender, bool &CanClose) {
 #ifndef FORCECLOSE
-	CanClose = MsgBoxYesNo(LoadStr(IDS_QUESTION_CLOSE_PROGRAM));
+	CanClose = MsgBoxYesNo(IDS_QUESTION_CLOSE_PROGRAM);
 #endif
 }
 

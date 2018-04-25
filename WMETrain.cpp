@@ -821,7 +821,7 @@ void __fastcall TfrmTrain::FormCloseQuery(TObject *Sender, bool &CanClose) {
 		return;
 	}
 
-	switch (MsgBox(LoadStr(IDS_QUESTION_TRAIN_CHANGED),
+	switch (MsgBox(IDS_QUESTION_TRAIN_CHANGED,
 		MB_ICONQUESTION | MB_YESNOCANCEL)) {
 	case ID_YES:
 		CanClose = SaveVans();

@@ -39,31 +39,31 @@ __fastcall TSettings::~TSettings() {
 }
 
 // ---------------------------------------------------------------------------
-bool __fastcall TSettings::Equals(TObject* Obj) {
+bool __fastcall TSettings::Equals(TObject * Obj) {
 	if (this == Obj)
 		return true;
 	if (Obj == NULL || ClassType() != Obj->ClassType())
 		return false;
 
-	TSettings *Settings = (TSettings*) Obj;
+	TSettings * Settings = (TSettings*) Obj;
 
 	if (!Settings->Connection->Equals(Connection))
 		return false;
 
-	if (Settings->UserList->Count != UserList->Count)
+	if (!Settings->UserList->Equals(UserList))
 		return false;
 
-	for (int i = 0; i < Settings->UserList->Count; i++) {
-		if (!Settings->UserList->Items[i]->Equals(UserList->Items[i])) {
-			return false;
-		}
-	}
+	if (!Settings->VanTypeList->Equals(VanTypeList))
+		return false;
+
+	if (!Settings->CargoTypeList->Equals(CargoTypeList))
+		return false;
 
 	return true;
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TSettings::Assign(TSettings* Source) {
+void __fastcall TSettings::Assign(TSettings * Source) {
 	FConnection->Assign(Source->Connection);
 	FUserList->Assign(Source->UserList);
 	FVanTypeList->Assign(Source->VanTypeList);

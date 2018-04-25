@@ -18,8 +18,8 @@ private:
 	bool FAdmin;
 
 public:
-	bool __fastcall Equals(TObject* Obj);
-	void __fastcall Assign(TUser* Source);
+	bool __fastcall Equals(TObject * Obj);
+	void __fastcall Assign(TUser * Source);
 
 	__property String Name = {read = FName, write = FName};
 	__property String Pass = {read = FPass, write = FPass};
@@ -30,7 +30,7 @@ public:
 };
 
 // ---------------------------------------------------------------------------
-typedef TObjList<TUser> TUserList;
+typedef TObjList<TUser>TUserList;
 
 // ---------------------------------------------------------------------------
 #endif

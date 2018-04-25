@@ -79,7 +79,7 @@ __fastcall TfrmOptions::TfrmOptions(TComponent* Owner) : TForm(Owner) {
 bool TfrmOptions::Show(TSettings *Settings, bool ReadOnly) {
 	bool Result = false;
 
-	TfrmOptions *frmOptions = new TfrmOptions(Application);
+	TfrmOptions * frmOptions = new TfrmOptions(Application);
 	try {
 		frmOptions->IsReadOnly = ReadOnly;
 		if (ReadOnly) {
@@ -133,7 +133,7 @@ void __fastcall TfrmOptions::FormCreate(TObject *Sender) {
 
 	Settings = new TSettings();
 
-	TFileIni* FileIni = TFileIni::GetNewInstance();
+	TFileIni * FileIni = TFileIni::GetNewInstance();
 	try {
 		FileIni->ReadFormPosition(this);
 	}
@@ -144,7 +144,7 @@ void __fastcall TfrmOptions::FormCreate(TObject *Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmOptions::FormDestroy(TObject *Sender) {
-	TFileIni* FileIni = TFileIni::GetNewInstance();
+	TFileIni * FileIni = TFileIni::GetNewInstance();
 	try {
 		FileIni->WriteFormPosition(this);
 	}
@@ -198,7 +198,7 @@ void TfrmOptions::CreateVanCatalogColumns(TStringGrid * Grid) {
 
 // ---------------------------------------------------------------------------
 void TfrmOptions::SetReadOnly(TComponent *Parent, bool ReadOnly) {
-	TWinControl *Child;
+	TWinControl * Child;
 
 	for (int i = 0; i < ((TWinControl*)Parent)->ControlCount; i++) {
 		try {
@@ -315,8 +315,8 @@ void TfrmOptions::UpdateSettings() {
 }
 
 // ---------------------------------------------------------------------------
-TConnectionInfo* TfrmOptions::GetConnection() {
-	TConnectionInfo *Connection = new TConnectionInfo();
+TConnectionInfo * TfrmOptions::GetConnection() {
+	TConnectionInfo * Connection = new TConnectionInfo();
 
 	Connection->Host = eDBHost->Text;
 	Connection->Port = eDBPort->Text;
@@ -330,12 +330,12 @@ TConnectionInfo* TfrmOptions::GetConnection() {
 void TfrmOptions::DatabaseAction(int Action) {
 	switch (Action) {
 	case DB_ACTION_CREATE:
-		if (!MsgBoxYesNo(LoadStr(IDS_QUESTION_DB_CREATE))) {
+		if (!MsgBoxYesNo(IDS_QUESTION_DB_CREATE)) {
 			return;
 		}
 		break;
 	case DB_ACTION_DROP:
-		if (!MsgBoxYesNo(LoadStr(IDS_QUESTION_DB_DROP))) {
+		if (!MsgBoxYesNo(IDS_QUESTION_DB_DROP)) {
 			return;
 		}
 		break;
@@ -353,9 +353,9 @@ void TfrmOptions::DatabaseAction(int Action) {
 		IDS_ERROR_MYSQL_DB_DROP};
 
 	ShowWaitCursor();
-	TConnectionInfo *Connection = GetConnection();
+	TConnectionInfo * Connection = GetConnection();
 
-	TDatabaseOperation *DatabaseOperation;
+	TDatabaseOperation * DatabaseOperation;
 
 	try {
 		switch (Action) {
@@ -385,7 +385,7 @@ void TfrmOptions::DatabaseAction(int Action) {
 	}
 
 	if (Result) {
-		MsgBox(LoadStr(ActionResultOK[Action]));
+		MsgBox(ActionResultOK[Action]);
 	}
 	else {
 		MsgBoxErr(ActionResultFail[Action]);
@@ -433,7 +433,7 @@ void __fastcall TfrmOptions::FormCloseQuery(TObject *Sender, bool &CanClose) {
 			return;
 		}
 
-		switch (MsgBox(LoadStr(IDS_QUESTION_SETTINGS_CHANGED),
+		switch (MsgBox(IDS_QUESTION_SETTINGS_CHANGED,
 			MB_ICONQUESTION | MB_YESNOCANCEL)) {
 		case ID_YES:
 			PerformSave = true;

@@ -86,7 +86,7 @@ void __fastcall TfrmLogin::FormCloseQuery(TObject *Sender, bool &CanClose) {
 #else
 	CanClose = ModalResult == mrOk;
 	if (!CanClose) {
-		CanClose = MsgBoxYesNo(LoadStr(IDS_QUESTION_CLOSE_PROGRAM));
+		CanClose = MsgBoxYesNo(IDS_QUESTION_CLOSE_PROGRAM);
 	}
 #endif
 }

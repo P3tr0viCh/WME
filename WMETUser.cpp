@@ -10,13 +10,13 @@
 #pragma package(smart_init)
 
 // ---------------------------------------------------------------------------
-bool __fastcall TUser::Equals(TObject* Obj) {
+bool __fastcall TUser::Equals(TObject * Obj) {
 	if (this == Obj)
 		return true;
 	if (Obj == NULL || ClassType() != Obj->ClassType())
 		return false;
 
-	TUser *User = (TUser*) Obj;
+	TUser * User = (TUser*) Obj;
 
 	if (Name != User->Name || Pass != User->Pass ||
 		TabNum != User->TabNum || ShiftNum != User->ShiftNum ||
@@ -27,7 +27,7 @@ bool __fastcall TUser::Equals(TObject* Obj) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TUser::Assign(TUser* Source) {
+void __fastcall TUser::Assign(TUser * Source) {
 	Name = Source->Name;
 	Pass = Source->Pass;
 	TabNum = Source->TabNum;

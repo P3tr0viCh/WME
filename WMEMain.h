@@ -39,17 +39,17 @@ __published:
 	void __fastcall ApplicationEventsException(TObject *Sender, Exception *E);
 
 private:
-	TUser *FUser;
-	TSettings *FSettings;
+	TUser * FUser;
+	TSettings * FSettings;
 
 public:
 	__fastcall TMain(TComponent* Owner);
 
 	void ChangeUser();
 
-	__property TUser *User = {read = FUser};
+	__property TUser * User = {read = FUser};
 
-	__property TSettings *Settings = {read = FSettings};
+	__property TSettings * Settings = {read = FSettings};
 };
 
 // ---------------------------------------------------------------------------
