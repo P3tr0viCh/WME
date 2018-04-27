@@ -27,7 +27,12 @@ private:
 	TUserList * FUserList;
 
 	TVanTypeList * FVanTypeList;
+
 	TVanCatalogList * FCargoTypeList;
+	TVanCatalogList * FDepartStationList;
+	TVanCatalogList * FPurposeStationList;
+	TVanCatalogList * FInvoiceRecipientList;
+	TVanCatalogList * FInvoiceSupplierList;
 
 	String GetConfigDir();
 	bool CheckConfigDir();
@@ -38,20 +43,28 @@ private:
 
 	void DeleteConfigFile(String ConfigFileName);
 
-	void LoadVanCatalog(String ConfigFileName, String SCount, String SSection,
+	void LoadVanCatalog(String ConfigFileName, String Name,
 		TVanCatalogList * VanCatalogList);
-	void SaveVanCatalog(String ConfigFileName, String SCount, String SSection,
+	void SaveVanCatalog(String ConfigFileName, String Name,
 		TVanCatalogList * VanCatalogList);
 
 	void LoadDatabase(String ConfigFileName);
 	void LoadUsers(String ConfigFileName);
 	void LoadVanTypes(String ConfigFileName);
 	void LoadCargoTypes(String ConfigFileName);
+	void LoadDepartStations(String ConfigFileName);
+	void LoadPurposeStations(String ConfigFileName);
+	void LoadInvoiceRecipients(String ConfigFileName);
+	void LoadInvoiceSuppliers(String ConfigFileName);
 
 	void SaveDatabase(String ConfigFileName);
 	void SaveUsers(String ConfigFileName);
 	void SaveVanTypes(String ConfigFileName);
 	void SaveCargoTypes(String ConfigFileName);
+	void SaveDepartStations(String ConfigFileName);
+	void SavePurposeStations(String ConfigFileName);
+	void SaveInvoiceRecipients(String ConfigFileName);
+	void SaveInvoiceSuppliers(String ConfigFileName);
 
 public:
 	__fastcall TSettings();
@@ -70,7 +83,16 @@ public:
 	__property TUserList * UserList = {read = FUserList};
 
 	__property TVanTypeList * VanTypeList = {read = FVanTypeList};
+
 	__property TVanCatalogList * CargoTypeList = {read = FCargoTypeList};
+	__property TVanCatalogList * DepartStationList = {read = FDepartStationList
+	};
+	__property TVanCatalogList * PurposeStationList = {
+		read = FPurposeStationList};
+	__property TVanCatalogList * InvoiceRecipientList = {
+		read = FInvoiceRecipientList};
+	__property TVanCatalogList * InvoiceSupplierList = {
+		read = FInvoiceSupplierList};
 };
 
 // ---------------------------------------------------------------------------

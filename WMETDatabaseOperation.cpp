@@ -42,7 +42,7 @@ bool TDatabaseOperation::Execute() {
 
 		Result = true;
 	}
-	catch (Exception *E) {
+	catch (Exception * E) {
 		FErrorMessage = E->Message;
 	}
 

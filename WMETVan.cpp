@@ -17,7 +17,12 @@ void TVan::Init() {
 	FUser = new TUser();
 
 	FVanType = new TVanType();
+
 	FCargoType = new TVanCatalog();
+	FDepartStation = new TVanCatalog();
+	FPurposeStation = new TVanCatalog();
+	FInvoiceRecipient = new TVanCatalog();
+	FInvoiceSupplier = new TVanCatalog();
 
 	FNum = 0;
 	FDateTime = NULL;
@@ -26,7 +31,12 @@ void TVan::Init() {
 
 // ---------------------------------------------------------------------------
 __fastcall TVan::~TVan() {
+	FInvoiceSupplier->Free();
+	FInvoiceRecipient->Free();
+	FPurposeStation->Free();
+	FDepartStation->Free();
 	FCargoType->Free();
+
 	FVanType->Free();
 	FUser->Free();
 }
@@ -140,11 +150,13 @@ void __fastcall TVan::Assign(TVan* Source) {
 
 	User->Assign(Source->User);
 
-	DepartStation = Source->DepartStation;
-	PurposeStation = Source->PurposeStation;
+	DepartStation->Assign(Source->DepartStation);
+	PurposeStation->Assign(Source->PurposeStation);
+
 	InvoiceNum = Source->InvoiceNum;
-	InvoiceSupplier = Source->InvoiceSupplier;
-	InvoiceRecipient = Source->InvoiceRecipient;
+
+	InvoiceSupplier->Assign(Source->InvoiceSupplier);
+	InvoiceRecipient->Assign(Source->InvoiceRecipient);
 }
 
 // ---------------------------------------------------------------------------
@@ -180,21 +192,19 @@ String __fastcall TVan::ToString() {
 	S += ",";
 	S += "Overload='" + IntToStr(Overload) + "'";
 	S += ",";
-	S += "CargoType='" + CargoType->Name + "'";
-	S += ",";
-	S += "CargoTypeCode='" + IntToStr(CargoType->Code) + "'";
+	S += "CargoType='" + CargoType->ToString() + "'";
 	S += ",";
 	S += "User Name='" + User->Name + "'";
 	S += ",";
-	S += "DepartStation='" + DepartStation + "'";
+	S += "DepartStation='" + DepartStation->ToString() + "'";
 	S += ",";
-	S += "PurposeStation='" + PurposeStation + "'";
+	S += "PurposeStation='" + PurposeStation->ToString() + "'";
 	S += ",";
 	S += "InvoiceNum='" + InvoiceNum + "'";
 	S += ",";
-	S += "InvoiceSupplier='" + InvoiceSupplier + "'";
+	S += "InvoiceSupplier='" + InvoiceSupplier->ToString() + "'";
 	S += ",";
-	S += "InvoiceRecipient='" + InvoiceRecipient + "'";
+	S += "InvoiceRecipient='" + InvoiceRecipient->ToString() + "'";
 	S += "}";
 
 	return S;

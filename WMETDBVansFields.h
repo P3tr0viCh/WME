@@ -14,7 +14,9 @@ enum TDBVansFieldName {
 	fnVansVanType, fnVansVanTypeCode, fnVansCarrying, fnVansBrutto, fnVansTare,
 	fnVansNetto, fnVansOverload, fnVansCargoType, fnVansCargoTypeCode,
 	fnVansAxisCount, fnVansOperator, fnVansOperatorTabNum,
-	fnVansOperatorShiftNum
+	fnVansOperatorShiftNum, fnVansDepartStation, fnVansDepartStationCode,
+	fnVansPurposeStation, fnVansPurposeStationCode, fnVansInvoiceRecipient,
+	fnVansInvoiceRecipientCode, fnVansInvoiceSupplier, fnVansInvoiceSupplierCode
 };
 
 enum TDBVansDatabaseOp {
@@ -24,8 +26,8 @@ enum TDBVansDatabaseOp {
 class TDBVansFields : public TDBTableFields<TDBVansFieldName, TDBVansDatabaseOp>
 {
 public:
-	static const SAVE_TRAIN_FIELDS_COUNT = 18;
-	static const LOAD_TRAIN_FIELDS_COUNT = 18;
+	static const SAVE_TRAIN_FIELDS_COUNT = 26;
+	static const LOAD_TRAIN_FIELDS_COUNT = 26;
 
 	static const TDBVansFieldName SAVE_TRAIN_FIELDS[SAVE_TRAIN_FIELDS_COUNT];
 	static const TDBVansFieldName LOAD_TRAIN_FIELDS[LOAD_TRAIN_FIELDS_COUNT];

@@ -35,7 +35,7 @@ object frmOptions: TfrmOptions
       Top = 1
       Width = 606
       Height = 390
-      ActivePage = tsUsers
+      ActivePage = tsInvoiceSuppliers
       Align = alClient
       MultiLine = True
       TabOrder = 0
@@ -155,10 +155,12 @@ object frmOptions: TfrmOptions
           Width = 566
           Height = 250
           ColCount = 2
+          DefaultDrawing = False
           RowCount = 2
           Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected, goColSizing, goFixedColClick]
           TabOrder = 0
           OnDblClick = sgUsersDblClick
+          OnDrawCell = sgUsersDrawCell
           OnFixedCellClick = sgUsersFixedCellClick
         end
         object btnUsersAdd: TButton
@@ -198,10 +200,12 @@ object frmOptions: TfrmOptions
           Width = 566
           Height = 250
           ColCount = 2
+          DefaultDrawing = False
           RowCount = 2
           Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected, goColSizing, goFixedColClick]
           TabOrder = 0
           OnDblClick = sgUsersDblClick
+          OnDrawCell = sgVanTypesDrawCell
           OnFixedCellClick = sgUsersFixedCellClick
         end
         object btnVanTypesAdd: TButton
@@ -241,10 +245,12 @@ object frmOptions: TfrmOptions
           Width = 566
           Height = 250
           ColCount = 2
+          DefaultDrawing = False
           RowCount = 2
           Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected, goColSizing, goFixedColClick]
           TabOrder = 0
           OnDblClick = sgUsersDblClick
+          OnDrawCell = sgVanCatalogDrawCell
           OnFixedCellClick = sgUsersFixedCellClick
         end
         object btnCargoTypesAdd: TButton
@@ -278,18 +284,182 @@ object frmOptions: TfrmOptions
       object tsDepartStations: TTabSheet
         Caption = #1057#1090#1072#1085#1094#1080#1103' '#1086#1090#1087#1088#1072#1074#1083#1077#1085#1080#1103
         ImageIndex = 4
+        object sgDepartStations: TStringGrid
+          Left = 16
+          Top = 16
+          Width = 566
+          Height = 250
+          ColCount = 2
+          DefaultDrawing = False
+          RowCount = 2
+          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected, goColSizing, goFixedColClick]
+          TabOrder = 0
+          OnDblClick = sgUsersDblClick
+          OnDrawCell = sgVanCatalogDrawCell
+          OnFixedCellClick = sgUsersFixedCellClick
+        end
+        object btnDepartStationsAdd: TButton
+          Left = 16
+          Top = 282
+          Width = 96
+          Height = 32
+          Caption = #1044#1086#1073#1072#1074#1080#1090#1100
+          TabOrder = 1
+          OnClick = btnUsersAddClick
+        end
+        object btnDepartStationsChange: TButton
+          Left = 128
+          Top = 282
+          Width = 96
+          Height = 32
+          Caption = #1048#1079#1084#1077#1085#1080#1090#1100
+          TabOrder = 2
+          OnClick = btnUsersChangeClick
+        end
+        object btnDepartStationsDelete: TButton
+          Left = 240
+          Top = 282
+          Width = 96
+          Height = 32
+          Caption = #1059#1076#1072#1083#1080#1090#1100
+          TabOrder = 3
+          OnClick = btnUsersDeleteClick
+        end
       end
       object tsPurposeStations: TTabSheet
         Caption = #1057#1090#1072#1085#1094#1080#1103' '#1085#1072#1079#1085#1072#1095#1077#1085#1080#1103
         ImageIndex = 5
+        object sgPurposeStations: TStringGrid
+          Left = 16
+          Top = 16
+          Width = 566
+          Height = 250
+          ColCount = 2
+          DefaultDrawing = False
+          RowCount = 2
+          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected, goColSizing, goFixedColClick]
+          TabOrder = 0
+          OnDblClick = sgUsersDblClick
+          OnDrawCell = sgVanCatalogDrawCell
+          OnFixedCellClick = sgUsersFixedCellClick
+        end
+        object btnPurposeStationsAdd: TButton
+          Left = 16
+          Top = 282
+          Width = 96
+          Height = 32
+          Caption = #1044#1086#1073#1072#1074#1080#1090#1100
+          TabOrder = 1
+          OnClick = btnUsersAddClick
+        end
+        object btnPurposeStationsChange: TButton
+          Left = 128
+          Top = 282
+          Width = 96
+          Height = 32
+          Caption = #1048#1079#1084#1077#1085#1080#1090#1100
+          TabOrder = 2
+          OnClick = btnUsersChangeClick
+        end
+        object btnPurposeStationsDelete: TButton
+          Left = 240
+          Top = 282
+          Width = 96
+          Height = 32
+          Caption = #1059#1076#1072#1083#1080#1090#1100
+          TabOrder = 3
+          OnClick = btnUsersDeleteClick
+        end
       end
       object tsInvoiceSuppliers: TTabSheet
         Caption = #1043#1088#1091#1079#1086#1086#1090#1087#1088#1072#1074#1080#1090#1077#1083#1100
         ImageIndex = 6
+        object sgInvoiceSuppliers: TStringGrid
+          Left = 16
+          Top = 16
+          Width = 566
+          Height = 250
+          ColCount = 2
+          DefaultDrawing = False
+          RowCount = 2
+          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected, goColSizing, goFixedColClick]
+          TabOrder = 0
+          OnDblClick = sgUsersDblClick
+          OnDrawCell = sgVanCatalogDrawCell
+          OnFixedCellClick = sgUsersFixedCellClick
+        end
+        object btnInvoiceSuppliersAdd: TButton
+          Left = 16
+          Top = 282
+          Width = 96
+          Height = 32
+          Caption = #1044#1086#1073#1072#1074#1080#1090#1100
+          TabOrder = 1
+          OnClick = btnUsersAddClick
+        end
+        object btnInvoiceSuppliersChange: TButton
+          Left = 128
+          Top = 282
+          Width = 96
+          Height = 32
+          Caption = #1048#1079#1084#1077#1085#1080#1090#1100
+          TabOrder = 2
+          OnClick = btnUsersChangeClick
+        end
+        object btnInvoiceSuppliersDelete: TButton
+          Left = 240
+          Top = 282
+          Width = 96
+          Height = 32
+          Caption = #1059#1076#1072#1083#1080#1090#1100
+          TabOrder = 3
+          OnClick = btnUsersDeleteClick
+        end
       end
       object tsInvoiceRecipients: TTabSheet
         Caption = #1043#1088#1091#1079#1086#1087#1086#1083#1091#1095#1072#1090#1077#1083#1100
         ImageIndex = 7
+        object sgInvoiceRecipients: TStringGrid
+          Left = 16
+          Top = 16
+          Width = 566
+          Height = 250
+          ColCount = 2
+          DefaultDrawing = False
+          RowCount = 2
+          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected, goColSizing, goFixedColClick]
+          TabOrder = 0
+          OnDblClick = sgUsersDblClick
+          OnDrawCell = sgVanCatalogDrawCell
+          OnFixedCellClick = sgUsersFixedCellClick
+        end
+        object btnInvoiceRecipientsAdd: TButton
+          Left = 16
+          Top = 282
+          Width = 96
+          Height = 32
+          Caption = #1044#1086#1073#1072#1074#1080#1090#1100
+          TabOrder = 1
+          OnClick = btnUsersAddClick
+        end
+        object btnInvoiceRecipientsChange: TButton
+          Left = 128
+          Top = 282
+          Width = 96
+          Height = 32
+          Caption = #1048#1079#1084#1077#1085#1080#1090#1100
+          TabOrder = 2
+          OnClick = btnUsersChangeClick
+        end
+        object btnInvoiceRecipientsDelete: TButton
+          Left = 240
+          Top = 282
+          Width = 96
+          Height = 32
+          Caption = #1059#1076#1072#1083#1080#1090#1100
+          TabOrder = 3
+          OnClick = btnUsersDeleteClick
+        end
       end
     end
   end

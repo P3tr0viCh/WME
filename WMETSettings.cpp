@@ -26,12 +26,22 @@ __fastcall TSettings::TSettings() {
 	FUserList = new TObjList<TUser>();
 
 	FVanTypeList = new TVanTypeList();
+
 	FCargoTypeList = new TVanCatalogList();
+	FDepartStationList = new TVanCatalogList();
+	FPurposeStationList = new TVanCatalogList();
+	FInvoiceRecipientList = new TVanCatalogList();
+	FInvoiceSupplierList = new TVanCatalogList();
 }
 
 // ---------------------------------------------------------------------------
 __fastcall TSettings::~TSettings() {
+	FInvoiceSupplierList->Free();
+	FInvoiceRecipientList->Free();
+	FPurposeStationList->Free();
+	FDepartStationList->Free();
 	FCargoTypeList->Free();
+
 	FVanTypeList->Free();
 
 	FUserList->Free();
@@ -58,6 +68,14 @@ bool __fastcall TSettings::Equals(TObject * Obj) {
 
 	if (!Settings->CargoTypeList->Equals(CargoTypeList))
 		return false;
+	if (!Settings->DepartStationList->Equals(DepartStationList))
+		return false;
+	if (!Settings->PurposeStationList->Equals(PurposeStationList))
+		return false;
+	if (!Settings->InvoiceRecipientList->Equals(InvoiceRecipientList))
+		return false;
+	if (!Settings->InvoiceSupplierList->Equals(InvoiceSupplierList))
+		return false;
 
 	return true;
 }
@@ -68,6 +86,10 @@ void __fastcall TSettings::Assign(TSettings * Source) {
 	FUserList->Assign(Source->UserList);
 	FVanTypeList->Assign(Source->VanTypeList);
 	FCargoTypeList->Assign(Source->CargoTypeList);
+	FDepartStationList->Assign(Source->DepartStationList);
+	FPurposeStationList->Assign(Source->PurposeStationList);
+	FInvoiceRecipientList->Assign(Source->InvoiceRecipientList);
+	FInvoiceSupplierList->Assign(Source->InvoiceSupplierList);
 }
 
 // ---------------------------------------------------------------------------
@@ -79,6 +101,14 @@ String __fastcall TSettings::ToString() {
 	S += "UserList->Count='" + IntToStr(UserList->Count) + "'";
 	S += "VanTypeList->Count='" + IntToStr(VanTypeList->Count) + "'";
 	S += "CargoTypeList->Count='" + IntToStr(CargoTypeList->Count) + "'";
+	S += "DepartStationList->Count='" +
+		IntToStr(DepartStationList->Count) + "'";
+	S += "PurposeStationList->Count='" +
+		IntToStr(PurposeStationList->Count) + "'";
+	S += "InvoiceRecipientList->Count='" +
+		IntToStr(InvoiceRecipientList->Count) + "'";
+	S += "InvoiceSupplierList->Count='" +
+		IntToStr(InvoiceSupplierList->Count) + "'";
 	S += "}";
 
 	return S;
@@ -247,8 +277,8 @@ void TSettings::LoadVanTypes(String ConfigFileName) {
 }
 
 // ---------------------------------------------------------------------------
-void TSettings::LoadVanCatalog(String ConfigFileName, String SCount,
-	String SSection, TVanCatalogList * VanCatalogList) {
+void TSettings::LoadVanCatalog(String ConfigFileName, String Name,
+	TVanCatalogList * VanCatalogList) {
 	TIniFile * IniFile = new TIniFile(ConfigFileName);
 
 	TVanCatalog * VanCatalog;
@@ -256,10 +286,10 @@ void TSettings::LoadVanCatalog(String ConfigFileName, String SCount,
 	String Section;
 
 	try {
-		int Count = IniFile->ReadInteger(SCount, "Count", 0);
+		int Count = IniFile->ReadInteger(Name + "s", "Count", 0);
 
 		for (int i = 0; i < Count; i++) {
-			Section = SSection + IntToStr(i);
+			Section = Name + "_" + IntToStr(i);
 
 			VanCatalog = new TVanCatalog();
 
@@ -278,7 +308,27 @@ void TSettings::LoadVanCatalog(String ConfigFileName, String SCount,
 
 // ---------------------------------------------------------------------------
 void TSettings::LoadCargoTypes(String ConfigFileName) {
-	LoadVanCatalog(ConfigFileName, "CargoTypes", "CargoType_", CargoTypeList);
+	LoadVanCatalog(ConfigFileName, "CargoType", CargoTypeList);
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::LoadDepartStations(String ConfigFileName) {
+	LoadVanCatalog(ConfigFileName, "DepartStation", DepartStationList);
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::LoadPurposeStations(String ConfigFileName) {
+	LoadVanCatalog(ConfigFileName, "PurposeStation", PurposeStationList);
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::LoadInvoiceRecipients(String ConfigFileName) {
+	LoadVanCatalog(ConfigFileName, "InvoiceRecipient", InvoiceRecipientList);
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::LoadInvoiceSuppliers(String ConfigFileName) {
+	LoadVanCatalog(ConfigFileName, "InvoiceSupplier", InvoiceSupplierList);
 }
 
 // ---------------------------------------------------------------------------
@@ -301,8 +351,16 @@ bool TSettings::Load() {
 
 		ConfigFileName = GetConfigFileName("CargoTypes");
 		LoadCargoTypes(ConfigFileName);
+		ConfigFileName = GetConfigFileName("DepartStations");
+		LoadDepartStations(ConfigFileName);
+		ConfigFileName = GetConfigFileName("PurposeStations");
+		LoadPurposeStations(ConfigFileName);
+		ConfigFileName = GetConfigFileName("InvoiceRecipients");
+		LoadInvoiceRecipients(ConfigFileName);
+		ConfigFileName = GetConfigFileName("InvoiceSuppliers");
+		LoadInvoiceSuppliers(ConfigFileName);
 	}
-	catch (Exception *E) {
+	catch (Exception * E) {
 		WriteToLog(Format(IDS_LOG_READ_FILE_FAIL,
 			ARRAYOFCONST((ConfigFileName, E->Message))));
 
@@ -386,8 +444,8 @@ void TSettings::SaveVanTypes(String ConfigFileName) {
 }
 
 // ---------------------------------------------------------------------------
-void TSettings::SaveVanCatalog(String ConfigFileName, String SCount,
-	String SSection, TVanCatalogList * VanCatalogList) {
+void TSettings::SaveVanCatalog(String ConfigFileName, String Name,
+	TVanCatalogList * VanCatalogList) {
 	DeleteConfigFile(ConfigFileName);
 
 	VanCatalogList->Sort(VanCatalogListSort);
@@ -396,13 +454,15 @@ void TSettings::SaveVanCatalog(String ConfigFileName, String SCount,
 
 	TIniFile * IniFile = new TIniFile(ConfigFileName);
 	try {
-		IniFile->WriteInteger(SCount, "Count", VanCatalogList->Count);
+		IniFile->WriteInteger(Name + "s", "Count", VanCatalogList->Count);
 
 		for (int i = 0; i < VanCatalogList->Count; i++) {
-			Section = SSection + IntToStr(i);
+			Section = Name + "_" + IntToStr(i);
 
-			IniFile->WriteInteger(Section, "Code", VanCatalogList->Items[i]->Code);
-			IniFile->WriteString(Section, "Name", VanCatalogList->Items[i]->Name);
+			IniFile->WriteInteger(Section, "Code",
+				VanCatalogList->Items[i]->Code);
+			IniFile->WriteString(Section, "Name",
+				VanCatalogList->Items[i]->Name);
 		}
 	}
 	__finally {
@@ -412,7 +472,27 @@ void TSettings::SaveVanCatalog(String ConfigFileName, String SCount,
 
 // ---------------------------------------------------------------------------
 void TSettings::SaveCargoTypes(String ConfigFileName) {
-	SaveVanCatalog(ConfigFileName, "CargoTypes", "CargoType_", CargoTypeList);
+	SaveVanCatalog(ConfigFileName, "CargoType", CargoTypeList);
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::SaveDepartStations(String ConfigFileName) {
+	SaveVanCatalog(ConfigFileName, "DepartStation", DepartStationList);
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::SavePurposeStations(String ConfigFileName) {
+	SaveVanCatalog(ConfigFileName, "PurposeStation", PurposeStationList);
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::SaveInvoiceRecipients(String ConfigFileName) {
+	SaveVanCatalog(ConfigFileName, "InvoiceRecipient", InvoiceRecipientList);
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::SaveInvoiceSuppliers(String ConfigFileName) {
+	SaveVanCatalog(ConfigFileName, "InvoiceSupplier", InvoiceSupplierList);
 }
 
 // ---------------------------------------------------------------------------
@@ -439,8 +519,16 @@ bool TSettings::Save() {
 
 		ConfigFileName = GetConfigFileName("CargoTypes");
 		SaveCargoTypes(ConfigFileName);
+		ConfigFileName = GetConfigFileName("DepartStations");
+		SaveDepartStations(ConfigFileName);
+		ConfigFileName = GetConfigFileName("PurposeStations");
+		SavePurposeStations(ConfigFileName);
+		ConfigFileName = GetConfigFileName("InvoiceRecipients");
+		SaveInvoiceRecipients(ConfigFileName);
+		ConfigFileName = GetConfigFileName("InvoiceSuppliers");
+		SaveInvoiceSuppliers(ConfigFileName);
 	}
-	catch (Exception *E) {
+	catch (Exception * E) {
 		WriteToLog(Format(IDS_LOG_WRITE_FILE_FAIL,
 			ARRAYOFCONST((ConfigFileName, E->Message))));
 

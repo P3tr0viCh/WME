@@ -158,6 +158,23 @@ void TDBSaveTrain::Operation() {
 				Train->VanList->Items[i]->User->TabNum);
 			SetVansParam(Query, fnVansOperatorShiftNum, i,
 				Train->VanList->Items[i]->User->ShiftNum);
+
+			SetVansParam(Query, fnVansDepartStation, i,
+				Train->VanList->Items[i]->DepartStation->Name);
+			SetVansParam(Query, fnVansDepartStationCode, i,
+				Train->VanList->Items[i]->DepartStation->Code);
+			SetVansParam(Query, fnVansPurposeStation, i,
+				Train->VanList->Items[i]->PurposeStation->Name);
+			SetVansParam(Query, fnVansPurposeStationCode, i,
+				Train->VanList->Items[i]->PurposeStation->Code);
+			SetVansParam(Query, fnVansInvoiceRecipient, i,
+				Train->VanList->Items[i]->InvoiceRecipient->Name);
+			SetVansParam(Query, fnVansInvoiceRecipientCode, i,
+				Train->VanList->Items[i]->InvoiceRecipient->Code);
+			SetVansParam(Query, fnVansInvoiceSupplier, i,
+				Train->VanList->Items[i]->InvoiceSupplier->Name);
+			SetVansParam(Query, fnVansInvoiceSupplierCode, i,
+				Train->VanList->Items[i]->InvoiceSupplier->Code);
 		}
 
 		Query->Prepared = true;

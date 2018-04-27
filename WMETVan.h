@@ -39,11 +39,11 @@ private:
 
 	TUser * FUser;
 
-	String FDepartStation;
-	String FPurposeStation;
+	TVanCatalog * FDepartStation;
+	TVanCatalog * FPurposeStation;
 	String FInvoiceNum;
-	String FInvoiceSupplier;
-	String FInvoiceRecipient;
+	TVanCatalog * FInvoiceSupplier;
+	TVanCatalog * FInvoiceRecipient;
 
 	void Init();
 
@@ -86,15 +86,11 @@ public:
 
 	__property TUser * User = {read = FUser, write = SetUser};
 
-	__property String DepartStation = {
-		read = FDepartStation, write = FDepartStation};
-	__property String PurposeStation = {
-		read = FPurposeStation, write = FPurposeStation};
+	__property TVanCatalog * DepartStation = {read = FDepartStation};
+	__property TVanCatalog * PurposeStation = {read = FPurposeStation};
 	__property String InvoiceNum = {read = FInvoiceNum, write = FInvoiceNum};
-	__property String InvoiceSupplier = {
-		read = FInvoiceSupplier, write = FInvoiceSupplier};
-	__property String InvoiceRecipient = {
-		read = FInvoiceRecipient, write = FInvoiceRecipient};
+	__property TVanCatalog * InvoiceSupplier = {read = FInvoiceSupplier};
+	__property TVanCatalog * InvoiceRecipient = {read = FInvoiceRecipient};
 };
 
 // ---------------------------------------------------------------------------

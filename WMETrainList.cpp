@@ -314,7 +314,7 @@ void TfrmTrainList::UpdateVans(int Index) {
 // ---------------------------------------------------------------------------
 void TfrmTrainList::UpdateTrain(int Index) {
 	SetTrain(Index + 1, TrainList->Items[Index]);
-    UpdateVans(Index);
+	UpdateVans(Index);
 }
 
 // ---------------------------------------------------------------------------
@@ -368,6 +368,13 @@ int TfrmTrainList::SetVan(int Index, TVan *Van) {
 	sgVans->Cells[VansColumns.OVERLOAD][Index] = IntToStr(Van->Overload);
 
 	sgVans->Cells[VansColumns.CARGOTYPE][Index] = Van->CargoType->Name;
+	sgVans->Cells[VansColumns.DEPART_STATION][Index] = Van->DepartStation->Name;
+	sgVans->Cells[VansColumns.PURPOSE_STATION][Index] =
+		Van->PurposeStation->Name;
+	sgVans->Cells[VansColumns.INVOICE_RECIPIENT][Index] =
+		Van->InvoiceRecipient->Name;
+	sgVans->Cells[VansColumns.INVOICE_SUPPLIER][Index] =
+		Van->InvoiceSupplier->Name;
 
 	return Index;
 }

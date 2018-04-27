@@ -54,6 +54,22 @@ __published:
 	TButton *btnCargoTypesAdd;
 	TButton *btnCargoTypesChange;
 	TButton *btnCargoTypesDelete;
+	TStringGrid *sgDepartStations;
+	TButton *btnDepartStationsAdd;
+	TButton *btnDepartStationsChange;
+	TButton *btnDepartStationsDelete;
+	TStringGrid *sgInvoiceRecipients;
+	TButton *btnInvoiceRecipientsAdd;
+	TButton *btnInvoiceRecipientsChange;
+	TButton *btnInvoiceRecipientsDelete;
+	TStringGrid *sgPurposeStations;
+	TButton *btnPurposeStationsAdd;
+	TButton *btnPurposeStationsChange;
+	TButton *btnPurposeStationsDelete;
+	TStringGrid *sgInvoiceSuppliers;
+	TButton *btnInvoiceSuppliersAdd;
+	TButton *btnInvoiceSuppliersChange;
+	TButton *btnInvoiceSuppliersDelete;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -68,8 +84,17 @@ __published:
 	void __fastcall sgUsersFixedCellClick(TObject *Sender, int ACol, int ARow);
 	void __fastcall btnDBCreateClick(TObject *Sender);
 	void __fastcall btnDBDeleteClick(TObject *Sender);
+	void __fastcall sgVanCatalogDrawCell(TObject *Sender, int ACol, int ARow,
+		TRect &Rect, TGridDrawState State);
+	void __fastcall sgVanTypesDrawCell(TObject *Sender, int ACol, int ARow,
+		TRect &Rect, TGridDrawState State);
+	void __fastcall sgUsersDrawCell(TObject *Sender, int ACol, int ARow,
+		TRect &Rect, TGridDrawState State);
 
 private:
+	TIntegerSet NUSet;
+	TColor NUColor;
+
 	TSettings * Settings;
 
 	bool IsReadOnly;
@@ -82,7 +107,10 @@ private:
 
 	void SetReadOnly(TComponent * Parent, bool ReadOnly);
 
+	void UpdateFormVanCatalog(TStringGrid * Grid,
+		TVanCatalogList * VanCatalogList);
 	void UpdateForm();
+
 	void UpdateSettingsVanCatalog(TStringGrid * Grid,
 		TVanCatalogList * VanCatalogList);
 	void UpdateSettings();

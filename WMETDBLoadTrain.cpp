@@ -58,7 +58,7 @@ void TDBLoadTrain::Operation() {
 
 	Connection->Open();
 
-	TADOQuery *Query = new TADOQuery(NULL);
+	TADOQuery * Query = new TADOQuery(NULL);
 	try {
 		Query->Connection = Connection;
 
@@ -74,7 +74,7 @@ void TDBLoadTrain::Operation() {
 
 		// WriteToLog(Query->SQL->Text);
 
-		TParameter *Param = Query->Parameters->ParamByName
+		TParameter * Param = Query->Parameters->ParamByName
 			(VansFields->GetParamName(fnVansTrnum));
 		Param->DataType = VansFields->GetFieldType(fnVansTrnum);
 		Param->Value = TrainNum;
@@ -135,6 +135,38 @@ void TDBLoadTrain::Operation() {
 				GetFieldAsInteger(Query,
 				VansFields->GetFieldName(fnVansCargoTypeCode),
 				Van->CargoType->Code);
+
+			Van->DepartStation->Name =
+				Query->FieldByName(VansFields->GetFieldName(fnVansDepartStation)
+				)->AsString;
+			Van->DepartStation->Code =
+				GetFieldAsInteger(Query,
+				VansFields->GetFieldName(fnVansDepartStationCode),
+				Van->DepartStation->Code);
+
+			Van->PurposeStation->Name =
+				Query->FieldByName
+				(VansFields->GetFieldName(fnVansPurposeStation))->AsString;
+			Van->PurposeStation->Code =
+				GetFieldAsInteger(Query,
+				VansFields->GetFieldName(fnVansPurposeStationCode),
+				Van->PurposeStation->Code);
+
+			Van->InvoiceRecipient->Name =
+				Query->FieldByName
+				(VansFields->GetFieldName(fnVansInvoiceRecipient))->AsString;
+			Van->InvoiceRecipient->Code =
+				GetFieldAsInteger(Query,
+				VansFields->GetFieldName(fnVansInvoiceRecipientCode),
+				Van->InvoiceRecipient->Code);
+
+			Van->InvoiceSupplier->Name =
+				Query->FieldByName
+				(VansFields->GetFieldName(fnVansInvoiceSupplier))->AsString;
+			Van->InvoiceSupplier->Code =
+				GetFieldAsInteger(Query,
+				VansFields->GetFieldName(fnVansInvoiceSupplierCode),
+				Van->InvoiceSupplier->Code);
 
 			FVanList->Add(Van);
 

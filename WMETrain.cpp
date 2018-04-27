@@ -54,9 +54,9 @@ public:
 	TVansColumns() {
 		ReadOnly =
 			TIntegerSet() << NUM << TARE << TARE_D << TARE_S << TARE_INDEX <<
-			NETTO << OVERLOAD << DEPART_STATION << PURPOSE_STATION <<
-			INVOICE_SUPPLIER << INVOICE_RECIPIENT;
-		ComboBox = TIntegerSet() << VANTYPE << CARGOTYPE;
+			NETTO << OVERLOAD;
+		ComboBox = TIntegerSet() << VANTYPE << CARGOTYPE << DEPART_STATION <<
+			PURPOSE_STATION << INVOICE_SUPPLIER << INVOICE_RECIPIENT;
 		LeftAlign =
 			TIntegerSet() << DATETIME << VANNUM << VANTYPE << CARGOTYPE <<
 			DEPART_STATION << PURPOSE_STATION << INVOICE_NUM <<
@@ -132,6 +132,10 @@ void __fastcall TfrmTrain::FormCreate(TObject *Sender) {
 
 	CreateVansColumns();
 	CreateTrainColumns();
+
+	sgVans->DefaultRowHeight = ComboBox->Height;
+	sgTrain->DefaultRowHeight = sgVans->DefaultRowHeight;
+	sgTrain->Height = (sgTrain->GridHeight + 2);
 
 	TFileIni* FileIni = TFileIni::GetNewInstance();
 	try {
@@ -373,6 +377,18 @@ bool TfrmTrain::ShowVanComboBox(int Col) {
 	case VansColumns.CARGOTYPE:
 		UpdateVanComboBox(Main->Settings->CargoTypeList);
 		break;
+	case VansColumns.DEPART_STATION:
+		UpdateVanComboBox(Main->Settings->DepartStationList);
+		break;
+	case VansColumns.PURPOSE_STATION:
+		UpdateVanComboBox(Main->Settings->PurposeStationList);
+		break;
+	case VansColumns.INVOICE_RECIPIENT:
+		UpdateVanComboBox(Main->Settings->InvoiceRecipientList);
+		break;
+	case VansColumns.INVOICE_SUPPLIER:
+		UpdateVanComboBox(Main->Settings->InvoiceSupplierList);
+		break;
 	default:
 		return false;
 	}
@@ -380,7 +396,7 @@ bool TfrmTrain::ShowVanComboBox(int Col) {
 	TRect Rect = sgVans->CellRect(sgVans->Col, sgVans->Row);
 
 	ComboBox->SetBounds(sgVans->Left + Rect.Left + sgVans->GridLineWidth + 1,
-		sgVans->Top + Rect.Top + sgVans->GridLineWidth,
+		sgVans->Top + Rect.Top + sgVans->GridLineWidth + 1,
 		sgVans->ColWidths[sgVans->Col], sgVans->DefaultRowHeight);
 
 	ComboBox->Visible = true;
@@ -574,6 +590,18 @@ int TfrmTrain::GetVanCatalogCode(int CatalogIdent, String Name) {
 	case VansColumns.CARGOTYPE:
 		VanCatalogList = Main->Settings->CargoTypeList;
 		break;
+	case VansColumns.DEPART_STATION:
+		VanCatalogList = Main->Settings->DepartStationList;
+		break;
+	case VansColumns.PURPOSE_STATION:
+		VanCatalogList = Main->Settings->PurposeStationList;
+		break;
+	case VansColumns.INVOICE_RECIPIENT:
+		VanCatalogList = Main->Settings->InvoiceRecipientList;
+		break;
+	case VansColumns.INVOICE_SUPPLIER:
+		VanCatalogList = Main->Settings->InvoiceSupplierList;
+		break;
 	default:
 		return VAN_CATALOG_CODE_NONE;
 	}
@@ -603,9 +631,9 @@ TVanType * TfrmTrain::GetVanType(String Name) {
 
 // ---------------------------------------------------------------------------
 TVanList * TfrmTrain::GetVanList() {
-	TVanList *VanList = new TVanList();
+	TVanList * VanList = new TVanList();
 
-	TVan *Van;
+	TVan * Van;
 
 	for (int i = 1; i < sgVans->RowCount; i++) {
 		Van = new TVan();
@@ -636,11 +664,29 @@ TVanList * TfrmTrain::GetVanList() {
 
 		Van->User = Main->User;
 
-		Van->DepartStation = sgVans->Cells[VansColumns.DEPART_STATION][i];
-		Van->PurposeStation = sgVans->Cells[VansColumns.PURPOSE_STATION][i];
+		Van->DepartStation->Name = sgVans->Cells[VansColumns.DEPART_STATION][i];
+		Van->DepartStation->Code = GetVanCatalogCode(VansColumns.DEPART_STATION,
+			Van->DepartStation->Name);
+
+		Van->PurposeStation->Name =
+			sgVans->Cells[VansColumns.PURPOSE_STATION][i];
+		Van->PurposeStation->Code =
+			GetVanCatalogCode(VansColumns.PURPOSE_STATION,
+			Van->PurposeStation->Name);
+
 		Van->InvoiceNum = sgVans->Cells[VansColumns.INVOICE_NUM][i];
-		Van->InvoiceSupplier = sgVans->Cells[VansColumns.INVOICE_SUPPLIER][i];
-		Van->InvoiceRecipient = sgVans->Cells[VansColumns.INVOICE_RECIPIENT][i];
+
+		Van->InvoiceSupplier->Name =
+			sgVans->Cells[VansColumns.INVOICE_SUPPLIER][i];
+		Van->InvoiceSupplier->Code =
+			GetVanCatalogCode(VansColumns.INVOICE_SUPPLIER,
+			Van->InvoiceSupplier->Name);
+
+		Van->InvoiceRecipient->Name =
+			sgVans->Cells[VansColumns.INVOICE_RECIPIENT][i];
+		Van->InvoiceRecipient->Code =
+			GetVanCatalogCode(VansColumns.INVOICE_RECIPIENT,
+			Van->InvoiceRecipient->Name);
 
 		VanList->Add(Van);
 	}
@@ -650,7 +696,7 @@ TVanList * TfrmTrain::GetVanList() {
 
 // ---------------------------------------------------------------------------
 TTrain *TfrmTrain::GetTrain(int TrainNum) {
-	TTrain *Train = new TTrain(GetVanList());
+	TTrain * Train = new TTrain(GetVanList());
 
 	Train->TrainNum = TrainNum;
 
@@ -694,11 +740,11 @@ bool TfrmTrain::SaveVans() {
 
 	bool Result;
 
-	TTrain *TempTrain = GetTrain(Train->TrainNum);
+	TTrain * TempTrain = GetTrain(Train->TrainNum);
 
 	ShowWaitCursor();
 
-	TDBSaveTrain *DBSaveTrain = new TDBSaveTrain(Main->Settings->Connection,
+	TDBSaveTrain * DBSaveTrain = new TDBSaveTrain(Main->Settings->Connection,
 		TempTrain);
 	try {
 		Result = DBSaveTrain->Execute();
@@ -746,6 +792,14 @@ int TfrmTrain::SetVan(int Index, TVan *Van) {
 	sgVans->Cells[VansColumns.OVERLOAD][Index] = IntToStr(Van->Overload);
 
 	sgVans->Cells[VansColumns.CARGOTYPE][Index] = Van->CargoType->Name;
+
+	sgVans->Cells[VansColumns.DEPART_STATION][Index] = Van->DepartStation->Name;
+	sgVans->Cells[VansColumns.PURPOSE_STATION][Index] =
+		Van->PurposeStation->Name;
+	sgVans->Cells[VansColumns.INVOICE_RECIPIENT][Index] =
+		Van->InvoiceRecipient->Name;
+	sgVans->Cells[VansColumns.INVOICE_SUPPLIER][Index] =
+		Van->InvoiceSupplier->Name;
 
 	return Index;
 }
