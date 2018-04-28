@@ -123,11 +123,10 @@ void StringGridDrawCell(TStringGrid *Grid, int ACol, int ARow, TRect Rect,
 
 		DrawText(Grid->Canvas->Handle, Grid->Cells[ACol][ARow].c_str(),
 			Grid->Cells[ACol][ARow].Length(), (RECT*)&Rect,
-			DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+			DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
 	}
 	else {
 		InflateRect(Rect, -2, 0);
-		OffsetRect(Rect, 0, 2);
 
 		if (!State.Contains(gdSelected)) {
 			if (ColsCustomColor.Contains(ACol)) {
@@ -139,12 +138,12 @@ void StringGridDrawCell(TStringGrid *Grid, int ACol, int ARow, TRect Rect,
 		if (ColsLeftAlign.Contains(ACol)) {
 			DrawText(Grid->Canvas->Handle, Grid->Cells[ACol][ARow].c_str(),
 				Grid->Cells[ACol][ARow].Length(), (RECT*)&Rect,
-				DT_SINGLELINE | DT_END_ELLIPSIS);
+				DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 		}
 		else {
 			DrawText(Grid->Canvas->Handle, Grid->Cells[ACol][ARow].c_str(),
 				Grid->Cells[ACol][ARow].Length(), (RECT*)&Rect,
-				DT_SINGLELINE | DT_END_ELLIPSIS | DT_CENTER);
+				DT_SINGLELINE | DT_END_ELLIPSIS | DT_CENTER | DT_VCENTER);
 		}
 	}
 }
@@ -188,6 +187,38 @@ String DateTimeToSQLStr(TDateTime ADateTime) {
 int DateTimeToWTime(TDateTime ADateTime) {
 	// TODO: Magic Number
 	return int(DateTimeToUnix(IncHour(ADateTime, -3)));
+}
+
+// ---------------------------------------------------------------------------
+String CheckStrValue(String Value) {
+	int P = Value.Pos(sLineBreak);
+	if (P > 0) {
+		Value = Value.SubString(0, P - 1);
+	}
+
+	return Trim(Value);
+}
+
+// ---------------------------------------------------------------------------
+bool CheckDateTimeValue(String Value) {
+	try {
+		StrToDateTime(Value);
+	}
+	catch (...) {
+		return false;
+	}
+	return true;
+}
+
+// ---------------------------------------------------------------------------
+bool CheckIntValue(String Value) {
+	try {
+		StrToInt(Value);
+	}
+	catch (...) {
+		return false;
+	}
+	return true;
 }
 
 // ---------------------------------------------------------------------------

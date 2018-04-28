@@ -16,6 +16,13 @@ object frmOptionsUser: TfrmOptionsUser
   Position = poOwnerFormCenter
   PixelsPerInch = 96
   TextHeight = 21
+  object Bevel: TBevel
+    Left = 16
+    Top = 176
+    Width = 304
+    Height = 4
+    Shape = bsTopLine
+  end
   object btnCancel: TButton
     Left = 224
     Top = 192

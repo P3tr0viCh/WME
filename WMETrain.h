@@ -71,7 +71,7 @@ __published:
 private:
 	bool FChanged;
 
-	TTrain *Train;
+	TTrain * Train;
 
 	TIntegerSet NUSet;
 	TColor NUColor;
@@ -93,32 +93,29 @@ private:
 
 	void UpdateButtons();
 
-	String CheckStrValue(String Value);
-	void CheckStrValue(int ACol, int ARow);
-	bool CheckDateTimeValue(String Value);
-	bool CheckIntValue(String Value);
+	void CheckValue(int ACol, int ARow);
 	bool CheckValues(int ARow = -1);
 
 	int GetVanCatalogCode(int CatalogIdent, String Name);
 
 	TVanType * GetVanType(String Name);
 
-	TVanList *GetVanList();
-	TTrain *GetTrain(int TrainNum);
+	TVanList * GetVanList();
+	TTrain * GetTrain(int TrainNum);
 
 	bool SaveVans();
 
-	int SetVan(int Index, TVan *Van);
+	int SetVan(int Index, TVan * Van);
 
-	void UpdateVans(TTrain *Train);
+	void UpdateVans(TTrain * Train);
 
-	void UpdateVanComboBox(TVanCatalogList *VanCatalogList);
+	void UpdateVanComboBox(TVanCatalogList * VanCatalogList);
 	bool ShowVanComboBox(int Col);
 
 public:
-	__fastcall TfrmTrain(TComponent* Owner);
+	__fastcall TfrmTrain(TComponent * Owner);
 
-	static bool Show(TTrain *Train);
+	static bool Show(TTrain * Train);
 
 	__property bool Changed = {read = FChanged, write = SetChanged};
 };

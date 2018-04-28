@@ -32,6 +32,10 @@ IDS_ERROR_USERS_LAST_ADMIN,
         "В списке пользователей должен присутствовать как минимум один Администратор"
 IDS_ERROR_UNKNOWN_EXCEPTION,
         "Возникла непредвиденная ошибка:\n\n%s"
+IDS_ERROR_NEED_INT,
+        "Необходимо указать число"
+IDS_ERROR_TEXT_EMPTY,
+        "Строковое значение не указано"
 
 IDS_ERROR_MYSQL_CONNECTION,
         "Не удалось подключиться к базе данных"

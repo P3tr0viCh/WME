@@ -19,10 +19,10 @@ __fastcall TfrmOptionsUser::TfrmOptionsUser(TComponent* Owner) : TForm(Owner) {
 }
 
 // ---------------------------------------------------------------------------
-bool TfrmOptionsUser::Show(TComponent* Owner, TUser *User, int AdminCount) {
+bool TfrmOptionsUser::Show(TComponent * Owner, TUser * User, int AdminCount) {
 	bool Result = false;
 
-	TfrmOptionsUser *frmOptionsUser = new TfrmOptionsUser(Owner);
+	TfrmOptionsUser * frmOptionsUser = new TfrmOptionsUser(Owner);
 	try {
 		frmOptionsUser->eName->Text = User->Name;
 		frmOptionsUser->ePass->Text = User->Pass;

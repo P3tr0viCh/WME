@@ -378,7 +378,8 @@ void TfrmOptions::UpdateSettings() {
 	UpdateSettingsVanCatalog(sgCargoTypes, Settings->CargoTypeList);
 	UpdateSettingsVanCatalog(sgDepartStations, Settings->DepartStationList);
 	UpdateSettingsVanCatalog(sgPurposeStations, Settings->PurposeStationList);
-	UpdateSettingsVanCatalog(sgInvoiceRecipients, Settings->InvoiceRecipientList);
+	UpdateSettingsVanCatalog(sgInvoiceRecipients,
+		Settings->InvoiceRecipientList);
 	UpdateSettingsVanCatalog(sgInvoiceSuppliers, Settings->InvoiceSupplierList);
 }
 
@@ -632,7 +633,7 @@ bool TfrmOptions::IsUserAdmin(int Index) {
 }
 
 // ---------------------------------------------------------------------------
-TStringGrid* TfrmOptions::GetStringGrid(TObject *Sender) {
+TStringGrid * TfrmOptions::GetStringGrid(TObject *Sender) {
 	switch (((TControl*)Sender)->Tag) {
 	case StringGrids.USERS:
 		return sgUsers;
@@ -655,23 +656,34 @@ TStringGrid* TfrmOptions::GetStringGrid(TObject *Sender) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmOptions::btnUsersAddClick(TObject * Sender) {
-	TStringGrid *SG = GetStringGrid(Sender);
+void TfrmOptions::SetStringGridValues(bool Add, TObject * Sender) {
+	TStringGrid * SG = GetStringGrid(Sender);
 
 	TUser * User;
 	TVanType * VanType;
 	TVanCatalog * VanCatalog;
 
+	int SelectedRow = SG->Row;
+	int ChangeRow = Add ? -1 : SelectedRow;
+
 	switch (SG->Tag) {
 	case StringGrids.USERS:
-		User = new TUser();
+		if (Add) {
+			User = new TUser();
+		}
+		else {
+			User = GetUser(SelectedRow);
+		}
+
 		try {
 #ifdef _DEBUG
-			User->Name = "Name " + IntToStr(rand());
+			if (Add) {
+				User->Name = "Name " + IntToStr(rand());
+			}
 #endif
 
 			if (TfrmOptionsUser::Show(this, User, AdminCount())) {
-				sgUsers->Row = SetUser(-1, User);
+				SG->Row = SetUser(ChangeRow, User);
 			}
 		}
 		__finally {
@@ -680,19 +692,24 @@ void __fastcall TfrmOptions::btnUsersAddClick(TObject * Sender) {
 		break;
 
 	case StringGrids.VANTYPES:
-		VanType = new TVanType();
+		if (Add) {
+			VanType = new TVanType();
+		}
+		else {
+			VanType = GetVanType(SelectedRow);
+		}
 		try {
-#ifdef _DEBUG
-			VanType->Code = rand();
-			VanType->Name = "VanType " + IntToStr(VanType->Code);
-			VanType->AxisCount = random(3) + 1;
-#endif
-			sgVanTypes->Row = SetVanType(-1, VanType);
 
-			// TODO
-			// if (TfrmOptionsUser::Show(this, User, AdminCount())) {
-			// sgVanTypes->Row = SetVanType(-1, VanCatalog);
-			// }
+#ifdef _DEBUG
+			if (Add) {
+				VanType->Code = rand();
+				VanType->Name = "VanType " + IntToStr(VanType->Code);
+				VanType->AxisCount = random(3) + 1;
+			}
+#endif
+			if (TfrmOptionsVanType::Show(this, VanType)) {
+				SG->Row = SetVanType(ChangeRow, VanType);
+			}
 		}
 		__finally {
 			VanType->Free();
@@ -704,102 +721,86 @@ void __fastcall TfrmOptions::btnUsersAddClick(TObject * Sender) {
 	case StringGrids.PURPOSE_STATIONS:
 	case StringGrids.INVOICE_RECIPIENTS:
 	case StringGrids.INVOICE_SUPPLIERS:
-		VanCatalog = new TVanCatalog();
+		if (Add) {
+			VanCatalog = new TVanCatalog();
+		}
+		else {
+			VanCatalog = GetVanCatalog(SG, SelectedRow);
+		}
+
 		try {
 #ifdef _DEBUG
-			VanCatalog->Code = rand();
+			if (Add) {
+				VanCatalog->Code = rand();
 
-			String VanCatalogName;
+				String VanCatalogName;
+
+				switch (SG->Tag) {
+				case StringGrids.CARGOTYPES:
+					VanCatalogName = "CargoType";
+					break;
+				case StringGrids.DEPART_STATIONS:
+					VanCatalogName = "DepartStation";
+					break;
+				case StringGrids.PURPOSE_STATIONS:
+					VanCatalogName = "PurposeStation";
+					break;
+				case StringGrids.INVOICE_RECIPIENTS:
+					VanCatalogName = "InvoiceRecipient";
+					break;
+				case StringGrids.INVOICE_SUPPLIERS:
+					VanCatalogName = "InvoiceSupplier";
+					break;
+				}
+				VanCatalog->Name = VanCatalogName + " " +
+					IntToStr(VanCatalog->Code);
+			}
+#endif
+			String VanCatalogCaption;
 
 			switch (SG->Tag) {
 			case StringGrids.CARGOTYPES:
-				VanCatalogName = "CargoType";
+				VanCatalogCaption = LoadStr(IDS_GRID_HEADER_CARGOTYPE);
 				break;
 			case StringGrids.DEPART_STATIONS:
-				VanCatalogName = "DepartStation";
+				VanCatalogCaption = LoadStr(IDS_GRID_HEADER_DEPART_STATION);
 				break;
 			case StringGrids.PURPOSE_STATIONS:
-				VanCatalogName = "PurposeStation";
+				VanCatalogCaption = LoadStr(IDS_GRID_HEADER_PURPOSE_STATION);
 				break;
 			case StringGrids.INVOICE_RECIPIENTS:
-				VanCatalogName = "InvoiceRecipient";
+				VanCatalogCaption = LoadStr(IDS_GRID_HEADER_INVOICE_SUPPLIER);
 				break;
 			case StringGrids.INVOICE_SUPPLIERS:
-				VanCatalogName = "InvoiceSupplier";
+				VanCatalogCaption = LoadStr(IDS_GRID_HEADER_INVOICE_RECIPIENT);
 				break;
 			}
-			VanCatalog->Name = VanCatalogName + " " +
-				IntToStr(VanCatalog->Code);
-#endif
-			SG->Row = SetVanCatalog(SG, -1, VanCatalog);
-			// TODO
-			// if (TfrmOptionsUser::Show(this, User, AdminCount())) {
-			// sgVanTypes->Row = SetVanType(-1, VanCatalog);
-			// }
+
+			if (TfrmOptionsVanCatalog::Show(this, VanCatalogCaption,
+				VanCatalog)) {
+				SG->Row = SetVanCatalog(SG, ChangeRow, VanCatalog);
+			}
 		}
 		__finally {
 			VanCatalog->Free();
 		}
 		break;
 	}
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmOptions::btnUsersAddClick(TObject * Sender) {
+	SetStringGridValues(true, Sender);
 }
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmOptions::btnUsersChangeClick(TObject * Sender) {
-	TStringGrid *SG = GetStringGrid(Sender);
-
-	if (StringGridIsEmpty(SG)) {
-		return;
-	}
-
-	TUser * User;
-	TVanType * VanType;
-	TVanCatalog * VanCatalog;
-
-	switch (SG->Tag) {
-	case StringGrids.USERS:
-		User = GetUser(sgUsers->Row);
-		try {
-			if (TfrmOptionsUser::Show(this, User, AdminCount())) {
-				SetUser(sgUsers->Row, User);
-			}
-		}
-		__finally {
-			User->Free();
-		}
-		break;
-
-	case StringGrids.VANTYPES:
-		VanType = GetVanType(sgVanTypes->Row);
-		try {
-			VanType->Code = VanType->Code + 1;
-			SetVanType(sgVanTypes->Row, VanType);
-		}
-		__finally {
-			VanType->Free();
-		}
-		break;
-
-	case StringGrids.CARGOTYPES:
-	case StringGrids.DEPART_STATIONS:
-	case StringGrids.PURPOSE_STATIONS:
-	case StringGrids.INVOICE_RECIPIENTS:
-	case StringGrids.INVOICE_SUPPLIERS:
-		VanCatalog = GetVanCatalog(SG, SG->Row);
-		try {
-			VanCatalog->Code = VanCatalog->Code + 1;
-			SetVanCatalog(SG, SG->Row, VanCatalog);
-		}
-		__finally {
-			VanCatalog->Free();
-		}
-		break;
-	}
+	SetStringGridValues(false, Sender);
 }
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmOptions::btnUsersDeleteClick(TObject *Sender) {
-	TStringGrid *SG = GetStringGrid(Sender);
+	TStringGrid * SG = GetStringGrid(Sender);
 
 	int ColumnCount;
 
@@ -834,7 +835,7 @@ void __fastcall TfrmOptions::btnUsersDeleteClick(TObject *Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmOptions::sgUsersDblClick(TObject *Sender) {
-	TStringGrid *SG = GetStringGrid(Sender);
+	TStringGrid * SG = GetStringGrid(Sender);
 
 	TButton * btnAdd;
 	TButton * btnChange;

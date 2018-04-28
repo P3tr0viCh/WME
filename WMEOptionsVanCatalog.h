@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------
 
-#ifndef WMEOptionsUserH
-#define WMEOptionsUserH
+#ifndef WMEOptionsVanCatalogH
+#define WMEOptionsVanCatalogH
 // ---------------------------------------------------------------------------
 #include <System.Classes.hpp>
 #include <Vcl.Controls.hpp>
@@ -9,30 +9,28 @@
 #include <Vcl.Forms.hpp>
 #include <Vcl.ExtCtrls.hpp>
 
-#include "WMETUser.h"
+#include "WMETVanCatalog.h"
 
 // ---------------------------------------------------------------------------
-class TfrmOptionsUser : public TForm {
+class TfrmOptionsVanCatalog : public TForm {
 __published:
 	TButton *btnCancel;
 	TButton *btnOk;
+	TLabeledEdit *eCode;
 	TLabeledEdit *eName;
-	TLabeledEdit *ePass;
-	TLabeledEdit *eTabNum;
-	TLabeledEdit *eShiftNum;
-	TCheckBox *cboxAdmin;
 	TBevel *Bevel;
 
 	void __fastcall btnOkClick(TObject *Sender);
 
 private:
 public:
-	__fastcall TfrmOptionsUser(TComponent * Owner);
+	__fastcall TfrmOptionsVanCatalog(TComponent * Owner);
 
-	static bool Show(TComponent * Owner, TUser * User, int AdminCount);
+	static bool Show(TComponent * Owner, String Caption,
+		TVanCatalog * VanCatalog);
 };
 
 // ---------------------------------------------------------------------------
-extern PACKAGE TfrmOptionsUser *frmOptionsUser;
+extern PACKAGE TfrmOptionsVanCatalog *frmOptionsVanCatalog;
 // ---------------------------------------------------------------------------
 #endif

@@ -499,40 +499,8 @@ void TfrmTrain::UpdateButtons() {
 }
 
 // ---------------------------------------------------------------------------
-String TfrmTrain::CheckStrValue(String Value) {
-	int P = Value.Pos(sLineBreak);
-	if (P > 0) {
-		Value = Value.SubString(0, P - 1);
-	}
-
-	return Trim(Value);
-}
-
-// ---------------------------------------------------------------------------
-void TfrmTrain::CheckStrValue(int ACol, int ARow) {
+void TfrmTrain::CheckValue(int ACol, int ARow) {
 	sgVans->Cells[ACol][ARow] = CheckStrValue(sgVans->Cells[ACol][ARow]);
-}
-
-// ---------------------------------------------------------------------------
-bool TfrmTrain::CheckDateTimeValue(String Value) {
-	try {
-		StrToDateTime(Value);
-	}
-	catch (...) {
-		return false;
-	}
-	return true;
-}
-
-// ---------------------------------------------------------------------------
-bool TfrmTrain::CheckIntValue(String Value) {
-	try {
-		StrToInt(Value);
-	}
-	catch (...) {
-		return false;
-	}
-	return true;
 }
 
 // ---------------------------------------------------------------------------
@@ -549,14 +517,14 @@ bool TfrmTrain::CheckValues(int ARow) {
 		return Result;
 	}
 
-	CheckStrValue(VansColumns.VANNUM, ARow);
-	CheckStrValue(VansColumns.VANTYPE, ARow);
-	CheckStrValue(VansColumns.CARGOTYPE, ARow);
-	CheckStrValue(VansColumns.DEPART_STATION, ARow);
-	CheckStrValue(VansColumns.PURPOSE_STATION, ARow);
-	CheckStrValue(VansColumns.INVOICE_NUM, ARow);
-	CheckStrValue(VansColumns.INVOICE_SUPPLIER, ARow);
-	CheckStrValue(VansColumns.INVOICE_RECIPIENT, ARow);
+	CheckValue(VansColumns.VANNUM, ARow);
+	CheckValue(VansColumns.VANTYPE, ARow);
+	CheckValue(VansColumns.CARGOTYPE, ARow);
+	CheckValue(VansColumns.DEPART_STATION, ARow);
+	CheckValue(VansColumns.PURPOSE_STATION, ARow);
+	CheckValue(VansColumns.INVOICE_NUM, ARow);
+	CheckValue(VansColumns.INVOICE_SUPPLIER, ARow);
+	CheckValue(VansColumns.INVOICE_RECIPIENT, ARow);
 
 	if (!CheckDateTimeValue(sgVans->Cells[VansColumns.DATETIME][ARow])) {
 		StringGridSelectCell(sgVans, VansColumns.DATETIME, ARow);
@@ -898,6 +866,10 @@ void __fastcall TfrmTrain::sgVansDblClick(TObject *Sender) {
 	int Col, Row;
 
 	StringGridMouseToCell(sgVans, Col, Row);
+
+	if (Row < 1) {
+		return;
+	}
 
 	if (ShowVanComboBox(Col)) {
 		return;

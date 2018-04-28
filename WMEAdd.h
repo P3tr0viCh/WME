@@ -31,4 +31,9 @@ String DateTimeToSQLStr(TDateTime ADateTime);
 int DateTimeToWTime(TDateTime ADateTime);
 
 // ---------------------------------------------------------------------------
+String CheckStrValue(String Value);
+bool CheckDateTimeValue(String Value);
+bool CheckIntValue(String Value);
+
+// ---------------------------------------------------------------------------
 #endif

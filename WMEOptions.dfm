@@ -35,7 +35,7 @@ object frmOptions: TfrmOptions
       Top = 1
       Width = 606
       Height = 390
-      ActivePage = tsInvoiceSuppliers
+      ActivePage = tsVanTypes
       Align = alClient
       MultiLine = True
       TabOrder = 0

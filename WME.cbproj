@@ -252,6 +252,18 @@
             <DependentOn>WMEOptionsUser.h</DependentOn>
             <BuildOrder>29</BuildOrder>
         </CppCompile>
+        <CppCompile Include="WMEOptionsVanCatalog.cpp">
+            <Form>frmOptionsVanCatalog</Form>
+            <FormType>dfm</FormType>
+            <DependentOn>WMEOptionsVanCatalog.h</DependentOn>
+            <BuildOrder>50</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="WMEOptionsVanType.cpp">
+            <Form>frmOptionsVanType</Form>
+            <FormType>dfm</FormType>
+            <DependentOn>WMEOptionsVanType.h</DependentOn>
+            <BuildOrder>51</BuildOrder>
+        </CppCompile>
         <PCHCompile Include="WMEPCH.h">
             <BuildOrder>1</BuildOrder>
             <PCH>true</PCH>
@@ -350,12 +362,14 @@
             <DependentOn>WMETVanType.h</DependentOn>
             <BuildOrder>49</BuildOrder>
         </CppCompile>
-        <FormResources Include="WMEOptionsUser.dfm"/>
+        <FormResources Include="WMEOptionsVanCatalog.dfm"/>
         <FormResources Include="WMETrainList.dfm"/>
         <FormResources Include="WMETrain.dfm"/>
+        <FormResources Include="WMEOptionsUser.dfm"/>
         <FormResources Include="WMEOptions.dfm"/>
         <FormResources Include="WMEMain.dfm"/>
         <FormResources Include="WMELogin.dfm"/>
+        <FormResources Include="WMEOptionsVanType.dfm"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -390,6 +404,7 @@
                 </Excluded_Packages>
             </CPlusPlusBuilder.Personality>
             <Deployment Version="3">
+                <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'=='true'" LocalName="$(BDS)\bin64\cc64220mt.dll" Class="DependencyModule"/>
                 <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'=='true'" LocalName="$(BDS)\bin\cc32c250mt.dll" Class="DependencyModule">
                     <Platform Name="Win32">
                         <Overwrite>true</Overwrite>
@@ -415,10 +430,14 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\..\Projects.exe\WME\Win32\Debug\WME.tds" Configuration="Debug" Class="DebugSymbols"/>
-                <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'!='true'" LocalName="$(BDS)\bin64\cc64220.dll" Class="DependencyModule"/>
                 <DeployFile Condition="'$(DynamicRTL)'=='true'" LocalName="$(BDS)\Redist\osx32\libcgstl.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\..\Projects.exe\WME\Win32\Debug\WME.tds" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win32">
+                        <RemoteName>WME.tds</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -427,21 +446,40 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'=='true'" LocalName="$(BDS)\bin64\cc64220mt.dll" Class="DependencyModule"/>
+                <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'!='true'" LocalName="$(BDS)\bin64\cc64220.dll" Class="DependencyModule"/>
                 <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'=='true'" LocalName="$(BDS)\bin64\cc64250mt.dll" Class="DependencyModule">
                     <Platform Name="Win64">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="sql\table trains.sql" Configuration="Debug" Class="ProjectFile"/>
+                <DeployFile LocalName="..\..\..\Projects.exe\WME\Win32\Debug\WME.tds" Configuration="Debug" Class="DebugSymbols"/>
+                <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'!='true'" LocalName="$(BDS)\bin\cc32220.dll" Class="DependencyModule"/>
+                <DeployFile LocalName="..\..\..\Projects.exe\WME\Win32\Debug\WME.exe" Configuration="Debug" Class="ProjectOutput"/>
+                <DeployFile LocalName="sql\table trains.sql" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'!='true'" LocalName="$(BDS)\bin\cc32250.dll" Class="DependencyModule">
                     <Platform Name="Win32">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'!='true'" LocalName="$(BDS)\bin\cc32220.dll" Class="DependencyModule"/>
-                <DeployFile LocalName="..\..\..\Projects.exe\WME\Win32\Debug\WME.exe" Configuration="Debug" Class="ProjectOutput"/>
                 <DeployFile LocalName="sql\table vans.sql" Configuration="Debug" Class="ProjectFile"/>
+                <DeployFile LocalName="..\..\..\Projects.exe\WME\Win32\Debug\WME.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>WME.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="sql\table vans.sql" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="sql\table trains.sql" Configuration="Debug" Class="ProjectFile"/>
                 <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'!='true'" LocalName="$(BDS)\bin64\cc64250.dll" Class="DependencyModule">
                     <Platform Name="Win64">
                         <Overwrite>true</Overwrite>

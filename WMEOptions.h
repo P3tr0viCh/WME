@@ -12,13 +12,14 @@
 #include <Vcl.Grids.hpp>
 
 #include "WMEOptionsUser.h"
+#include "WMEOptionsVanType.h"
+#include "WMEOptionsVanCatalog.h"
 
 #include "WMETSettings.h"
 
 // ---------------------------------------------------------------------------
 class TfrmOptions : public TForm {
 __published:
-
 	TPanel *PanelMain;
 	TPageControl *PageControl;
 	TTabSheet *tsDatabase;
@@ -136,10 +137,12 @@ private:
 
 	TStringGrid * GetStringGrid(TObject * Sender);
 
-public:
-	__fastcall TfrmOptions(TComponent* Owner);
+	void SetStringGridValues(bool Add, TObject * Sender);
 
-	static bool Show(TSettings *Settings, bool ReadOnly);
+public:
+	__fastcall TfrmOptions(TComponent * Owner);
+
+	static bool Show(TSettings * Settings, bool ReadOnly);
 
 	int AdminCount();
 };
