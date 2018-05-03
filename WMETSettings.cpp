@@ -186,10 +186,10 @@ void TSettings::DeleteConfigFile(String ConfigFileName) {
 }
 
 // ---------------------------------------------------------------------------
-void TSettings::LoadDatabase(String ConfigFileName) {
+void TSettings::LoadDatabases(String ConfigFileName) {
 	TIniFile * IniFile = new TIniFile(ConfigFileName);
 
-	String Section = "Connection";
+	String Section = "Local";
 
 	try {
 		Connection->Host = IniFile->ReadString(Section, "host",
@@ -340,8 +340,8 @@ bool TSettings::Load() {
 	String ConfigFileName;
 
 	try {
-		ConfigFileName = GetConfigFileName("Database");
-		LoadDatabase(ConfigFileName);
+		ConfigFileName = GetConfigFileName("Databases");
+		LoadDatabases(ConfigFileName);
 
 		ConfigFileName = GetConfigFileName("Users");
 		LoadUsers(ConfigFileName);
@@ -371,10 +371,10 @@ bool TSettings::Load() {
 }
 
 // ---------------------------------------------------------------------------
-void TSettings::SaveDatabase(String ConfigFileName) {
+void TSettings::SaveDatabases(String ConfigFileName) {
 	TIniFile * IniFile = new TIniFile(ConfigFileName);
 	try {
-		String Section = "Connection";
+		String Section = "Local";
 
 		IniFile->WriteString(Section, "host", Connection->Host);
 		IniFile->WriteString(Section, "port", Connection->Port);
@@ -508,8 +508,8 @@ bool TSettings::Save() {
 	String Section;
 
 	try {
-		ConfigFileName = GetConfigFileName("Database");
-		SaveDatabase(ConfigFileName);
+		ConfigFileName = GetConfigFileName("Databases");
+		SaveDatabases(ConfigFileName);
 
 		ConfigFileName = GetConfigFileName("Users");
 		SaveUsers(ConfigFileName);

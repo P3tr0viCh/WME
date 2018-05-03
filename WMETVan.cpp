@@ -2,6 +2,8 @@
 
 #pragma hdrstop
 
+#include "WMEStringsGridHeader.h"
+
 #include "WMETVan.h"
 
 // ---------------------------------------------------------------------------
@@ -25,8 +27,10 @@ void TVan::Init() {
 	FInvoiceSupplier = new TVanCatalog();
 
 	FNum = 0;
+
 	FDateTime = NULL;
-	FTareIndex = 0;
+
+	FTareIndex = VAN_TARE_INDEX_S;
 }
 
 // ---------------------------------------------------------------------------
@@ -73,7 +77,7 @@ void TVan::SetTareTrft(int Value) {
 
 	FTareTrft = Value;
 
-	if (TareIndex != 0) {
+	if (TareIndex != VAN_TARE_INDEX_T) {
 		return;
 	}
 
@@ -86,29 +90,83 @@ void TVan::SetTareTrft(int Value) {
 
 // ---------------------------------------------------------------------------
 void TVan::SetTareDyn(int Value) {
+	if (FTareDyn == Value) {
+		return;
+	}
+
+	FTareDyn = Value;
+
+	if (TareIndex != VAN_TARE_INDEX_D) {
+		return;
+	}
+
+	FTare = FTareDyn;
+
+	FNetto = FBrutto - FTare;
+
+	FOverload = FNetto - FCarrying;
 }
 
 // ---------------------------------------------------------------------------
 void TVan::SetTareSta(int Value) {
+	if (FTareSta == Value) {
+		return;
+	}
+
+	FTareSta = Value;
+
+	if (TareIndex != VAN_TARE_INDEX_S) {
+		return;
+	}
+
+	FTare = FTareSta;
+
+	FNetto = FBrutto - FTare;
+
+	FOverload = FNetto - FCarrying;
 }
 
 // ---------------------------------------------------------------------------
 void TVan::SetTareIndex(int Value) {
+	if (FTareIndex == Value) {
+		return;
+	}
+
+	FTareIndex = Value;
+
+	switch (TareIndex) {
+	case VAN_TARE_INDEX_D:
+		FTare = FTareDyn;
+		FTareIndexAsText = LoadStr(IDS_GRID_HEADER_TARE_D);
+		break;
+	case VAN_TARE_INDEX_S:
+		FTare = FTareSta;
+		FTareIndexAsText = LoadStr(IDS_GRID_HEADER_TARE_S);
+		break;
+	case VAN_TARE_INDEX_T:
+	default:
+		FTare = FTareTrft;
+		FTareIndexAsText = LoadStr(IDS_GRID_HEADER_TARE_T);
+	}
+
+	FNetto = FBrutto - FTare;
+
+	FOverload = FNetto - FCarrying;
 }
 
 // ---------------------------------------------------------------------------
-void TVan::SetUser(TUser *Value) {
+void TVan::SetUser(TUser * Value) {
 	User->Assign(Value);
 }
 
 // ---------------------------------------------------------------------------
-bool __fastcall TVan::Equals(TObject* Obj) {
+bool __fastcall TVan::Equals(TObject * Obj) {
 	if (this == Obj)
 		return true;
 	if (Obj == NULL || ClassType() != Obj->ClassType())
 		return false;
 
-	TVan *Van = (TVan*) Obj;
+	TVan * Van = (TVan*) Obj;
 
 	if (Num != Van->Num || DateTime != Van->DateTime || VanNum != Van->VanNum ||
 		VanType != Van->VanType || Carrying != Van->Carrying ||
@@ -131,7 +189,7 @@ bool __fastcall TVan::Equals(TObject* Obj) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TVan::Assign(TVan* Source) {
+void __fastcall TVan::Assign(TVan * Source) {
 	Num = Source->Num;
 	DateTime = Source->DateTime;
 

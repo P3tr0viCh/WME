@@ -78,6 +78,8 @@ private:
 
 	String CellValue;
 
+	TVanCatalogList * TareIndexList;
+
 	void SetChanged(bool Value);
 
 	void CreateVansColumns();

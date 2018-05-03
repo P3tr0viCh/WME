@@ -12,6 +12,10 @@
 #include "WMETVanCatalog.h"
 #include "WMETVanType.h"
 
+const VAN_TARE_INDEX_T = 0;
+const VAN_TARE_INDEX_D = 1;
+const VAN_TARE_INDEX_S = 2;
+
 // ---------------------------------------------------------------------------
 class TVan : public TObject {
 private:
@@ -31,6 +35,7 @@ private:
 	int FTareSta;
 
 	int FTareIndex;
+	String FTareIndexAsText;
 
 	int FNetto;
 	int FOverload;
@@ -78,11 +83,14 @@ public:
 	__property int TareTrft = {read = FTareTrft, write = SetTareTrft};
 	__property int TareDyn = {read = FTareDyn, write = SetTareDyn};
 	__property int TareSta = {read = FTareSta, write = SetTareSta};
+
 	__property int TareIndex = {read = FTareIndex, write = SetTareIndex};
+	__property String TareIndexAsText = {read = FTareIndexAsText};
+
 	__property int Netto = {read = FNetto};
 	__property int Overload = {read = FOverload};
 
-	__property TVanCatalog *CargoType = {read = FCargoType};
+	__property TVanCatalog * CargoType = {read = FCargoType};
 
 	__property TUser * User = {read = FUser, write = SetUser};
 

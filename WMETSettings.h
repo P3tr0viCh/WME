@@ -48,7 +48,7 @@ private:
 	void SaveVanCatalog(String ConfigFileName, String Name,
 		TVanCatalogList * VanCatalogList);
 
-	void LoadDatabase(String ConfigFileName);
+	void LoadDatabases(String ConfigFileName);
 	void LoadUsers(String ConfigFileName);
 	void LoadVanTypes(String ConfigFileName);
 	void LoadCargoTypes(String ConfigFileName);
@@ -57,7 +57,7 @@ private:
 	void LoadInvoiceRecipients(String ConfigFileName);
 	void LoadInvoiceSuppliers(String ConfigFileName);
 
-	void SaveDatabase(String ConfigFileName);
+	void SaveDatabases(String ConfigFileName);
 	void SaveUsers(String ConfigFileName);
 	void SaveVanTypes(String ConfigFileName);
 	void SaveCargoTypes(String ConfigFileName);

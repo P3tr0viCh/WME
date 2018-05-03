@@ -18,9 +18,10 @@ private:
 public:
 	__fastcall TVanCatalog();
 	__fastcall TVanCatalog(int Code, String Name);
+	__fastcall TVanCatalog(int Code, NativeUInt Ident);
 
-	bool __fastcall Equals(TObject* Obj);
-	void __fastcall Assign(TVanCatalog* Source);
+	bool __fastcall Equals(TObject * Obj);
+	void __fastcall Assign(TVanCatalog * Source);
 	String __fastcall ToString();
 
 	__property int Code = {read = FCode, write = FCode};

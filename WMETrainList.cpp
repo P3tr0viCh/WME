@@ -363,7 +363,9 @@ int TfrmTrainList::SetVan(int Index, TVan *Van) {
 	sgVans->Cells[VansColumns.TARE_T][Index] = IntToStr(Van->TareTrft);
 	sgVans->Cells[VansColumns.TARE_S][Index] = IntToStr(Van->TareSta);
 	sgVans->Cells[VansColumns.TARE_D][Index] = IntToStr(Van->TareDyn);
-	sgVans->Cells[VansColumns.TARE_INDEX][Index] = IntToStr(Van->TareIndex);
+
+	sgVans->Cells[VansColumns.TARE_INDEX][Index] = Van->TareIndexAsText;
+
 	sgVans->Cells[VansColumns.NETTO][Index] = IntToStr(Van->Netto);
 	sgVans->Cells[VansColumns.OVERLOAD][Index] = IntToStr(Van->Overload);
 
