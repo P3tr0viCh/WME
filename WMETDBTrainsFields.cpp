@@ -7,27 +7,24 @@
 // ---------------------------------------------------------------------------
 #pragma package(smart_init)
 
-const TDBTrainsFieldName TDBTrainsFields::SAVE_TRAIN_FIELDS
-	[TDBTrainsFields::SAVE_TRAIN_FIELDS_COUNT] = {
-	fnTrainsTrnum, fnTrainsWTime, fnTrainsDatetime, fnTrainsCarrying,
+const TDBTrainsFieldName TDBTrainsFields::FIELDS[TDBTrainsFields::FIELDS_COUNT]
+	= {fnTrainsTrnum, fnTrainsWTime, fnTrainsDatetime, fnTrainsCarrying,
 	fnTrainsBrutto, fnTrainsTare, fnTrainsNetto, fnTrainsOverload,
-	fnTrainsVanCount};
-
-const TDBTrainsFieldName TDBTrainsFields::LOAD_TRAINS_FIELDS
-	[TDBTrainsFields::LOAD_TRAINS_FIELDS_COUNT] = {
-	fnTrainsTrnum, fnTrainsWTime, fnTrainsDatetime, fnTrainsCarrying,
-	fnTrainsBrutto, fnTrainsTare, fnTrainsNetto, fnTrainsOverload,
-	fnTrainsVanCount};
+	fnTrainsVanCount, fnTrainsOperator, fnTrainsOperatorTabNum,
+	fnTrainsOperatorShiftNum};
 
 // ---------------------------------------------------------------------------
 String TDBTrainsFields::GetFieldName(TDBTrainsFieldName Name) {
 	switch (Name) {
 	case fnTrainsTrnum:
 		return "trnum";
+
 	case fnTrainsWTime:
 		return "wtime";
+
 	case fnTrainsDatetime:
 		return "bdatetime";
+
 	case fnTrainsCarrying:
 		return "carrying";
 	case fnTrainsBrutto:
@@ -38,8 +35,16 @@ String TDBTrainsFields::GetFieldName(TDBTrainsFieldName Name) {
 		return "netto";
 	case fnTrainsOverload:
 		return "overload";
+
 	case fnTrainsVanCount:
 		return "nvans";
+
+	case fnTrainsOperator:
+		return "operator_name";
+	case fnTrainsOperatorTabNum:
+		return "operator_tabn";
+	case fnTrainsOperatorShiftNum:
+		return "operator_shift";
 	default:
 		throw Exception("TDBVansFields: unknown Name");
 	}
@@ -50,45 +55,40 @@ TFieldType TDBTrainsFields::GetFieldType(TDBTrainsFieldName Name) {
 	switch (Name) {
 	case fnTrainsTrnum:
 		return ftInteger;
+
 	case fnTrainsWTime:
 		return ftInteger;
+
 	case fnTrainsDatetime:
 		return ftString;
+
 	case fnTrainsCarrying:
 	case fnTrainsBrutto:
 	case fnTrainsTare:
 	case fnTrainsNetto:
 	case fnTrainsOverload:
+		return ftInteger;
+
 	case fnTrainsVanCount:
 		return ftInteger;
+
+	case fnTrainsOperator:
+	case fnTrainsOperatorTabNum:
+	case fnTrainsOperatorShiftNum:
+		return ftString;
 	default:
 		throw Exception("TDBVansFields: unknown Name");
 	}
 }
 
 // ---------------------------------------------------------------------------
-String TDBTrainsFields::GetFields(TDBTrainsDatabaseOp DatabaseOp) {
-	switch (DatabaseOp) {
-	case dboTrainsSaveTrain:
-		return ConcatFields(SAVE_TRAIN_FIELDS, SAVE_TRAIN_FIELDS_COUNT);
-	case dboTrainsLoadTrains:
-		return ConcatFields(LOAD_TRAINS_FIELDS, LOAD_TRAINS_FIELDS_COUNT);
-	default:
-		throw Exception("TDBTrainsFields: unknown DatabaseOp");
-	}
+String TDBTrainsFields::GetFields() {
+	return ConcatFields(FIELDS, FIELDS_COUNT);
 }
 
 // ---------------------------------------------------------------------------
-String TDBTrainsFields::GetValues(TDBTrainsDatabaseOp DatabaseOp, int Index) {
-	switch (DatabaseOp) {
-	case dboTrainsSaveTrain:
-		return ConcatValues(SAVE_TRAIN_FIELDS, SAVE_TRAIN_FIELDS_COUNT, Index);
-	case dboTrainsLoadTrains:
-		return ConcatValues(LOAD_TRAINS_FIELDS, LOAD_TRAINS_FIELDS_COUNT,
-			Index);
-	default:
-		throw Exception("TDBTrainsFields: unknown DatabaseOp");
-	}
+String TDBTrainsFields::GetValues(int Index) {
+	return ConcatValues(FIELDS, FIELDS_COUNT, Index);
 }
 
 // ---------------------------------------------------------------------------

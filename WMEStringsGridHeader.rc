@@ -22,6 +22,7 @@ IDS_GRID_HEADER_INVOICE_NUM,            "Номер накладной"
 IDS_GRID_HEADER_INVOICE_SUPPLIER,       "Грузоотправитель"
 IDS_GRID_HEADER_INVOICE_RECIPIENT,      "Грузополучатель"
 IDS_GRID_HEADER_VANCOUNT,               "Кол-во вагонов"
+IDS_GRID_HEADER_OPERATOR,               "Оператор"
 
 IDS_GRID_HEADER_USER_NAME,              "ФИО"
 IDS_GRID_HEADER_HAS_PASS,               "Пароль"

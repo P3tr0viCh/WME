@@ -10,6 +10,7 @@
 #include <UtilsFileIni.h>
 
 #include "WMEStrings.h"
+#include "WMEStringsSettings.h"
 
 #include "WMETSettings.h"
 
@@ -23,7 +24,7 @@ __fastcall TSettings::TSettings() {
 	FColorReadOnly = TColor(0x00E8E8E8);
 
 	FConnection = new TConnectionInfo();
-	FUserList = new TObjList<TUser>();
+	FUserList = new TUserList();
 
 	FVanTypeList = new TVanTypeList();
 
@@ -32,6 +33,8 @@ __fastcall TSettings::TSettings() {
 	FPurposeStationList = new TVanCatalogList();
 	FInvoiceRecipientList = new TVanCatalogList();
 	FInvoiceSupplierList = new TVanCatalogList();
+
+	FLoadTrainCount = 5;
 }
 
 // ---------------------------------------------------------------------------
@@ -56,6 +59,9 @@ bool __fastcall TSettings::Equals(TObject * Obj) {
 		return false;
 
 	TSettings * Settings = (TSettings*) Obj;
+
+	if (Settings->LoadTrainCount != LoadTrainCount)
+		return false;
 
 	if (!Settings->Connection->Equals(Connection))
 		return false;
@@ -83,13 +89,18 @@ bool __fastcall TSettings::Equals(TObject * Obj) {
 // ---------------------------------------------------------------------------
 void __fastcall TSettings::Assign(TSettings * Source) {
 	FConnection->Assign(Source->Connection);
+
 	FUserList->Assign(Source->UserList);
+
 	FVanTypeList->Assign(Source->VanTypeList);
+
 	FCargoTypeList->Assign(Source->CargoTypeList);
 	FDepartStationList->Assign(Source->DepartStationList);
 	FPurposeStationList->Assign(Source->PurposeStationList);
 	FInvoiceRecipientList->Assign(Source->InvoiceRecipientList);
 	FInvoiceSupplierList->Assign(Source->InvoiceSupplierList);
+
+	FLoadTrainCount = Source->LoadTrainCount;
 }
 
 // ---------------------------------------------------------------------------
@@ -98,17 +109,26 @@ String __fastcall TSettings::ToString() {
 
 	S = "TSettings{";
 	S += "Connection='" + Connection->ToString() + "'";
+	S += ",";
 	S += "UserList->Count='" + IntToStr(UserList->Count) + "'";
+	S += ",";
 	S += "VanTypeList->Count='" + IntToStr(VanTypeList->Count) + "'";
+	S += ",";
 	S += "CargoTypeList->Count='" + IntToStr(CargoTypeList->Count) + "'";
+	S += ",";
 	S += "DepartStationList->Count='" +
 		IntToStr(DepartStationList->Count) + "'";
+	S += ",";
 	S += "PurposeStationList->Count='" +
 		IntToStr(PurposeStationList->Count) + "'";
+	S += ",";
 	S += "InvoiceRecipientList->Count='" +
 		IntToStr(InvoiceRecipientList->Count) + "'";
+	S += ",";
 	S += "InvoiceSupplierList->Count='" +
 		IntToStr(InvoiceSupplierList->Count) + "'";
+	S += ",";
+	S += "LoadTrainCount='" + IntToStr(LoadTrainCount) + "'";
 	S += "}";
 
 	return S;
@@ -164,8 +184,8 @@ bool TSettings::CheckConfigDir() {
 }
 
 // ---------------------------------------------------------------------------
-String TSettings::GetConfigFileName(String ConfigName) {
-	return FConfigDir + ConfigName + CFG_EXT;
+String TSettings::GetConfigFileName(NativeUInt ConfigName) {
+	return FConfigDir + LoadStr(ConfigName) + CFG_EXT;
 }
 
 // ---------------------------------------------------------------------------
@@ -340,24 +360,27 @@ bool TSettings::Load() {
 	String ConfigFileName;
 
 	try {
-		ConfigFileName = GetConfigFileName("Databases");
+		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_DATABASES);
 		LoadDatabases(ConfigFileName);
 
-		ConfigFileName = GetConfigFileName("Users");
+		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_USERS);
 		LoadUsers(ConfigFileName);
 
-		ConfigFileName = GetConfigFileName("VanTypes");
+		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_VANTYPES);
 		LoadVanTypes(ConfigFileName);
 
-		ConfigFileName = GetConfigFileName("CargoTypes");
+		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_CARGOTYPES);
 		LoadCargoTypes(ConfigFileName);
-		ConfigFileName = GetConfigFileName("DepartStations");
+		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_DEPART_STATIONS);
 		LoadDepartStations(ConfigFileName);
-		ConfigFileName = GetConfigFileName("PurposeStations");
+		ConfigFileName =
+			GetConfigFileName(IDS_SETTINGS_CONFIG_PURPOSE_STATIONS);
 		LoadPurposeStations(ConfigFileName);
-		ConfigFileName = GetConfigFileName("InvoiceRecipients");
+		ConfigFileName =
+			GetConfigFileName(IDS_SETTINGS_CONFIG_INVOICE_SUPPLIERS);
 		LoadInvoiceRecipients(ConfigFileName);
-		ConfigFileName = GetConfigFileName("InvoiceSuppliers");
+		ConfigFileName =
+			GetConfigFileName(IDS_SETTINGS_CONFIG_INVOICE_RECIPIENTS);
 		LoadInvoiceSuppliers(ConfigFileName);
 	}
 	catch (Exception * E) {
@@ -501,31 +524,32 @@ bool TSettings::Save() {
 		return false;
 	}
 
-	TIniFile* IniFile;
-
 	String ConfigFileName;
 
 	String Section;
 
 	try {
-		ConfigFileName = GetConfigFileName("Databases");
+		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_DATABASES);
 		SaveDatabases(ConfigFileName);
 
-		ConfigFileName = GetConfigFileName("Users");
+		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_USERS);
 		SaveUsers(ConfigFileName);
 
-		ConfigFileName = GetConfigFileName("VanTypes");
+		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_VANTYPES);
 		SaveVanTypes(ConfigFileName);
 
-		ConfigFileName = GetConfigFileName("CargoTypes");
+		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_CARGOTYPES);
 		SaveCargoTypes(ConfigFileName);
-		ConfigFileName = GetConfigFileName("DepartStations");
+		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_DEPART_STATIONS);
 		SaveDepartStations(ConfigFileName);
-		ConfigFileName = GetConfigFileName("PurposeStations");
+		ConfigFileName =
+			GetConfigFileName(IDS_SETTINGS_CONFIG_PURPOSE_STATIONS);
 		SavePurposeStations(ConfigFileName);
-		ConfigFileName = GetConfigFileName("InvoiceRecipients");
+		ConfigFileName =
+			GetConfigFileName(IDS_SETTINGS_CONFIG_INVOICE_SUPPLIERS);
 		SaveInvoiceRecipients(ConfigFileName);
-		ConfigFileName = GetConfigFileName("InvoiceSuppliers");
+		ConfigFileName =
+			GetConfigFileName(IDS_SETTINGS_CONFIG_INVOICE_RECIPIENTS);
 		SaveInvoiceSuppliers(ConfigFileName);
 	}
 	catch (Exception * E) {

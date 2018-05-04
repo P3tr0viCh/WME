@@ -24,10 +24,10 @@ __fastcall TfrmLogin::TfrmLogin(TComponent* Owner) : TForm(Owner) {
 }
 
 // ---------------------------------------------------------------------------
-bool TfrmLogin::Show(TUserList *UserList, TUser* User) {
+bool TfrmLogin::Show(TUserList * UserList, TUser * User) {
 	bool Result = false;
 
-	TfrmLogin *frmLogin = new TfrmLogin(Application);
+	TfrmLogin * frmLogin = new TfrmLogin(Application);
 	try {
 		frmLogin->UserList->Assign(UserList);
 		frmLogin->UpdateForm();
@@ -55,7 +55,7 @@ void __fastcall TfrmLogin::FormCreate(TObject *Sender) {
 
 	UserList = new TUserList();
 
-	TFileIni* FileIni = TFileIni::GetNewInstance();
+	TFileIni * FileIni = TFileIni::GetNewInstance();
 	try {
 		FileIni->ReadFormPosition(this);
 	}
@@ -66,7 +66,7 @@ void __fastcall TfrmLogin::FormCreate(TObject *Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmLogin::FormDestroy(TObject *Sender) {
-	TFileIni* FileIni = TFileIni::GetNewInstance();
+	TFileIni * FileIni = TFileIni::GetNewInstance();
 	try {
 		FileIni->WriteFormPosition(this);
 	}

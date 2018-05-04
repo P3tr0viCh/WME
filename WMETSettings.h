@@ -34,9 +34,11 @@ private:
 	TVanCatalogList * FInvoiceRecipientList;
 	TVanCatalogList * FInvoiceSupplierList;
 
+	int FLoadTrainCount;
+
 	String GetConfigDir();
 	bool CheckConfigDir();
-	String GetConfigFileName(String ConfigName);
+	String GetConfigFileName(NativeUInt ConfigName);
 
 	String EncryptPass(String S);
 	String DecryptPass(String S);
@@ -80,6 +82,7 @@ public:
 	__property TColor ColorReadOnly = {read = FColorReadOnly};
 
 	__property TConnectionInfo * Connection = {read = FConnection};
+
 	__property TUserList * UserList = {read = FUserList};
 
 	__property TVanTypeList * VanTypeList = {read = FVanTypeList};
@@ -93,6 +96,9 @@ public:
 		read = FInvoiceRecipientList};
 	__property TVanCatalogList * InvoiceSupplierList = {
 		read = FInvoiceSupplierList};
+
+	__property int LoadTrainCount = {
+		read = FLoadTrainCount, write = FLoadTrainCount};
 };
 
 // ---------------------------------------------------------------------------

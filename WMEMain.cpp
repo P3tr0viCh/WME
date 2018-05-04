@@ -149,21 +149,30 @@ void TMain::ChangeUser() {
 
 // ---------------------------------------------------------------------------
 void __fastcall TMain::btnOptionsClick(TObject *Sender) {
-	TfrmOptions::Show(Settings, !User->IsAdmin);
+	if (TfrmOptions::Show(Settings, !User->IsAdmin)) {
+		for (int i = 0; i < Settings->UserList->Count; i++) {
+			if (AnsiSameStr(User->Name, Settings->UserList->Items[i]->Name)) {
+				User->Assign(Settings->UserList->Items[i]);
+				return;
+			}
+		}
 
-	Application->Terminate();
+		btnOperator->Click();
+	}
+
+	// Application->Terminate();
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::FormCloseQuery(TObject *Sender, bool &CanClose) {
+void __fastcall TMain::FormCloseQuery(TObject * Sender, bool &CanClose) {
 #ifndef FORCECLOSE
 	CanClose = MsgBoxYesNo(IDS_QUESTION_CLOSE_PROGRAM);
 #endif
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TMain::ApplicationEventsException(TObject *Sender, Exception *E)
-{
+void __fastcall TMain::ApplicationEventsException(TObject * Sender,
+	Exception * E) {
 	MsgBoxErr(Format(IDS_ERROR_UNKNOWN_EXCEPTION, E->Message));
 	WriteToLog(Format(IDS_LOG_EXCEPTION, E->Message));
 }

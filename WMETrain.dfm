@@ -109,6 +109,7 @@ object frmTrain: TfrmTrain
       OnKeyDown = sgVansKeyDown
       OnSelectCell = sgVansSelectCell
       OnSetEditText = sgVansSetEditText
+      ExplicitTop = 47
     end
     object PanelTop: TPanel
       Left = 8

@@ -95,7 +95,7 @@ private:
 
 	void UpdateButtons();
 
-	void CheckValue(int ACol, int ARow);
+	void CheckValue(int ACol, int ARow, int MaxLength);
 	bool CheckValues(int ARow = -1);
 
 	int GetVanCatalogCode(int CatalogIdent, String Name);

@@ -46,6 +46,23 @@ __fastcall TVan::~TVan() {
 }
 
 // ---------------------------------------------------------------------------
+void TVan::UpdateValues() {
+	if (FBrutto > 0 && FTare > 0) {
+		FNetto = FBrutto - FTare;
+	}
+	else {
+		FNetto = 0;
+	}
+
+	if (FCarrying > 0 && FNetto > 0) {
+		FOverload = FNetto - FCarrying;
+	}
+	else {
+		FOverload = 0;
+	}
+}
+
+// ---------------------------------------------------------------------------
 void TVan::SetCarrying(int Value) {
 	if (FCarrying == Value) {
 		return;
@@ -53,7 +70,7 @@ void TVan::SetCarrying(int Value) {
 
 	FCarrying = Value;
 
-	FOverload = FNetto - FCarrying;
+	UpdateValues();
 }
 
 // ---------------------------------------------------------------------------
@@ -64,9 +81,7 @@ void TVan::SetBrutto(int Value) {
 
 	FBrutto = Value;
 
-	FNetto = FBrutto - FTare;
-
-	FOverload = FNetto - FCarrying;
+	UpdateValues();
 }
 
 // ---------------------------------------------------------------------------
@@ -83,9 +98,7 @@ void TVan::SetTareTrft(int Value) {
 
 	FTare = FTareTrft;
 
-	FNetto = FBrutto - FTare;
-
-	FOverload = FNetto - FCarrying;
+	UpdateValues();
 }
 
 // ---------------------------------------------------------------------------
@@ -102,9 +115,7 @@ void TVan::SetTareDyn(int Value) {
 
 	FTare = FTareDyn;
 
-	FNetto = FBrutto - FTare;
-
-	FOverload = FNetto - FCarrying;
+	UpdateValues();
 }
 
 // ---------------------------------------------------------------------------
@@ -121,9 +132,7 @@ void TVan::SetTareSta(int Value) {
 
 	FTare = FTareSta;
 
-	FNetto = FBrutto - FTare;
-
-	FOverload = FNetto - FCarrying;
+	UpdateValues();
 }
 
 // ---------------------------------------------------------------------------
@@ -149,9 +158,7 @@ void TVan::SetTareIndex(int Value) {
 		FTareIndexAsText = LoadStr(IDS_GRID_HEADER_TARE_T);
 	}
 
-	FNetto = FBrutto - FTare;
-
-	FOverload = FNetto - FCarrying;
+	UpdateValues();
 }
 
 // ---------------------------------------------------------------------------

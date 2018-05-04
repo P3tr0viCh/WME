@@ -37,13 +37,14 @@ public:
 	static const NETTO = 5;
 	static const OVERLOAD = 6;
 	static const VANCOUNT = 7;
+	static const OPERATOR = 8;
 
-	static const VISIBLE_COUNT = 8;
+	static const VISIBLE_COUNT = 9;
 
-	static const COUNT = 8;
+	static const COUNT = 9;
 
 	TListTrainsColumns() {
-		LeftAlign = TIntegerSet() << DATETIME;
+		LeftAlign = TIntegerSet() << DATETIME << OPERATOR;
 	}
 
 	TIntegerSet LeftAlign;
@@ -98,18 +99,21 @@ __fastcall TfrmTrainList::TfrmTrainList(TComponent* Owner) : TForm(Owner) {
 
 // ---------------------------------------------------------------------------
 void TfrmTrainList::Show() {
-	TfrmTrainList *frmTrainList = new TfrmTrainList(Application);
+	TfrmTrainList * frmTrainList = new TfrmTrainList(Application);
 	try {
-		if (frmTrainList->LoadTrains()) {
+		// if (frmTrainList->LoadTrains()) {
+		//
+		// if (!frmTrainList->TrainList->IsEmpty()) {
+		// if (frmTrainList->LoadTrain(0)) {
+		// frmTrainList->SelectedRow = 1;
+		// }
+		// }
+		//
+		// frmTrainList->ShowModal();
+		// }
+		frmTrainList->Page = 0;
 
-			if (!frmTrainList->TrainList->IsEmpty()) {
-				if (frmTrainList->LoadTrain(0)) {
-					frmTrainList->SelectedRow = 1;
-				}
-			}
-
-			frmTrainList->ShowModal();
-		}
+		frmTrainList->ShowModal();
 	}
 	__finally {
 		delete frmTrainList;
@@ -120,6 +124,8 @@ void TfrmTrainList::Show() {
 void __fastcall TfrmTrainList::FormCreate(TObject *Sender) {
 	WriteToLogForm(true, ClassName());
 
+	FPage = -1;
+
 	SelectedRow = -1;
 
 	TrainList = new TTrainList();
@@ -127,9 +133,12 @@ void __fastcall TfrmTrainList::FormCreate(TObject *Sender) {
 	CreateTrainsColumns();
 	CreateVansColumns();
 
-	TFileIni* FileIni = TFileIni::GetNewInstance();
+	TFileIni * FileIni = TFileIni::GetNewInstance();
 	try {
 		FileIni->ReadFormBounds(this);
+
+		sgTrains->Height = FileIni->ReadInteger(Name, "TrainsHeight",
+			sgTrains->Height);
 	}
 	__finally {
 		delete FileIni;
@@ -138,9 +147,11 @@ void __fastcall TfrmTrainList::FormCreate(TObject *Sender) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmTrainList::FormDestroy(TObject *Sender) {
-	TFileIni* FileIni = TFileIni::GetNewInstance();
+	TFileIni * FileIni = TFileIni::GetNewInstance();
 	try {
 		FileIni->WriteFormBounds(this);
+
+		FileIni->WriteInteger(Name, "TrainsHeight", sgTrains->Height);
 	}
 	__finally {
 		delete FileIni;
@@ -169,6 +180,8 @@ void TfrmTrainList::CreateTrainsColumns() {
 		IDS_GRID_HEADER_OVERLOAD, 90);
 	StringGridSetHeader(sgTrains, TrainsColumns.VANCOUNT,
 		IDS_GRID_HEADER_VANCOUNT, 120);
+	StringGridSetHeader(sgTrains, TrainsColumns.OPERATOR,
+		IDS_GRID_HEADER_OPERATOR, 120);
 }
 
 // ---------------------------------------------------------------------------
@@ -234,7 +247,8 @@ bool TfrmTrainList::LoadTrains() {
 
 	TrainList->Clear();
 
-	TDBLoadTrains *DBLoadTrains = new TDBLoadTrains(Main->Settings->Connection);
+	TDBLoadTrains * DBLoadTrains = new TDBLoadTrains(Main->Settings->Connection,
+		Page, Main->Settings->LoadTrainCount);
 	try {
 		Result = DBLoadTrains->Execute();
 
@@ -260,15 +274,15 @@ bool TfrmTrainList::LoadTrains() {
 bool TfrmTrainList::LoadTrain(int Index) {
 	bool Result;
 
-	TTrain *Train = TrainList->Items[Index];
+	TTrain * Train = TrainList->Items[Index];
 
 	Result = Train->VanCount == Train->VanList->Count;
 
 	if (!Result) {
 		ShowWaitCursor();
 
-		TDBLoadTrain *DBLoadTrain = new TDBLoadTrain(Main->Settings->Connection,
-			Train->TrainNum);
+		TDBLoadTrain * DBLoadTrain =
+			new TDBLoadTrain(Main->Settings->Connection, Train->TrainNum);
 		try {
 			Result = DBLoadTrain->Execute();
 
@@ -289,6 +303,35 @@ bool TfrmTrainList::LoadTrain(int Index) {
 	}
 
 	return Result;
+}
+
+// ---------------------------------------------------------------------------
+void TfrmTrainList::SetPage(int Value) {
+	FPage = Value;
+
+	StringGridClear(sgTrains);
+	StringGridClear(sgVans);
+
+	tbtnPrevPage->Enabled = Page > 0;
+
+	if (LoadTrains()) {
+		tbtnNextPage->Enabled =
+			TrainList->Count == Main->Settings->LoadTrainCount;
+
+		if (!TrainList->IsEmpty()) {
+			if (LoadTrain(0)) {
+				SelectedRow = 1;
+
+				return;
+			}
+		}
+		else {
+			return;
+		}
+	}
+
+	tbtnPrevPage->Enabled = false;
+	tbtnNextPage->Enabled = false;
 }
 
 // ---------------------------------------------------------------------------
@@ -318,7 +361,7 @@ void TfrmTrainList::UpdateTrain(int Index) {
 }
 
 // ---------------------------------------------------------------------------
-int TfrmTrainList::SetTrain(int Index, TTrain *Train) {
+int TfrmTrainList::SetTrain(int Index, TTrain * Train) {
 	if (Index < 0) {
 		if (!StringGridIsEmpty(sgTrains)) {
 			sgTrains->RowCount++;
@@ -326,7 +369,9 @@ int TfrmTrainList::SetTrain(int Index, TTrain *Train) {
 		Index = sgTrains->RowCount - 1;
 	}
 
-	sgTrains->Cells[TrainsColumns.NUM][Index] = IntToStr(Index);
+	sgTrains->Cells[TrainsColumns.NUM][Index] =
+		IntToStr(Index + Main->Settings->LoadTrainCount * Page);
+
 	sgTrains->Cells[TrainsColumns.DATETIME][Index] =
 		DateTimeToStr(Train->DateTime);
 
@@ -338,11 +383,13 @@ int TfrmTrainList::SetTrain(int Index, TTrain *Train) {
 
 	sgTrains->Cells[TrainsColumns.VANCOUNT][Index] = IntToStr(Train->VanCount);
 
+	sgTrains->Cells[TrainsColumns.OPERATOR][Index] = Train->User->Name;
+
 	return Index;
 }
 
 // ---------------------------------------------------------------------------
-int TfrmTrainList::SetVan(int Index, TVan *Van) {
+int TfrmTrainList::SetVan(int Index, TVan * Van) {
 	if (Index < 0) {
 		if (!StringGridIsEmpty(sgVans)) {
 			sgVans->RowCount++;
@@ -373,10 +420,14 @@ int TfrmTrainList::SetVan(int Index, TVan *Van) {
 	sgVans->Cells[VansColumns.DEPART_STATION][Index] = Van->DepartStation->Name;
 	sgVans->Cells[VansColumns.PURPOSE_STATION][Index] =
 		Van->PurposeStation->Name;
-	sgVans->Cells[VansColumns.INVOICE_RECIPIENT][Index] =
-		Van->InvoiceRecipient->Name;
+
+	sgVans->Cells[VansColumns.INVOICE_NUM][Index] =
+		Van->InvoiceNum;
+
 	sgVans->Cells[VansColumns.INVOICE_SUPPLIER][Index] =
 		Van->InvoiceSupplier->Name;
+	sgVans->Cells[VansColumns.INVOICE_RECIPIENT][Index] =
+		Van->InvoiceRecipient->Name;
 
 	return Index;
 }
@@ -433,4 +484,13 @@ void __fastcall TfrmTrainList::sgTrainsFixedCellClick(TObject *Sender, int ACol,
 	((TStringGrid*)Sender)->Row = ARow;
 }
 
+// ---------------------------------------------------------------------------
+void __fastcall TfrmTrainList::tbtnPrevPageClick(TObject *Sender) {
+	Page -= 1;
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmTrainList::tbtnNextPageClick(TObject *Sender) {
+	Page += 1;
+}
 // ---------------------------------------------------------------------------

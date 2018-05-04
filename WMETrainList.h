@@ -16,36 +16,43 @@
 class TfrmTrainList : public TForm {
 __published:
 	TPanel *PanelMain;
-	TToolBar *ToolBar;
-	TToolButton *tbtnOpen;
-	TToolButton *tbtnSeparator02;
-	TToolButton *tbtnClose;
 	TStringGrid *sgTrains;
 	TPanel *PanelTop;
 	TStringGrid *sgVans;
 	TSplitter *Splitter;
 	TStatusBar *StatusBar;
+	TToolBar *ToolBar;
+	TToolButton *tbtnPrevPage;
+	TToolButton *tbtnNextPage;
+	TToolButton *tbtnSeparator01;
+	TToolButton *tbtnOpen;
+	TToolButton *tbtnSeparator02;
+	TToolButton *tbtnClose;
 
 	void __fastcall FormDestroy(TObject *Sender);
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall tbtnCloseClick(TObject *Sender);
-	void __fastcall sgTrainsDrawCell(TObject *Sender, int ACol, int ARow, TRect &Rect,
-          TGridDrawState State);
-	void __fastcall sgVansDrawCell(TObject *Sender, int ACol, int ARow, TRect &Rect,
-          TGridDrawState State);
-	void __fastcall sgTrainsSelectCell(TObject *Sender, int ACol, int ARow, bool &CanSelect);
+	void __fastcall sgTrainsDrawCell(TObject *Sender, int ACol, int ARow,
+		TRect &Rect, TGridDrawState State);
+	void __fastcall sgVansDrawCell(TObject *Sender, int ACol, int ARow,
+		TRect &Rect, TGridDrawState State);
+	void __fastcall sgTrainsSelectCell(TObject *Sender, int ACol, int ARow,
+		bool &CanSelect);
 	void __fastcall tbtnOpenClick(TObject *Sender);
 	void __fastcall sgTrainsDblClick(TObject *Sender);
 	void __fastcall sgTrainsFixedCellClick(TObject *Sender, int ACol, int ARow);
-
+	void __fastcall tbtnPrevPageClick(TObject *Sender);
+	void __fastcall tbtnNextPageClick(TObject *Sender);
 
 private:
 	TIntegerSet NUSet;
 	TColor NUColor;
 
-    int SelectedRow;
+	int FPage;
 
-	TTrainList *TrainList;
+	int SelectedRow;
+
+	TTrainList * TrainList;
 
 	void CreateTrainsColumns();
 	void CreateVansColumns();
@@ -57,13 +64,17 @@ private:
 	void UpdateVans(int Index);
 	void UpdateTrain(int Index);
 
-	int SetTrain(int Index, TTrain *Train);
-	int SetVan(int Index, TVan *Van);
+	int SetTrain(int Index, TTrain * Train);
+	int SetVan(int Index, TVan * Van);
+
+	void SetPage(int Value);
 
 public:
 	__fastcall TfrmTrainList(TComponent* Owner);
 
 	static void Show();
+
+	__property int Page = {read = FPage, write = SetPage};
 };
 
 // ---------------------------------------------------------------------------

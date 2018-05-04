@@ -52,6 +52,8 @@ private:
 
 	void Init();
 
+	void UpdateValues();
+
 	void SetCarrying(int Value);
 	void SetBrutto(int Value);
 	void SetTareTrft(int Value);

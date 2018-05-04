@@ -7,27 +7,16 @@
 // ---------------------------------------------------------------------------
 #pragma package(smart_init)
 
-const TDBVansFieldName TDBVansFields::SAVE_TRAIN_FIELDS
-	[TDBVansFields::SAVE_TRAIN_FIELDS_COUNT] = {
+const TDBVansFieldName TDBVansFields::FIELDS[TDBVansFields::FIELDS_COUNT] = {
 	fnVansTrnum, fnVansNum, fnVansWTime, fnVansDatetime, fnVansVanNum,
 	fnVansVanType, fnVansVanTypeCode, fnVansCarrying, fnVansBrutto, fnVansTare,
-	fnVansNetto, fnVansOverload, fnVansCargoType, fnVansCargoTypeCode,
-	fnVansAxisCount, fnVansOperator, fnVansOperatorTabNum,
-	fnVansOperatorShiftNum, fnVansDepartStation, fnVansDepartStationCode,
-	fnVansPurposeStation, fnVansPurposeStationCode, fnVansInvoiceRecipient,
-	fnVansInvoiceRecipientCode, fnVansInvoiceSupplier, fnVansInvoiceSupplierCode
-};
-
-const TDBVansFieldName TDBVansFields::LOAD_TRAIN_FIELDS
-	[TDBVansFields::LOAD_TRAIN_FIELDS_COUNT] = {
-	fnVansTrnum, fnVansNum, fnVansWTime, fnVansDatetime, fnVansVanNum,
-	fnVansVanType, fnVansVanTypeCode, fnVansCarrying, fnVansBrutto, fnVansTare,
-	fnVansNetto, fnVansOverload, fnVansCargoType, fnVansCargoTypeCode,
-	fnVansAxisCount, fnVansOperator, fnVansOperatorTabNum,
-	fnVansOperatorShiftNum, fnVansDepartStation, fnVansDepartStationCode,
-	fnVansPurposeStation, fnVansPurposeStationCode, fnVansInvoiceRecipient,
-	fnVansInvoiceRecipientCode, fnVansInvoiceSupplier, fnVansInvoiceSupplierCode
-};
+	fnVansTareTrft, fnVansTareDyn, fnVansTareSta, fnVansTareIndex, fnVansNetto,
+	fnVansOverload, fnVansCargoType, fnVansCargoTypeCode, fnVansAxisCount,
+	fnVansOperator, fnVansOperatorTabNum, fnVansOperatorShiftNum,
+	fnVansDepartStation, fnVansDepartStationCode, fnVansPurposeStation,
+	fnVansPurposeStationCode, fnVansInvoiceNum, fnVansInvoiceSupplier,
+	fnVansInvoiceSupplierCode, fnVansInvoiceRecipient,
+	fnVansInvoiceRecipientCode};
 
 // ---------------------------------------------------------------------------
 String TDBVansFields::GetFieldName(TDBVansFieldName Name) {
@@ -57,6 +46,14 @@ String TDBVansFields::GetFieldName(TDBVansFieldName Name) {
 		return "brutto";
 	case fnVansTare:
 		return "tare";
+	case fnVansTareTrft:
+		return "tare_t";
+	case fnVansTareDyn:
+		return "tare_d";
+	case fnVansTareSta:
+		return "tare_s";
+	case fnVansTareIndex:
+		return "tareindex";
 	case fnVansNetto:
 		return "netto";
 	case fnVansOverload:
@@ -85,14 +82,16 @@ String TDBVansFields::GetFieldName(TDBVansFieldName Name) {
 		return "purpose_station";
 	case fnVansPurposeStationCode:
 		return "purpose_station_code";
-	case fnVansInvoiceRecipient:
-		return "invoice_recipient";
-	case fnVansInvoiceRecipientCode:
-		return "invoice_recipient_code";
+	case fnVansInvoiceNum:
+		return "invoice_num";
 	case fnVansInvoiceSupplier:
 		return "invoice_supplier";
 	case fnVansInvoiceSupplierCode:
 		return "invoice_supplier_code";
+	case fnVansInvoiceRecipient:
+		return "invoice_recipient";
+	case fnVansInvoiceRecipientCode:
+		return "invoice_recipient_code";
 	default:
 		throw Exception("TDBVansFields: unknown Name");
 	}
@@ -119,6 +118,10 @@ TFieldType TDBVansFields::GetFieldType(TDBVansFieldName Name) {
 	case fnVansCarrying:
 	case fnVansBrutto:
 	case fnVansTare:
+	case fnVansTareTrft:
+	case fnVansTareDyn:
+	case fnVansTareSta:
+	case fnVansTareIndex:
 	case fnVansNetto:
 	case fnVansOverload:
 		return ftInteger;
@@ -126,8 +129,9 @@ TFieldType TDBVansFields::GetFieldType(TDBVansFieldName Name) {
 	case fnVansCargoType:
 	case fnVansDepartStation:
 	case fnVansPurposeStation:
-	case fnVansInvoiceRecipient:
+	case fnVansInvoiceNum:
 	case fnVansInvoiceSupplier:
+	case fnVansInvoiceRecipient:
 		return ftString;
 
 	case fnVansAxisCount:
@@ -142,8 +146,8 @@ TFieldType TDBVansFields::GetFieldType(TDBVansFieldName Name) {
 	case fnVansCargoTypeCode:
 	case fnVansDepartStationCode:
 	case fnVansPurposeStationCode:
-	case fnVansInvoiceRecipientCode:
 	case fnVansInvoiceSupplierCode:
+	case fnVansInvoiceRecipientCode:
 		return ftInteger;
 
 	default:
@@ -152,27 +156,13 @@ TFieldType TDBVansFields::GetFieldType(TDBVansFieldName Name) {
 }
 
 // ---------------------------------------------------------------------------
-String TDBVansFields::GetFields(TDBVansDatabaseOp DatabaseOp) {
-	switch (DatabaseOp) {
-	case dboVansSaveTrain:
-		return ConcatFields(SAVE_TRAIN_FIELDS, SAVE_TRAIN_FIELDS_COUNT);
-	case dboVansLoadTrain:
-		return ConcatFields(LOAD_TRAIN_FIELDS, LOAD_TRAIN_FIELDS_COUNT);
-	default:
-		throw Exception("TDBVansFields: unknown DatabaseOp");
-	}
+String TDBVansFields::GetFields() {
+	return ConcatFields(FIELDS, FIELDS_COUNT);
 }
 
 // ---------------------------------------------------------------------------
-String TDBVansFields::GetValues(TDBVansDatabaseOp DatabaseOp, int Index) {
-	switch (DatabaseOp) {
-	case dboVansSaveTrain:
-		return ConcatValues(SAVE_TRAIN_FIELDS, SAVE_TRAIN_FIELDS_COUNT, Index);
-	case dboVansLoadTrain:
-		return ConcatValues(LOAD_TRAIN_FIELDS, LOAD_TRAIN_FIELDS_COUNT, Index);
-	default:
-		throw Exception("TDBVansFields: unknown DatabaseOp");
-	}
+String TDBVansFields::GetValues(int Index) {
+	return ConcatValues(FIELDS, FIELDS_COUNT, Index);
 }
 
 // ---------------------------------------------------------------------------

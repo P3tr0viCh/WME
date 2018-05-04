@@ -15,12 +15,12 @@
 #pragma package(smart_init)
 
 // ---------------------------------------------------------------------------
-bool StringGridIsEmpty(TStringGrid *Grid) {
+bool StringGridIsEmpty(TStringGrid * Grid) {
 	return IsEmpty(Grid->Cells[0][1]);
 }
 
 // ---------------------------------------------------------------------------
-void StringGridClear(TStringGrid *Grid) {
+void StringGridClear(TStringGrid * Grid) {
 	for (int i = 1; i < Grid->RowCount; i++) {
 		Grid->Rows[i]->Clear();
 	}
@@ -28,20 +28,21 @@ void StringGridClear(TStringGrid *Grid) {
 }
 
 // ---------------------------------------------------------------------------
-void StringGridSelectCell(TStringGrid *Grid, int ACol, int ARow) {
+void StringGridSelectCell(TStringGrid * Grid, int ACol, int ARow) {
 	Grid->Col = ACol;
 	Grid->Row = ARow;
 }
 
 // ---------------------------------------------------------------------------
-void StringGridUpdateOrderNum(TStringGrid *Grid) {
+void StringGridUpdateOrderNum(TStringGrid * Grid, int StartValue) {
 	for (int ARow = 1, Count = Grid->RowCount; ARow < Count; ARow++) {
-		Grid->Cells[0][ARow] = IntToStr(ARow);
+		Grid->Cells[0][ARow] = IntToStr(StartValue);
+		StartValue++;
 	}
 }
 
 // ---------------------------------------------------------------------------
-void StringGridDeleteRow(TStringGrid *Grid, int ARow, int AColCount) {
+void StringGridDeleteRow(TStringGrid * Grid, int ARow, int AColCount) {
 	int Count = Grid->RowCount;
 
 	if (Count - Grid->FixedRows <= 1) {
@@ -68,20 +69,20 @@ void StringGridDeleteRow(TStringGrid *Grid, int ARow, int AColCount) {
 }
 
 // ---------------------------------------------------------------------------
-void StringGridSetHeader(TStringGrid *Grid, int ACol, String ColName,
+void StringGridSetHeader(TStringGrid * Grid, int ACol, String ColName,
 	int ColWidth) {
 	Grid->Cells[ACol][0] = ColName;
 	Grid->ColWidths[ACol] = ColWidth;
 }
 
 // ---------------------------------------------------------------------------
-void StringGridSetHeader(TStringGrid *Grid, int ACol, NativeUInt ColNameIdent,
+void StringGridSetHeader(TStringGrid * Grid, int ACol, NativeUInt ColNameIdent,
 	int ColWidth) {
 	StringGridSetHeader(Grid, ACol, LoadStr(ColNameIdent), ColWidth);
 }
 
 // ---------------------------------------------------------------------------
-void StringGridDrawCell(TStringGrid *Grid, int ACol, int ARow, TRect Rect,
+void StringGridDrawCell(TStringGrid * Grid, int ACol, int ARow, TRect Rect,
 	TGridDrawState State, TIntegerSet ColsReadOnly, TIntegerSet ColsLeftAlign,
 	TIntegerSet ColsCustomColor, TColor ReadOnlyColor, TColor CustomColor,
 	bool DrawFocusedOnInactive) {
@@ -130,6 +131,7 @@ void StringGridDrawCell(TStringGrid *Grid, int ACol, int ARow, TRect Rect,
 
 		if (!State.Contains(gdSelected)) {
 			if (ColsCustomColor.Contains(ACol)) {
+				// TODO
 				// Grid->Canvas->Font->Color =
 				// GetColorByBack(Grid->Canvas->Brush->Color);
 			}
@@ -149,7 +151,7 @@ void StringGridDrawCell(TStringGrid *Grid, int ACol, int ARow, TRect Rect,
 }
 
 // ---------------------------------------------------------------------------
-void StringGridMouseToCell(TStringGrid *Grid, int &ACol, int &ARow) {
+void StringGridMouseToCell(TStringGrid * Grid, int &ACol, int &ARow) {
 	TPoint P = Mouse->CursorPos;
 	P = Grid->ScreenToClient(P);
 
@@ -160,9 +162,9 @@ void StringGridMouseToCell(TStringGrid *Grid, int &ACol, int &ARow) {
 String LoadSQL(NativeUInt Ident) {
 	String Result;
 
-	TStrings *Strings = new TStringList;
+	TStrings * Strings = new TStringList;
 
-	TResourceStream *Stream = new TResourceStream((int)HInstance,
+	TResourceStream * Stream = new TResourceStream((int)HInstance,
 		LoadStr(Ident), RT_RCDATA);
 
 	try {
@@ -190,13 +192,26 @@ int DateTimeToWTime(TDateTime ADateTime) {
 }
 
 // ---------------------------------------------------------------------------
-String CheckStrValue(String Value) {
+String CheckStrValue(String Value, int MaxLength) {
+	if (Value.IsEmpty()) {
+		return Value;
+	}
+
 	int P = Value.Pos(sLineBreak);
+
 	if (P > 0) {
 		Value = Value.SubString(0, P - 1);
 	}
 
-	return Trim(Value);
+	Value = StringReplace(Value, "\t", " ", TReplaceFlags() << rfReplaceAll);
+
+	Value = Value.Trim();
+
+	if (Value.Length() > MaxLength) {
+		Value.SetLength(MaxLength);
+	}
+
+	return Value;
 }
 
 // ---------------------------------------------------------------------------

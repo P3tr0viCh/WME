@@ -13,7 +13,7 @@ __fastcall TTrain::TTrain() {
 }
 
 // ---------------------------------------------------------------------------
-__fastcall TTrain::TTrain(TVanList *AVanList) {
+__fastcall TTrain::TTrain(TVanList * AVanList) {
 	Init();
 
 	VanList = AVanList;
@@ -22,10 +22,13 @@ __fastcall TTrain::TTrain(TVanList *AVanList) {
 // ---------------------------------------------------------------------------
 __fastcall TTrain::~TTrain() {
 	FVanList->Free();
+	FUser->Free();
 }
 
 // ---------------------------------------------------------------------------
 void TTrain::Init() {
+	FUser = new TUser();
+
 	FVanList = new TVanList();
 
 	FTrainNum = TRAINNUM_NONE;
@@ -35,24 +38,33 @@ void TTrain::Init() {
 }
 
 // ---------------------------------------------------------------------------
-void TTrain::SetVanList(TVanList *AVanList) {
+void TTrain::SetUser(TUser * Value) {
+	User->Assign(Value);
+}
+
+// ---------------------------------------------------------------------------
+void TTrain::SetVanList(TVanList * AVanList) {
 	VanList->Assign(AVanList);
 }
 
 // ---------------------------------------------------------------------------
-bool __fastcall TTrain::Equals(TObject* Obj) {
+bool __fastcall TTrain::Equals(TObject * Obj) {
 	if (this == Obj)
 		return true;
 	if (Obj == NULL || ClassType() != Obj->ClassType())
 		return false;
 
-	TTrain *Train = (TTrain*) Obj;
+	TTrain * Train = (TTrain*) Obj;
 
 	if (TrainNum != Train->TrainNum || UnixTime != Train->UnixTime ||
 		DateTime != Train->DateTime || Carrying != Train->Carrying ||
 		Brutto != Train->Brutto || Tare != Train->Tare ||
 		Netto != Train->Netto || Overload != Train->Overload ||
 		VanCount != Train->VanCount) {
+		return false;
+	}
+
+	if (!User->Equals(Train->User)) {
 		return false;
 	}
 
@@ -64,7 +76,7 @@ bool __fastcall TTrain::Equals(TObject* Obj) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TTrain::Assign(TTrain* Source) {
+void __fastcall TTrain::Assign(TTrain * Source) {
 	TrainNum = Source->TrainNum;
 
 	UnixTime = Source->UnixTime;
@@ -77,6 +89,8 @@ void __fastcall TTrain::Assign(TTrain* Source) {
 	Overload = Source->Overload;
 
 	VanCount = Source->VanCount;
+
+	User->Assign(Source->User);
 
 	VanList->Assign(Source->VanList);
 }
@@ -101,6 +115,8 @@ String __fastcall TTrain::ToString() {
 	S += "Overload='" + IntToStr(Overload) + "'";
 	S += ",";
 	S += "VanCount='" + IntToStr(VanCount) + "'";
+	S += ",";
+	S += "User Name='" + User->Name + "'";
 	S += ",";
 	S += "VanList Items Count='" + IntToStr(VanList->Count) + "'";
 	S += "}";

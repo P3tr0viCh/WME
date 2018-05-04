@@ -28,20 +28,24 @@ private:
 
 	int FVanCount;
 
-	TVanList *FVanList;
+	TUser * FUser;
+
+	TVanList * FVanList;
 
 	void Init();
 
-	void SetVanList(TVanList *AVanList);
+	void SetUser(TUser * Value);
+
+	void SetVanList(TVanList * AVanList);
 
 public:
 	__fastcall TTrain();
-	__fastcall TTrain(TVanList *AVanList);
+	__fastcall TTrain(TVanList * AVanList);
 
 	__fastcall ~TTrain();
 
-	bool __fastcall Equals(TObject* Obj);
-	void __fastcall Assign(TTrain* Source);
+	bool __fastcall Equals(TObject * Obj);
+	void __fastcall Assign(TTrain * Source);
 	String __fastcall ToString();
 
 	__property int TrainNum = {read = FTrainNum, write = FTrainNum};
@@ -57,7 +61,9 @@ public:
 
 	__property int VanCount = {read = FVanCount, write = FVanCount};
 
-	__property TVanList *VanList = {read = FVanList, write = SetVanList};
+	__property TUser * User = {read = FUser, write = SetUser};
+
+	__property TVanList * VanList = {read = FVanList, write = SetVanList};
 };
 
 // ---------------------------------------------------------------------------

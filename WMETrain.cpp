@@ -114,15 +114,6 @@ bool TfrmTrain::Show(TTrain *Train) {
 
 		frmTrain->Changed = false;
 
-		// TODO: delete
-		if (Train->TrainNum == TRAINNUM_NONE) {
-			frmTrain->tbtnAdd->Click();
-			frmTrain->sgVans->Cells[VansColumns.TARE_D][frmTrain->sgVans->Row] =
-				IntToStr(20);
-			frmTrain->sgVans->Cells[VansColumns.TARE_S][frmTrain->sgVans->Row] =
-				IntToStr(30);
-		}
-
 		Result = frmTrain->ShowModal() == mrOk;
 	}
 	__finally {
@@ -384,8 +375,18 @@ void __fastcall TfrmTrain::sgVansSelectCell(TObject *Sender, int ACol, int ARow,
 }
 
 // ---------------------------------------------------------------------------
+void __fastcall TfrmTrain::sgVansGetEditText(TObject *Sender, int ACol,
+	int ARow, UnicodeString & Value) {
+	CellValue = Value;
+}
+
+// ---------------------------------------------------------------------------
 void __fastcall TfrmTrain::sgVansSetEditText(TObject *Sender, int ACol,
 	int ARow, const UnicodeString Value) {
+	if (AnsiSameStr(CellValue, Value)) {
+		return;
+	}
+
 	Changed = true;
 }
 
@@ -551,8 +552,9 @@ void TfrmTrain::UpdateButtons() {
 }
 
 // ---------------------------------------------------------------------------
-void TfrmTrain::CheckValue(int ACol, int ARow) {
-	sgVans->Cells[ACol][ARow] = CheckStrValue(sgVans->Cells[ACol][ARow]);
+void TfrmTrain::CheckValue(int ACol, int ARow, int MaxLength) {
+	sgVans->Cells[ACol][ARow] = CheckStrValue(sgVans->Cells[ACol][ARow],
+		MaxLength);
 }
 
 // ---------------------------------------------------------------------------
@@ -569,14 +571,14 @@ bool TfrmTrain::CheckValues(int ARow) {
 		return Result;
 	}
 
-	CheckValue(VansColumns.VANNUM, ARow);
-	CheckValue(VansColumns.VANTYPE, ARow);
-	CheckValue(VansColumns.CARGOTYPE, ARow);
-	CheckValue(VansColumns.DEPART_STATION, ARow);
-	CheckValue(VansColumns.PURPOSE_STATION, ARow);
-	CheckValue(VansColumns.INVOICE_NUM, ARow);
-	CheckValue(VansColumns.INVOICE_SUPPLIER, ARow);
-	CheckValue(VansColumns.INVOICE_RECIPIENT, ARow);
+	CheckValue(VansColumns.VANNUM, ARow, 8);
+	CheckValue(VansColumns.VANTYPE, ARow, 32);
+	CheckValue(VansColumns.CARGOTYPE, ARow, 32);
+	CheckValue(VansColumns.DEPART_STATION, ARow, 32);
+	CheckValue(VansColumns.PURPOSE_STATION, ARow, 32);
+	CheckValue(VansColumns.INVOICE_NUM, ARow, 16);
+	CheckValue(VansColumns.INVOICE_SUPPLIER, ARow, 32);
+	CheckValue(VansColumns.INVOICE_RECIPIENT, ARow, 32);
 
 	if (!CheckDateTimeValue(sgVans->Cells[VansColumns.DATETIME][ARow])) {
 		StringGridSelectCell(sgVans, VansColumns.DATETIME, ARow);
@@ -737,10 +739,24 @@ TTrain * TfrmTrain::GetTrain(int TrainNum) {
 	Train->Carrying = Carrying;
 	Train->Brutto = Brutto;
 	Train->Tare = Tare;
-	Train->Netto = Train->Brutto - Train->Tare;
-	Train->Overload = Train->Netto - Train->Carrying;
+
+	if (Train->Brutto > 0 && Train->Tare > 0) {
+		Train->Netto = Train->Brutto - Train->Tare;
+	}
+	else {
+		Train->Netto = 0;
+	}
+
+	if (Train->Carrying > 0 && Train->Netto > 0) {
+		Train->Overload = Train->Netto - Train->Carrying;
+	}
+	else {
+		Train->Overload = 0;
+	}
 
 	Train->VanCount = Train->VanList->Count;
+
+	Train->User = Main->User;
 
 	return Train;
 }
@@ -821,10 +837,13 @@ int TfrmTrain::SetVan(int Index, TVan * Van) {
 	sgVans->Cells[VansColumns.DEPART_STATION][Index] = Van->DepartStation->Name;
 	sgVans->Cells[VansColumns.PURPOSE_STATION][Index] =
 		Van->PurposeStation->Name;
-	sgVans->Cells[VansColumns.INVOICE_RECIPIENT][Index] =
-		Van->InvoiceRecipient->Name;
+
+	sgVans->Cells[VansColumns.INVOICE_NUM][Index] = Van->InvoiceNum;
+
 	sgVans->Cells[VansColumns.INVOICE_SUPPLIER][Index] =
 		Van->InvoiceSupplier->Name;
+	sgVans->Cells[VansColumns.INVOICE_RECIPIENT][Index] =
+		Van->InvoiceRecipient->Name;
 
 	return Index;
 }
@@ -859,12 +878,6 @@ void __fastcall TfrmTrain::sgVansGetEditMask(TObject *Sender, int ACol,
 		Value = "00000000";
 		break;
 	}
-}
-
-// ---------------------------------------------------------------------------
-void __fastcall TfrmTrain::sgVansGetEditText(TObject *Sender, int ACol,
-	int ARow, UnicodeString & Value) {
-	CellValue = Value;
 }
 
 // ---------------------------------------------------------------------------

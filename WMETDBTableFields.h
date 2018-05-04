@@ -7,7 +7,7 @@
 
 #include <Data.DB.hpp>
 
-template<typename T, typename D>
+template<typename T>
 class TDBTableFields : public TObject {
 protected:
 	String ConcatFields(const T Fields[], int Count) {
@@ -17,6 +17,7 @@ protected:
 		}
 		return S;
 	}
+
 	String ConcatValues(const T Fields[], int Count, int Index) {
 		String S = GetParamValue(Fields[0], Index);
 		for (int i = 1; i < Count; i++) {
@@ -42,9 +43,9 @@ public:
 	virtual TFieldType GetFieldType(T Name) = 0;
 
 	// field_name1, field_name2, ...
-	virtual String GetFields(D DatabaseOp) = 0;
+	virtual String GetFields() = 0;
 	// :field_name10, :field_name20, ...
-	virtual String GetValues(D DatabaseOp, int Index = -1) = 0;
+	virtual String GetValues(int Index = -1) = 0;
 };
 
 // ---------------------------------------------------------------------------

@@ -225,6 +225,8 @@ void TfrmOptions::CreateUsersColumns() {
 		IDS_GRID_HEADER_IS_ADMIN, 60);
 	StringGridSetHeader(sgUsers, UsersColumns.TABNUM,
 		IDS_GRID_HEADER_TABNUM, 100);
+	StringGridSetHeader(sgUsers, UsersColumns.SHIFTNUM,
+		IDS_GRID_HEADER_SHIFTNUM, 60);
 }
 
 // ---------------------------------------------------------------------------

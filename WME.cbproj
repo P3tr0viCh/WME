@@ -282,6 +282,14 @@
             <Form>WMEStringsGridHeader.res</Form>
             <BuildOrder>44</BuildOrder>
         </ResourceCompile>
+        <None Include="WMEStringsSettings.h">
+            <BuildOrder>52</BuildOrder>
+        </None>
+        <ResourceCompile Include="WMEStringsSettings.rc">
+            <ModuleName>WMEStringsSettings.rc</ModuleName>
+            <Form>WMEStringsSettings.res</Form>
+            <BuildOrder>53</BuildOrder>
+        </ResourceCompile>
         <CppCompile Include="WMETConnectionInfo.cpp">
             <DependentOn>WMETConnectionInfo.h</DependentOn>
             <BuildOrder>28</BuildOrder>
@@ -362,14 +370,14 @@
             <DependentOn>WMETVanType.h</DependentOn>
             <BuildOrder>49</BuildOrder>
         </CppCompile>
+        <FormResources Include="WMEOptionsVanType.dfm"/>
         <FormResources Include="WMEOptionsVanCatalog.dfm"/>
         <FormResources Include="WMETrainList.dfm"/>
         <FormResources Include="WMETrain.dfm"/>
+        <FormResources Include="WMELogin.dfm"/>
         <FormResources Include="WMEOptionsUser.dfm"/>
         <FormResources Include="WMEOptions.dfm"/>
         <FormResources Include="WMEMain.dfm"/>
-        <FormResources Include="WMELogin.dfm"/>
-        <FormResources Include="WMEOptionsVanType.dfm"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

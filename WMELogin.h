@@ -11,17 +11,18 @@
 #include <ObjList.h>
 
 #include "WMETUser.h"
+#include <Vcl.ExtCtrls.hpp>
 
 // ---------------------------------------------------------------------------
 class TfrmLogin : public TForm {
 __published:
-
 	TButton *btnOk;
 	TButton *btnCancel;
 	TEdit *ePass;
 	TLabel *lblPass;
 	TLabel *lblUser;
 	TComboBox *cboxUser;
+	TBevel *Bevel;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -29,12 +30,12 @@ __published:
 	void __fastcall btnOkClick(TObject *Sender);
 
 private:
-	TUserList *UserList;
+	TUserList * UserList;
 
 public:
 	__fastcall TfrmLogin(TComponent* Owner);
 
-	static bool Show(TUserList *UserList, TUser* User);
+	static bool Show(TUserList * UserList, TUser * User);
 
 	void UpdateForm();
 

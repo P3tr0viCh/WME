@@ -13,13 +13,13 @@
 // ---------------------------------------------------------------------------
 class TDBSaveTrain : public TDatabaseOperation {
 private:
-	TTrain *FTrain;
+	TTrain * FTrain;
 
-	TDBVansFields *VansFields;
-	TDBTrainsFields *TrainsFields;
+	TDBVansFields * VansFields;
+	TDBTrainsFields * TrainsFields;
 
 public:
-	__fastcall TDBSaveTrain(TConnectionInfo *ConnectionInfo, TTrain *Train);
+	__fastcall TDBSaveTrain(TConnectionInfo * ConnectionInfo, TTrain * Train);
 	__fastcall ~TDBSaveTrain();
 
 	void OperationStart();
@@ -28,12 +28,12 @@ public:
 
 	void SetVansParam(TADOQuery * Query, TDBVansFieldName Name, int Index,
 		Variant Value);
-	void SetTrainsParam(TADOQuery *Query, TDBTrainsFieldName Name,
+	void SetTrainParam(TADOQuery * Query, TDBTrainsFieldName Name,
 		Variant Value);
 
 	void Operation();
 
-	__property TTrain *Train = {read = FTrain};
+	__property TTrain * Train = {read = FTrain};
 };
 
 // ---------------------------------------------------------------------------

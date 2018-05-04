@@ -13,8 +13,11 @@
 #pragma package(smart_init)
 
 // ---------------------------------------------------------------------------
-__fastcall TDBLoadTrains::TDBLoadTrains(TConnectionInfo *ConnectionInfo)
-	: TDatabaseOperation(ConnectionInfo) {
+__fastcall TDBLoadTrains::TDBLoadTrains(TConnectionInfo * ConnectionInfo,
+	int APage, int ATrainCount) : TDatabaseOperation(ConnectionInfo) {
+	Page = APage;
+	TrainCount = ATrainCount;
+
 	FTrainList = new TTrainList();
 
 	TrainsFields = new TDBTrainsFields();
@@ -48,22 +51,27 @@ void TDBLoadTrains::Operation() {
 
 	Connection->Open();
 
-	TADOQuery *Query = new TADOQuery(NULL);
+	TADOQuery * Query = new TADOQuery(NULL);
 	try {
 		Query->Connection = Connection;
 
 		Query->SQL->Add("SELECT");
-		Query->SQL->Add(TrainsFields->GetFields(dboTrainsLoadTrains));
+		Query->SQL->Add(TrainsFields->GetFields());
 		Query->SQL->Add("FROM trains");
 		Query->SQL->Add("ORDER BY");
 		Query->SQL->Add(TrainsFields->GetFieldName(fnTrainsDatetime));
 		Query->SQL->Add("DESC");
 
-//		WriteToLog(Query->SQL->Text);
+		if (TrainCount > 0 && Page >= 0) {
+			Query->SQL->Add("LIMIT " + IntToStr(TrainCount) + " OFFSET " +
+				IntToStr(TrainCount * Page));
+		}
+
+		// WriteToLog(Query->SQL->Text);
 
 		Query->Open();
 
-		TTrain *Train;
+		TTrain * Train;
 
 		while (!Query->Eof) {
 			Train = new TTrain();
@@ -94,6 +102,17 @@ void TDBLoadTrains::Operation() {
 			Train->VanCount =
 				Query->FieldByName(TrainsFields->GetFieldName(fnTrainsVanCount))
 				->AsInteger;
+
+			Train->User->Name =
+				Query->FieldByName(TrainsFields->GetFieldName(fnTrainsOperator))
+				->AsString;
+			Train->User->TabNum =
+				Query->FieldByName
+				(TrainsFields->GetFieldName(fnTrainsOperatorTabNum))->AsString;
+			Train->User->ShiftNum =
+				Query->FieldByName
+				(TrainsFields->GetFieldName(fnTrainsOperatorShiftNum))
+				->AsString;
 
 			FTrainList->Add(Train);
 

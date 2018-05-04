@@ -4,7 +4,7 @@ object frmLogin: TfrmLogin
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = #1042#1093#1086#1076
-  ClientHeight = 232
+  ClientHeight = 238
   ClientWidth = 352
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -32,10 +32,18 @@ object frmLogin: TfrmLogin
     Width = 99
     Height = 21
     Caption = #1055#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1100
+    FocusControl = cboxUser
+  end
+  object Bevel: TBevel
+    Left = 16
+    Top = 174
+    Width = 320
+    Height = 4
+    Shape = bsTopLine
   end
   object btnOk: TButton
     Left = 128
-    Top = 184
+    Top = 190
     Width = 96
     Height = 32
     Caption = 'OK'
@@ -46,7 +54,7 @@ object frmLogin: TfrmLogin
   end
   object btnCancel: TButton
     Left = 240
-    Top = 184
+    Top = 190
     Width = 96
     Height = 32
     Cancel = True

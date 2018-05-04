@@ -15,8 +15,8 @@
 #pragma package(smart_init)
 
 // ---------------------------------------------------------------------------
-__fastcall TDBSaveTrain::TDBSaveTrain(TConnectionInfo *ConnectionInfo,
-	TTrain *Train) : TDatabaseOperation(ConnectionInfo) {
+__fastcall TDBSaveTrain::TDBSaveTrain(TConnectionInfo * ConnectionInfo,
+	TTrain * Train) : TDatabaseOperation(ConnectionInfo) {
 	VansFields = new TDBVansFields();
 	TrainsFields = new TDBTrainsFields();
 
@@ -45,18 +45,18 @@ void TDBSaveTrain::OperationEndFail() {
 }
 
 // ---------------------------------------------------------------------------
-void TDBSaveTrain::SetVansParam(TADOQuery *Query, TDBVansFieldName Name,
+void TDBSaveTrain::SetVansParam(TADOQuery * Query, TDBVansFieldName Name,
 	int Index, Variant Value) {
-	TParameter *Param = Query->Parameters->ParamByName
+	TParameter * Param = Query->Parameters->ParamByName
 		(VansFields->GetParamName(Name, Index));
 	Param->DataType = VansFields->GetFieldType(Name);
 	Param->Value = Value;
 }
 
 // ---------------------------------------------------------------------------
-void TDBSaveTrain::SetTrainsParam(TADOQuery *Query, TDBTrainsFieldName Name,
+void TDBSaveTrain::SetTrainParam(TADOQuery * Query, TDBTrainsFieldName Name,
 	Variant Value) {
-	TParameter *Param = Query->Parameters->ParamByName
+	TParameter * Param = Query->Parameters->ParamByName
 		(TrainsFields->GetParamName(Name));
 	Param->DataType = TrainsFields->GetFieldType(Name);
 	Param->Value = Value;
@@ -72,7 +72,7 @@ void TDBSaveTrain::Operation() {
 
 	Connection->Open();
 
-	TADOQuery *Query = new TADOQuery(NULL);
+	TADOQuery * Query = new TADOQuery(NULL);
 	try {
 		Query->Connection = Connection;
 
@@ -80,6 +80,8 @@ void TDBSaveTrain::Operation() {
 			Train->TrainNum = DateTimeToWTime(Now());
 		}
 		else {
+			// TODO: mark as deleted and delete after successful save
+
 			Query->SQL->Add("DELETE FROM vans");
 			Query->SQL->Add("WHERE");
 			Query->SQL->Add(VansFields->GetFieldName(fnVansTrnum) + "=" +
@@ -97,7 +99,7 @@ void TDBSaveTrain::Operation() {
 			Query->SQL->Add(TrainsFields->GetFieldName(fnTrainsTrnum) + "=" +
 				TrainsFields->GetParamValue(fnTrainsTrnum));
 
-			SetTrainsParam(Query, fnTrainsTrnum, Train->TrainNum);
+			SetTrainParam(Query, fnTrainsTrnum, Train->TrainNum);
 
 			Query->Prepared = true;
 
@@ -107,15 +109,14 @@ void TDBSaveTrain::Operation() {
 		Query->SQL->Clear();
 		Query->SQL->Add("INSERT INTO vans");
 		Query->SQL->Add("(");
-		Query->SQL->Add(VansFields->GetFields(dboVansSaveTrain));
+		Query->SQL->Add(VansFields->GetFields());
 		Query->SQL->Add(")");
 		Query->SQL->Add("VALUES");
 
-		Query->SQL->Add("(" + VansFields->GetValues(dboVansSaveTrain, 0) + ")");
+		Query->SQL->Add("(" + VansFields->GetValues(0) + ")");
 		for (int i = 1; i < Train->VanList->Count; i++) {
 			Query->SQL->Add(",");
-			Query->SQL->Add("(" + VansFields->GetValues(dboVansSaveTrain,
-				i) + ")");
+			Query->SQL->Add("(" + VansFields->GetValues(i) + ")");
 		}
 
 		for (int i = 0; i < Train->VanList->Count; i++) {
@@ -138,7 +139,17 @@ void TDBSaveTrain::Operation() {
 				Train->VanList->Items[i]->Carrying);
 			SetVansParam(Query, fnVansBrutto, i,
 				Train->VanList->Items[i]->Brutto);
+
 			SetVansParam(Query, fnVansTare, i, Train->VanList->Items[i]->Tare);
+			SetVansParam(Query, fnVansTareTrft, i,
+				Train->VanList->Items[i]->TareTrft);
+			SetVansParam(Query, fnVansTareDyn, i,
+				Train->VanList->Items[i]->TareDyn);
+			SetVansParam(Query, fnVansTareSta, i,
+				Train->VanList->Items[i]->TareSta);
+			SetVansParam(Query, fnVansTareIndex, i,
+				Train->VanList->Items[i]->TareIndex);
+
 			SetVansParam(Query, fnVansNetto, i,
 				Train->VanList->Items[i]->Netto);
 			SetVansParam(Query, fnVansOverload, i,
@@ -163,18 +174,24 @@ void TDBSaveTrain::Operation() {
 				Train->VanList->Items[i]->DepartStation->Name);
 			SetVansParam(Query, fnVansDepartStationCode, i,
 				Train->VanList->Items[i]->DepartStation->Code);
+
 			SetVansParam(Query, fnVansPurposeStation, i,
 				Train->VanList->Items[i]->PurposeStation->Name);
 			SetVansParam(Query, fnVansPurposeStationCode, i,
 				Train->VanList->Items[i]->PurposeStation->Code);
-			SetVansParam(Query, fnVansInvoiceRecipient, i,
-				Train->VanList->Items[i]->InvoiceRecipient->Name);
-			SetVansParam(Query, fnVansInvoiceRecipientCode, i,
-				Train->VanList->Items[i]->InvoiceRecipient->Code);
+
+			SetVansParam(Query, fnVansInvoiceNum, i,
+				Train->VanList->Items[i]->InvoiceNum);
+
 			SetVansParam(Query, fnVansInvoiceSupplier, i,
 				Train->VanList->Items[i]->InvoiceSupplier->Name);
 			SetVansParam(Query, fnVansInvoiceSupplierCode, i,
 				Train->VanList->Items[i]->InvoiceSupplier->Code);
+
+			SetVansParam(Query, fnVansInvoiceRecipient, i,
+				Train->VanList->Items[i]->InvoiceRecipient->Name);
+			SetVansParam(Query, fnVansInvoiceRecipientCode, i,
+				Train->VanList->Items[i]->InvoiceRecipient->Code);
 		}
 
 		Query->Prepared = true;
@@ -187,23 +204,26 @@ void TDBSaveTrain::Operation() {
 
 		Query->SQL->Add("INSERT INTO trains");
 		Query->SQL->Add("(");
-		Query->SQL->Add(TrainsFields->GetFields(dboTrainsSaveTrain));
+		Query->SQL->Add(TrainsFields->GetFields());
 		Query->SQL->Add(")");
 		Query->SQL->Add("VALUES");
 
-		Query->SQL->Add("(" + TrainsFields->GetValues(dboTrainsSaveTrain,
-			-1) + ")");
+		Query->SQL->Add("(" + TrainsFields->GetValues(-1) + ")");
 
-		SetTrainsParam(Query, fnTrainsTrnum, Train->TrainNum);
-		SetTrainsParam(Query, fnTrainsWTime, Train->UnixTime);
-		SetTrainsParam(Query, fnTrainsDatetime,
+		SetTrainParam(Query, fnTrainsTrnum, Train->TrainNum);
+		SetTrainParam(Query, fnTrainsWTime, Train->UnixTime);
+		SetTrainParam(Query, fnTrainsDatetime,
 			DateTimeToSQLStr(Train->DateTime));
-		SetTrainsParam(Query, fnTrainsCarrying, Train->Carrying);
-		SetTrainsParam(Query, fnTrainsBrutto, Train->Brutto);
-		SetTrainsParam(Query, fnTrainsTare, Train->Tare);
-		SetTrainsParam(Query, fnTrainsNetto, Train->Netto);
-		SetTrainsParam(Query, fnTrainsOverload, Train->Overload);
-		SetTrainsParam(Query, fnTrainsVanCount, Train->VanCount);
+		SetTrainParam(Query, fnTrainsCarrying, Train->Carrying);
+		SetTrainParam(Query, fnTrainsBrutto, Train->Brutto);
+		SetTrainParam(Query, fnTrainsTare, Train->Tare);
+		SetTrainParam(Query, fnTrainsNetto, Train->Netto);
+		SetTrainParam(Query, fnTrainsOverload, Train->Overload);
+		SetTrainParam(Query, fnTrainsVanCount, Train->VanCount);
+
+		SetTrainParam(Query, fnTrainsOperator, Train->User->Name);
+		SetTrainParam(Query, fnTrainsOperatorTabNum, Train->User->TabNum);
+		SetTrainParam(Query, fnTrainsOperatorShiftNum, Train->User->ShiftNum);
 
 		Query->Prepared = true;
 

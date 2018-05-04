@@ -12,12 +12,16 @@
 // ---------------------------------------------------------------------------
 class TDBLoadTrains : public TDatabaseOperation {
 private:
-	TTrainList *FTrainList;
+	int Page;
+	int TrainCount;
 
-	TDBTrainsFields *TrainsFields;
+	TTrainList * FTrainList;
+
+	TDBTrainsFields * TrainsFields;
 
 public:
-	__fastcall TDBLoadTrains(TConnectionInfo *ConnectionInfo);
+	__fastcall TDBLoadTrains(TConnectionInfo * ConnectionInfo, int APage,
+		int ATrainCount);
 	__fastcall ~TDBLoadTrains();
 
 	void OperationStart();
@@ -26,7 +30,7 @@ public:
 
 	void Operation();
 
-	__property TTrainList *TrainList = {read = FTrainList};
+	__property TTrainList * TrainList = {read = FTrainList};
 };
 
 // ---------------------------------------------------------------------------

@@ -62,10 +62,9 @@ object frmOptions: TfrmOptions
           Left = 16
           Top = 168
           Width = 566
-          Height = 1
+          Height = 4
           Anchors = [akLeft, akTop, akRight]
           Shape = bsTopLine
-          ExplicitWidth = 432
         end
         object eDBUser: TLabeledEdit
           Left = 16
@@ -149,10 +148,6 @@ object frmOptions: TfrmOptions
       object tsUsers: TTabSheet
         Caption = #1055#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1080
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object sgUsers: TStringGrid
           Left = 16
           Top = 16
@@ -243,10 +238,6 @@ object frmOptions: TfrmOptions
       object tsCargoTypes: TTabSheet
         Caption = #1056#1086#1076' '#1075#1088#1091#1079#1072
         ImageIndex = 3
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object sgCargoTypes: TStringGrid
           Left = 16
           Top = 16
@@ -292,10 +283,6 @@ object frmOptions: TfrmOptions
       object tsDepartStations: TTabSheet
         Caption = #1057#1090#1072#1085#1094#1080#1103' '#1086#1090#1087#1088#1072#1074#1083#1077#1085#1080#1103
         ImageIndex = 4
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object sgDepartStations: TStringGrid
           Left = 16
           Top = 16
@@ -341,10 +328,6 @@ object frmOptions: TfrmOptions
       object tsPurposeStations: TTabSheet
         Caption = #1057#1090#1072#1085#1094#1080#1103' '#1085#1072#1079#1085#1072#1095#1077#1085#1080#1103
         ImageIndex = 5
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object sgPurposeStations: TStringGrid
           Left = 16
           Top = 16
@@ -390,10 +373,6 @@ object frmOptions: TfrmOptions
       object tsInvoiceSuppliers: TTabSheet
         Caption = #1043#1088#1091#1079#1086#1086#1090#1087#1088#1072#1074#1080#1090#1077#1083#1100
         ImageIndex = 6
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object sgInvoiceSuppliers: TStringGrid
           Left = 16
           Top = 16
@@ -439,10 +418,6 @@ object frmOptions: TfrmOptions
       object tsInvoiceRecipients: TTabSheet
         Caption = #1043#1088#1091#1079#1086#1087#1086#1083#1091#1095#1072#1090#1077#1083#1100
         ImageIndex = 7
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object sgInvoiceRecipients: TStringGrid
           Left = 16
           Top = 16
