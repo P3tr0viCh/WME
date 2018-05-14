@@ -8,6 +8,9 @@
 #include <UtilsStr.h>
 #include <UtilsFiles.h>
 #include <UtilsFileIni.h>
+#include <UtilsCryptoPP.h>
+
+#include "WMEEncKey.h"
 
 #include "WMEStrings.h"
 #include "WMEStringsSettings.h"
@@ -189,13 +192,31 @@ String TSettings::GetConfigFileName(NativeUInt ConfigName) {
 }
 
 // ---------------------------------------------------------------------------
-String TSettings::EncryptPass(String S) {
-	return S;
+String TSettings::Encrypt(String Text) {
+	if (IsEmpty(Text)) {
+		return "";
+	}
+
+	try {
+		return EncryptAES(Text, ENC_KEY);
+	}
+	catch (...) {
+		return "";
+	}
 }
 
 // ---------------------------------------------------------------------------
-String TSettings::DecryptPass(String S) {
-	return S;
+String TSettings::Decrypt(String Text) {
+	if (IsEmpty(Text)) {
+		return "";
+	}
+
+	try {
+		return DecryptAES(Text, ENC_KEY);
+	}
+	catch (...) {
+		return "";
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -218,8 +239,8 @@ void TSettings::LoadDatabases(String ConfigFileName) {
 			Connection->Port);
 		Connection->User = IniFile->ReadString(Section, "user",
 			Connection->User);
-		Connection->Password = IniFile->ReadString(Section, "pass",
-			EncryptPass(Connection->Password));
+		Connection->Password =
+			Decrypt(IniFile->ReadString(Section, "pass", ""));
 	}
 	__finally {
 		delete IniFile;
@@ -243,7 +264,7 @@ void TSettings::LoadUsers(String ConfigFileName) {
 			User = new TUser();
 
 			User->Name = IniFile->ReadString(Section, "Name", "");
-			User->Pass = EncryptPass(IniFile->ReadString(Section, "Pass", ""));
+			User->Pass = Decrypt(IniFile->ReadString(Section, "Pass", ""));
 			User->TabNum = IniFile->ReadString(Section, "TabNum", "");
 			User->ShiftNum = IniFile->ReadString(Section, "ShiftNum", "");
 
@@ -402,8 +423,7 @@ void TSettings::SaveDatabases(String ConfigFileName) {
 		IniFile->WriteString(Section, "host", Connection->Host);
 		IniFile->WriteString(Section, "port", Connection->Port);
 		IniFile->WriteString(Section, "user", Connection->User);
-		IniFile->WriteString(Section, "pass",
-			DecryptPass(Connection->Password));
+		IniFile->WriteString(Section, "pass", Encrypt(Connection->Password));
 	}
 	__finally {
 		delete IniFile;
@@ -427,7 +447,7 @@ void TSettings::SaveUsers(String ConfigFileName) {
 
 			IniFile->WriteString(Section, "Name", UserList->Items[i]->Name);
 			IniFile->WriteString(Section, "Pass",
-				EncryptPass(UserList->Items[i]->Pass));
+				Encrypt(UserList->Items[i]->Pass));
 			IniFile->WriteString(Section, "TabNum", UserList->Items[i]->TabNum);
 			IniFile->WriteString(Section, "ShiftNum",
 				UserList->Items[i]->ShiftNum);

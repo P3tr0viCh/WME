@@ -53,12 +53,11 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
         <_TCHARMapping>wchar_t</_TCHARMapping>
-        <ILINK_LibraryPath>..\!UtilsAndComps\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
         <Multithreaded>true</Multithreaded>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
         <AllPackageLibs>rtl.lib;vcl.lib;dbrtl.lib;adortl.lib;IndySystem.lib;IndyProtocols.lib;IndyCore.lib</AllPackageLibs>
         <SanitizedProjectName>WME</SanitizedProjectName>
-        <IncludePath>..\!UtilsAndComps\;$(IncludePath)</IncludePath>
+        <IncludePath>..\!UtilsAndComps\;C:\Docs\Projects\C++ Builder\!UtilsAndComps;C:\Docs\Projects\C++ Builder\CryptoPP\cryptopp700;$(IncludePath)</IncludePath>
         <ProjectType>CppVCLApplication</ProjectType>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_Locale>1049</VerInfo_Locale>
@@ -69,6 +68,7 @@
         <BCC_wpar>false</BCC_wpar>
         <BCC_OptimizeForSpeed>true</BCC_OptimizeForSpeed>
         <BCC_ExtendedErrorInfo>true</BCC_ExtendedErrorInfo>
+        <ILINK_LibraryPath>..\!UtilsAndComps\;C:\Docs\Projects\C++ Builder\CryptoPP;$(ILINK_LibraryPath)</ILINK_LibraryPath>
         <ILINK_TranslatedLibraryPath>$(BDSLIB)\$(PLATFORM)\release\$(LANGDIR);$(ILINK_TranslatedLibraryPath)</ILINK_TranslatedLibraryPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
@@ -166,6 +166,10 @@
             <DependentOn>..\!UtilsAndComps\UtilsCPUSpeed.h</DependentOn>
             <BuildOrder>5</BuildOrder>
         </CppCompile>
+        <CppCompile Include="..\!UtilsAndComps\UtilsCryptoPP.cpp">
+            <DependentOn>..\!UtilsAndComps\UtilsCryptoPP.h</DependentOn>
+            <BuildOrder>55</BuildOrder>
+        </CppCompile>
         <CppCompile Include="..\!UtilsAndComps\UtilsDate.cpp">
             <DependentOn>..\!UtilsAndComps\UtilsDate.h</DependentOn>
             <BuildOrder>6</BuildOrder>
@@ -228,6 +232,9 @@
         <None Include="WMEDebug.h">
             <BuildOrder>23</BuildOrder>
         </None>
+        <None Include="WMEEncKey.h">
+            <BuildOrder>54</BuildOrder>
+        </None>
         <CppCompile Include="WMELogin.cpp">
             <Form>frmLogin</Form>
             <FormType>dfm</FormType>
@@ -286,7 +293,6 @@
             <BuildOrder>52</BuildOrder>
         </None>
         <ResourceCompile Include="WMEStringsSettings.rc">
-            <ModuleName>WMEStringsSettings.rc</ModuleName>
             <Form>WMEStringsSettings.res</Form>
             <BuildOrder>53</BuildOrder>
         </ResourceCompile>
@@ -371,13 +377,13 @@
             <BuildOrder>49</BuildOrder>
         </CppCompile>
         <FormResources Include="WMEOptionsVanType.dfm"/>
-        <FormResources Include="WMEOptionsVanCatalog.dfm"/>
         <FormResources Include="WMETrainList.dfm"/>
         <FormResources Include="WMETrain.dfm"/>
+        <FormResources Include="WMEMain.dfm"/>
         <FormResources Include="WMELogin.dfm"/>
+        <FormResources Include="WMEOptionsVanCatalog.dfm"/>
         <FormResources Include="WMEOptionsUser.dfm"/>
         <FormResources Include="WMEOptions.dfm"/>
-        <FormResources Include="WMEMain.dfm"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

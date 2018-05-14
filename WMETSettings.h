@@ -40,8 +40,8 @@ private:
 	bool CheckConfigDir();
 	String GetConfigFileName(NativeUInt ConfigName);
 
-	String EncryptPass(String S);
-	String DecryptPass(String S);
+	String Encrypt(String Text);
+	String Decrypt(String Text);
 
 	void DeleteConfigFile(String ConfigFileName);
 
