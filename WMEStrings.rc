@@ -37,11 +37,11 @@ IDS_ERROR_NEED_INT,
 IDS_ERROR_TEXT_EMPTY,
         "Строковое значение не указано"
 
-IDS_ERROR_MYSQL_CONNECTION,
-        "Не удалось подключиться к базе данных"
-IDS_ERROR_MYSQL_DB_DROP,
+IDS_ERROR_LOCAL_CONNECTION,
+        "Не удалось подключиться к локальной базе данных"
+IDS_ERROR_LOCAL_DB_DROP,
         "Во время удаления базы данных произошла ошибка"
-IDS_ERROR_MYSQL_DB_CREATE,
+IDS_ERROR_LOCAL_DB_CREATE,
         "Во время создания базы данных произошла ошибка"
 IDS_ERROR_NOTHING_SAVE,
         "В составе отсутствуют вагоны"
@@ -53,13 +53,17 @@ IDS_ERROR_TRAIN_SAVE,
         "Во время сохранения произошла ошибка"
 IDS_ERROR_TRAIN_LOAD,
         "Во время загрузки состава произошла ошибка"
+IDS_ERROR_SERVER_CONNECTION,
+        "Не удалось подключиться к базе данных сервера"
 
-IDS_MSG_MYSQL_CONNECTION_OK,
-        "Соединение с базой данных выполнено"
-IDS_MSG_MYSQL_DB_DROP_OK,
+IDS_MSG_LOCAL_CONNECTION_OK,
+        "Соединение с локальной базой данных выполнено"
+IDS_MSG_LOCAL_DB_DROP_OK,
         "База данных удалена"
-IDS_MSG_MYSQL_DB_CREATE_OK,
+IDS_MSG_LOCAL_DB_CREATE_OK,
         "База данных создана"
+IDS_MSG_SERVER_CONNECTION_OK,
+        "Соединение с базой данных сервера выполнено"
 
 IDS_TXT_ADMIN_DEFAULT_NAME,
         "Администратор"

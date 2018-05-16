@@ -26,13 +26,13 @@ void TConnectionInfo::SetDefault() {
 }
 
 // ---------------------------------------------------------------------------
-bool __fastcall TConnectionInfo::Equals(TObject* Obj) {
+bool __fastcall TConnectionInfo::Equals(TObject * Obj) {
 	if (this == Obj)
 		return true;
 	if (Obj == NULL || ClassType() != Obj->ClassType())
 		return false;
 
-	TConnectionInfo *Connection = (TConnectionInfo*) Obj;
+	TConnectionInfo * Connection = (TConnectionInfo*) Obj;
 
 	if (Host != Connection->Host || Port != Connection->Port ||
 		Database != Connection->Database || User != Connection->User ||
@@ -43,7 +43,7 @@ bool __fastcall TConnectionInfo::Equals(TObject* Obj) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TConnectionInfo::Assign(TConnectionInfo* Source) {
+void __fastcall TConnectionInfo::Assign(TConnectionInfo * Source) {
 	Host = Source->Host;
 	Port = Source->Port;
 	Database = Source->Database;
@@ -60,7 +60,7 @@ String __fastcall TConnectionInfo::ToString() {
 	S += ", Port='" + Port + "'";
 	S += ", Database='" + Database + "'";
 	S += ", User='" + User + "'";
-	S += ", Password='" + Password + "'";
+	S += ", Password='" + String(IsEmpty(Password) ? "" : "*") + "'";
 	S += "}";
 
 	return S;

@@ -247,8 +247,9 @@ bool TfrmTrainList::LoadTrains() {
 
 	TrainList->Clear();
 
-	TDBLoadTrains * DBLoadTrains = new TDBLoadTrains(Main->Settings->Connection,
-		Page, Main->Settings->LoadTrainCount);
+	TDBLoadTrains * DBLoadTrains =
+		new TDBLoadTrains(Main->Settings->LocalConnection, Page,
+		Main->Settings->LoadTrainCount);
 	try {
 		Result = DBLoadTrains->Execute();
 
@@ -282,7 +283,7 @@ bool TfrmTrainList::LoadTrain(int Index) {
 		ShowWaitCursor();
 
 		TDBLoadTrain * DBLoadTrain =
-			new TDBLoadTrain(Main->Settings->Connection, Train->TrainNum);
+			new TDBLoadTrain(Main->Settings->LocalConnection, Train->TrainNum);
 		try {
 			Result = DBLoadTrain->Execute();
 
@@ -421,8 +422,7 @@ int TfrmTrainList::SetVan(int Index, TVan * Van) {
 	sgVans->Cells[VansColumns.PURPOSE_STATION][Index] =
 		Van->PurposeStation->Name;
 
-	sgVans->Cells[VansColumns.INVOICE_NUM][Index] =
-		Van->InvoiceNum;
+	sgVans->Cells[VansColumns.INVOICE_NUM][Index] = Van->InvoiceNum;
 
 	sgVans->Cells[VansColumns.INVOICE_SUPPLIER][Index] =
 		Van->InvoiceSupplier->Name;

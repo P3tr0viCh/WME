@@ -377,13 +377,13 @@
             <BuildOrder>49</BuildOrder>
         </CppCompile>
         <FormResources Include="WMEOptionsVanType.dfm"/>
+        <FormResources Include="WMEOptionsVanCatalog.dfm"/>
         <FormResources Include="WMETrainList.dfm"/>
         <FormResources Include="WMETrain.dfm"/>
-        <FormResources Include="WMEMain.dfm"/>
         <FormResources Include="WMELogin.dfm"/>
-        <FormResources Include="WMEOptionsVanCatalog.dfm"/>
         <FormResources Include="WMEOptionsUser.dfm"/>
         <FormResources Include="WMEOptions.dfm"/>
+        <FormResources Include="WMEMain.dfm"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

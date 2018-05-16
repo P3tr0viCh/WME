@@ -91,7 +91,7 @@ object frmOptionsUser: TfrmOptionsUser
     Left = 16
     Top = 144
     Width = 304
-    Height = 18
+    Height = 21
     Caption = #1040#1076#1084#1080#1085#1080#1089#1090#1088#1072#1090#1086#1088
     TabOrder = 4
   end

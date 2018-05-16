@@ -1,12 +1,13 @@
 object frmOptions: TfrmOptions
   Left = 0
   Top = 0
-  BorderIcons = [biSystemMenu]
-  BorderStyle = bsSingle
+  BorderIcons = [biSystemMenu, biMaximize]
   Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080
-  ClientHeight = 472
-  ClientWidth = 640
+  ClientHeight = 500
+  ClientWidth = 638
   Color = clBtnFace
+  Constraints.MinHeight = 500
+  Constraints.MinWidth = 640
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -16
@@ -25,29 +26,36 @@ object frmOptions: TfrmOptions
   object PanelMain: TPanel
     Left = 16
     Top = 16
-    Width = 608
-    Height = 392
+    Width = 606
+    Height = 420
     Align = alClient
     BevelOuter = bvLowered
     TabOrder = 0
+    ExplicitWidth = 608
+    ExplicitHeight = 392
     object PageControl: TPageControl
       Left = 1
       Top = 1
-      Width = 606
-      Height = 390
-      ActivePage = tsDatabase
+      Width = 604
+      Height = 418
+      ActivePage = tsLocalDatabase
       Align = alClient
       MultiLine = True
       TabOrder = 0
       StyleElements = [seFont, seClient]
-      object tsDatabase: TTabSheet
+      ExplicitWidth = 606
+      ExplicitHeight = 390
+      object tsLocalDatabase: TTabSheet
         Caption = #1041#1072#1079#1072' '#1076#1072#1085#1085#1099#1093
+        ExplicitTop = 58
+        ExplicitWidth = 598
+        ExplicitHeight = 328
         DesignSize = (
-          598
-          328)
-        object lblDBConnection: TLabel
+          596
+          330)
+        object lblLocalConnection: TLabel
           Left = 16
-          Top = 8
+          Top = 16
           Width = 286
           Height = 21
           Caption = #1055#1086#1076#1082#1083#1102#1095#1077#1085#1080#1077' '#1082' '#1083#1086#1082#1072#1083#1100#1085#1086#1081' '#1073#1072#1079#1077' '#1076#1072#1085#1085#1099#1093
@@ -58,17 +66,18 @@ object frmOptions: TfrmOptions
           Font.Style = []
           ParentFont = False
         end
-        object bvlDB: TBevel
+        object bvlLocalDB: TBevel
           Left = 16
-          Top = 168
-          Width = 566
+          Top = 176
+          Width = 564
           Height = 4
           Anchors = [akLeft, akTop, akRight]
           Shape = bsTopLine
+          ExplicitWidth = 566
         end
-        object eDBUser: TLabeledEdit
+        object eLocalDBUser: TLabeledEdit
           Left = 16
-          Top = 122
+          Top = 130
           Width = 120
           Height = 29
           EditLabel.Width = 44
@@ -76,9 +85,9 @@ object frmOptions: TfrmOptions
           EditLabel.Caption = #1051#1086#1075#1080#1085
           TabOrder = 2
         end
-        object eDBPass: TLabeledEdit
+        object eLocalDBPass: TLabeledEdit
           Left = 152
-          Top = 122
+          Top = 130
           Width = 152
           Height = 29
           EditLabel.Width = 53
@@ -87,18 +96,18 @@ object frmOptions: TfrmOptions
           PasswordChar = '#'
           TabOrder = 3
         end
-        object btnDBConnectionCheck: TButton
+        object btnLocalDBConnectionCheck: TButton
           Left = 320
-          Top = 119
+          Top = 127
           Width = 120
           Height = 32
           Caption = #1055#1088#1086#1074#1077#1088#1080#1090#1100
           TabOrder = 5
-          OnClick = btnDBConnectionCheckClick
+          OnClick = btnLocalDBConnectionCheckClick
         end
-        object eDBHost: TLabeledEdit
+        object eLocalDBHost: TLabeledEdit
           Left = 16
-          Top = 66
+          Top = 74
           Width = 120
           Height = 29
           EditLabel.Width = 32
@@ -106,9 +115,9 @@ object frmOptions: TfrmOptions
           EditLabel.Caption = #1061#1086#1089#1090
           TabOrder = 0
         end
-        object eDBPort: TLabeledEdit
+        object eLocalDBPort: TLabeledEdit
           Left = 152
-          Top = 66
+          Top = 74
           Width = 64
           Height = 29
           EditLabel.Width = 36
@@ -117,42 +126,115 @@ object frmOptions: TfrmOptions
           NumbersOnly = True
           TabOrder = 1
         end
-        object btnDBConnectionDefault: TButton
+        object btnLocalDBConnectionDefault: TButton
           Left = 320
-          Top = 63
+          Top = 71
           Width = 120
           Height = 32
           Caption = #1055#1086' '#1091#1084#1086#1083#1095#1072#1085#1080#1102
           TabOrder = 4
-          OnClick = btnDBConnectionDefaultClick
+          OnClick = btnLocalDBConnectionDefaultClick
         end
-        object btnDBCreate: TButton
+        object btnLocalDBCreate: TButton
           Left = 16
-          Top = 184
+          Top = 194
           Width = 168
           Height = 32
           Caption = #1057#1086#1079#1076#1072#1090#1100' '#1073#1072#1079#1091' '#1076#1072#1085#1085#1099#1093
           TabOrder = 6
-          OnClick = btnDBCreateClick
+          OnClick = btnLocalDBCreateClick
         end
-        object btnDBDelete: TButton
+        object btnLocalDBDelete: TButton
           Left = 196
-          Top = 184
+          Top = 194
           Width = 168
           Height = 32
           Caption = #1059#1076#1072#1083#1080#1090#1100' '#1073#1072#1079#1091' '#1076#1072#1085#1085#1099#1093
           TabOrder = 7
-          OnClick = btnDBDeleteClick
+          OnClick = btnLocalDBDeleteClick
+        end
+      end
+      object tsServerDatabase: TTabSheet
+        Caption = #1057#1077#1088#1074#1077#1088
+        ImageIndex = 8
+        ExplicitTop = 58
+        ExplicitWidth = 598
+        ExplicitHeight = 328
+        object eServerDBHost: TLabeledEdit
+          Left = 16
+          Top = 74
+          Width = 120
+          Height = 29
+          EditLabel.Width = 32
+          EditLabel.Height = 21
+          EditLabel.Caption = #1061#1086#1089#1090
+          TabOrder = 1
+        end
+        object eServerDBPort: TLabeledEdit
+          Left = 152
+          Top = 74
+          Width = 64
+          Height = 29
+          EditLabel.Width = 36
+          EditLabel.Height = 21
+          EditLabel.Caption = #1055#1086#1088#1090
+          NumbersOnly = True
+          TabOrder = 2
+        end
+        object eServerDBUser: TLabeledEdit
+          Left = 16
+          Top = 130
+          Width = 120
+          Height = 29
+          EditLabel.Width = 44
+          EditLabel.Height = 21
+          EditLabel.Caption = #1051#1086#1075#1080#1085
+          TabOrder = 3
+        end
+        object eServerDBPass: TLabeledEdit
+          Left = 152
+          Top = 130
+          Width = 152
+          Height = 29
+          EditLabel.Width = 53
+          EditLabel.Height = 21
+          EditLabel.Caption = #1055#1072#1088#1086#1083#1100
+          PasswordChar = '#'
+          TabOrder = 4
+        end
+        object btnServerDBConnectionCheck: TButton
+          Left = 320
+          Top = 127
+          Width = 120
+          Height = 32
+          Caption = #1055#1088#1086#1074#1077#1088#1080#1090#1100
+          TabOrder = 5
+          OnClick = btnServerDBConnectionCheckClick
+        end
+        object cboxServerDBConnection: TCheckBox
+          Left = 16
+          Top = 16
+          Width = 400
+          Height = 21
+          Caption = #1048#1089#1087#1086#1083#1100#1079#1086#1074#1072#1090#1100' '#1073#1072#1079#1091' '#1076#1072#1085#1085#1099#1093' '#1089#1077#1088#1074#1077#1088#1072
+          TabOrder = 0
         end
       end
       object tsUsers: TTabSheet
         Caption = #1055#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1080
         ImageIndex = 1
+        ExplicitTop = 58
+        ExplicitWidth = 598
+        ExplicitHeight = 328
+        DesignSize = (
+          596
+          330)
         object sgUsers: TStringGrid
           Left = 16
           Top = 16
           Width = 566
-          Height = 250
+          Height = 256
+          Anchors = [akLeft, akTop, akRight, akBottom]
           ColCount = 2
           DefaultDrawing = False
           RowCount = 2
@@ -161,43 +243,57 @@ object frmOptions: TfrmOptions
           OnDblClick = sgUsersDblClick
           OnDrawCell = sgUsersDrawCell
           OnFixedCellClick = sgUsersFixedCellClick
+          ExplicitHeight = 250
         end
         object btnUsersAdd: TButton
           Left = 16
-          Top = 282
+          Top = 288
           Width = 96
           Height = 32
+          Anchors = [akLeft, akBottom]
           Caption = #1044#1086#1073#1072#1074#1080#1090#1100
           TabOrder = 1
           OnClick = btnUsersAddClick
+          ExplicitTop = 282
         end
         object btnUsersChange: TButton
           Left = 128
-          Top = 282
+          Top = 288
           Width = 96
           Height = 32
+          Anchors = [akLeft, akBottom]
           Caption = #1048#1079#1084#1077#1085#1080#1090#1100
           TabOrder = 2
           OnClick = btnUsersChangeClick
+          ExplicitTop = 282
         end
         object btnUsersDelete: TButton
           Left = 240
-          Top = 282
+          Top = 288
           Width = 96
           Height = 32
+          Anchors = [akLeft, akBottom]
           Caption = #1059#1076#1072#1083#1080#1090#1100
           TabOrder = 3
           OnClick = btnUsersDeleteClick
+          ExplicitTop = 282
         end
       end
       object tsVanTypes: TTabSheet
         Caption = #1056#1086#1076' '#1074#1072#1075#1086#1085#1072
         ImageIndex = 2
+        ExplicitTop = 58
+        ExplicitWidth = 598
+        ExplicitHeight = 328
+        DesignSize = (
+          596
+          330)
         object sgVanTypes: TStringGrid
           Left = 16
           Top = 16
           Width = 566
           Height = 250
+          Anchors = [akLeft, akTop, akRight, akBottom]
           ColCount = 2
           DefaultDrawing = False
           RowCount = 2
@@ -212,6 +308,7 @@ object frmOptions: TfrmOptions
           Top = 282
           Width = 96
           Height = 32
+          Anchors = [akLeft, akBottom]
           Caption = #1044#1086#1073#1072#1074#1080#1090#1100
           TabOrder = 1
           OnClick = btnUsersAddClick
@@ -221,6 +318,7 @@ object frmOptions: TfrmOptions
           Top = 282
           Width = 96
           Height = 32
+          Anchors = [akLeft, akBottom]
           Caption = #1048#1079#1084#1077#1085#1080#1090#1100
           TabOrder = 2
           OnClick = btnUsersChangeClick
@@ -230,6 +328,7 @@ object frmOptions: TfrmOptions
           Top = 282
           Width = 96
           Height = 32
+          Anchors = [akLeft, akBottom]
           Caption = #1059#1076#1072#1083#1080#1090#1100
           TabOrder = 3
           OnClick = btnUsersDeleteClick
@@ -238,11 +337,18 @@ object frmOptions: TfrmOptions
       object tsCargoTypes: TTabSheet
         Caption = #1056#1086#1076' '#1075#1088#1091#1079#1072
         ImageIndex = 3
+        ExplicitTop = 58
+        ExplicitWidth = 598
+        ExplicitHeight = 328
+        DesignSize = (
+          596
+          330)
         object sgCargoTypes: TStringGrid
           Left = 16
           Top = 16
           Width = 566
           Height = 250
+          Anchors = [akLeft, akTop, akRight, akBottom]
           ColCount = 2
           DefaultDrawing = False
           RowCount = 2
@@ -257,6 +363,7 @@ object frmOptions: TfrmOptions
           Top = 282
           Width = 96
           Height = 32
+          Anchors = [akLeft, akBottom]
           Caption = #1044#1086#1073#1072#1074#1080#1090#1100
           TabOrder = 1
           OnClick = btnUsersAddClick
@@ -266,6 +373,7 @@ object frmOptions: TfrmOptions
           Top = 282
           Width = 96
           Height = 32
+          Anchors = [akLeft, akBottom]
           Caption = #1048#1079#1084#1077#1085#1080#1090#1100
           TabOrder = 2
           OnClick = btnUsersChangeClick
@@ -275,6 +383,7 @@ object frmOptions: TfrmOptions
           Top = 282
           Width = 96
           Height = 32
+          Anchors = [akLeft, akBottom]
           Caption = #1059#1076#1072#1083#1080#1090#1100
           TabOrder = 3
           OnClick = btnUsersDeleteClick
@@ -283,11 +392,18 @@ object frmOptions: TfrmOptions
       object tsDepartStations: TTabSheet
         Caption = #1057#1090#1072#1085#1094#1080#1103' '#1086#1090#1087#1088#1072#1074#1083#1077#1085#1080#1103
         ImageIndex = 4
+        ExplicitTop = 58
+        ExplicitWidth = 598
+        ExplicitHeight = 328
+        DesignSize = (
+          596
+          330)
         object sgDepartStations: TStringGrid
           Left = 16
           Top = 16
           Width = 566
           Height = 250
+          Anchors = [akLeft, akTop, akRight, akBottom]
           ColCount = 2
           DefaultDrawing = False
           RowCount = 2
@@ -302,6 +418,7 @@ object frmOptions: TfrmOptions
           Top = 282
           Width = 96
           Height = 32
+          Anchors = [akLeft, akBottom]
           Caption = #1044#1086#1073#1072#1074#1080#1090#1100
           TabOrder = 1
           OnClick = btnUsersAddClick
@@ -311,6 +428,7 @@ object frmOptions: TfrmOptions
           Top = 282
           Width = 96
           Height = 32
+          Anchors = [akLeft, akBottom]
           Caption = #1048#1079#1084#1077#1085#1080#1090#1100
           TabOrder = 2
           OnClick = btnUsersChangeClick
@@ -320,6 +438,7 @@ object frmOptions: TfrmOptions
           Top = 282
           Width = 96
           Height = 32
+          Anchors = [akLeft, akBottom]
           Caption = #1059#1076#1072#1083#1080#1090#1100
           TabOrder = 3
           OnClick = btnUsersDeleteClick
@@ -328,11 +447,18 @@ object frmOptions: TfrmOptions
       object tsPurposeStations: TTabSheet
         Caption = #1057#1090#1072#1085#1094#1080#1103' '#1085#1072#1079#1085#1072#1095#1077#1085#1080#1103
         ImageIndex = 5
+        ExplicitTop = 58
+        ExplicitWidth = 598
+        ExplicitHeight = 328
+        DesignSize = (
+          596
+          330)
         object sgPurposeStations: TStringGrid
           Left = 16
           Top = 16
           Width = 566
           Height = 250
+          Anchors = [akLeft, akTop, akRight, akBottom]
           ColCount = 2
           DefaultDrawing = False
           RowCount = 2
@@ -347,6 +473,7 @@ object frmOptions: TfrmOptions
           Top = 282
           Width = 96
           Height = 32
+          Anchors = [akLeft, akBottom]
           Caption = #1044#1086#1073#1072#1074#1080#1090#1100
           TabOrder = 1
           OnClick = btnUsersAddClick
@@ -356,6 +483,7 @@ object frmOptions: TfrmOptions
           Top = 282
           Width = 96
           Height = 32
+          Anchors = [akLeft, akBottom]
           Caption = #1048#1079#1084#1077#1085#1080#1090#1100
           TabOrder = 2
           OnClick = btnUsersChangeClick
@@ -365,6 +493,7 @@ object frmOptions: TfrmOptions
           Top = 282
           Width = 96
           Height = 32
+          Anchors = [akLeft, akBottom]
           Caption = #1059#1076#1072#1083#1080#1090#1100
           TabOrder = 3
           OnClick = btnUsersDeleteClick
@@ -373,11 +502,18 @@ object frmOptions: TfrmOptions
       object tsInvoiceSuppliers: TTabSheet
         Caption = #1043#1088#1091#1079#1086#1086#1090#1087#1088#1072#1074#1080#1090#1077#1083#1100
         ImageIndex = 6
+        ExplicitTop = 58
+        ExplicitWidth = 598
+        ExplicitHeight = 328
+        DesignSize = (
+          596
+          330)
         object sgInvoiceSuppliers: TStringGrid
           Left = 16
           Top = 16
           Width = 566
           Height = 250
+          Anchors = [akLeft, akTop, akRight, akBottom]
           ColCount = 2
           DefaultDrawing = False
           RowCount = 2
@@ -392,6 +528,7 @@ object frmOptions: TfrmOptions
           Top = 282
           Width = 96
           Height = 32
+          Anchors = [akLeft, akBottom]
           Caption = #1044#1086#1073#1072#1074#1080#1090#1100
           TabOrder = 1
           OnClick = btnUsersAddClick
@@ -401,6 +538,7 @@ object frmOptions: TfrmOptions
           Top = 282
           Width = 96
           Height = 32
+          Anchors = [akLeft, akBottom]
           Caption = #1048#1079#1084#1077#1085#1080#1090#1100
           TabOrder = 2
           OnClick = btnUsersChangeClick
@@ -410,6 +548,7 @@ object frmOptions: TfrmOptions
           Top = 282
           Width = 96
           Height = 32
+          Anchors = [akLeft, akBottom]
           Caption = #1059#1076#1072#1083#1080#1090#1100
           TabOrder = 3
           OnClick = btnUsersDeleteClick
@@ -418,11 +557,18 @@ object frmOptions: TfrmOptions
       object tsInvoiceRecipients: TTabSheet
         Caption = #1043#1088#1091#1079#1086#1087#1086#1083#1091#1095#1072#1090#1077#1083#1100
         ImageIndex = 7
+        ExplicitTop = 58
+        ExplicitWidth = 598
+        ExplicitHeight = 328
+        DesignSize = (
+          596
+          330)
         object sgInvoiceRecipients: TStringGrid
           Left = 16
           Top = 16
           Width = 566
           Height = 250
+          Anchors = [akLeft, akTop, akRight, akBottom]
           ColCount = 2
           DefaultDrawing = False
           RowCount = 2
@@ -437,6 +583,7 @@ object frmOptions: TfrmOptions
           Top = 282
           Width = 96
           Height = 32
+          Anchors = [akLeft, akBottom]
           Caption = #1044#1086#1073#1072#1074#1080#1090#1100
           TabOrder = 1
           OnClick = btnUsersAddClick
@@ -446,6 +593,7 @@ object frmOptions: TfrmOptions
           Top = 282
           Width = 96
           Height = 32
+          Anchors = [akLeft, akBottom]
           Caption = #1048#1079#1084#1077#1085#1080#1090#1100
           TabOrder = 2
           OnClick = btnUsersChangeClick
@@ -455,6 +603,7 @@ object frmOptions: TfrmOptions
           Top = 282
           Width = 96
           Height = 32
+          Anchors = [akLeft, akBottom]
           Caption = #1059#1076#1072#1083#1080#1090#1100
           TabOrder = 3
           OnClick = btnUsersDeleteClick
@@ -464,17 +613,19 @@ object frmOptions: TfrmOptions
   end
   object PanelButtons: TPanel
     Left = 16
-    Top = 408
-    Width = 608
+    Top = 436
+    Width = 606
     Height = 48
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitTop = 408
+    ExplicitWidth = 608
     DesignSize = (
-      608
+      606
       48)
     object btnOk: TButton
-      Left = 400
+      Left = 398
       Top = 16
       Width = 96
       Height = 32
@@ -484,9 +635,10 @@ object frmOptions: TfrmOptions
       ModalResult = 1
       TabOrder = 0
       OnClick = btnOkClick
+      ExplicitLeft = 400
     end
     object btnCancel: TButton
-      Left = 512
+      Left = 510
       Top = 16
       Width = 96
       Height = 32
@@ -495,6 +647,7 @@ object frmOptions: TfrmOptions
       Caption = #1054#1090#1084#1077#1085#1072
       ModalResult = 2
       TabOrder = 1
+      ExplicitLeft = 512
     end
   end
 end

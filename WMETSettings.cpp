@@ -26,7 +26,11 @@ __fastcall TSettings::TSettings() {
 
 	FColorReadOnly = TColor(0x00E8E8E8);
 
-	FConnection = new TConnectionInfo();
+	FUseServer = false;
+
+	FLocalConnection = new TConnectionInfo();
+	FServerConnection = new TConnectionInfo();
+
 	FUserList = new TUserList();
 
 	FVanTypeList = new TVanTypeList();
@@ -51,7 +55,9 @@ __fastcall TSettings::~TSettings() {
 	FVanTypeList->Free();
 
 	FUserList->Free();
-	FConnection->Free();
+
+	FServerConnection->Free();
+	FLocalConnection->Free();
 }
 
 // ---------------------------------------------------------------------------
@@ -66,7 +72,12 @@ bool __fastcall TSettings::Equals(TObject * Obj) {
 	if (Settings->LoadTrainCount != LoadTrainCount)
 		return false;
 
-	if (!Settings->Connection->Equals(Connection))
+	if (Settings->UseServer != UseServer)
+		return false;
+
+	if (!Settings->LocalConnection->Equals(LocalConnection))
+		return false;
+	if (!Settings->ServerConnection->Equals(ServerConnection))
 		return false;
 
 	if (!Settings->UserList->Equals(UserList))
@@ -91,7 +102,10 @@ bool __fastcall TSettings::Equals(TObject * Obj) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TSettings::Assign(TSettings * Source) {
-	FConnection->Assign(Source->Connection);
+	FLocalConnection->Assign(Source->LocalConnection);
+	FServerConnection->Assign(Source->ServerConnection);
+
+	FUseServer = Source->UseServer;
 
 	FUserList->Assign(Source->UserList);
 
@@ -111,7 +125,11 @@ String __fastcall TSettings::ToString() {
 	String S;
 
 	S = "TSettings{";
-	S += "Connection='" + Connection->ToString() + "'";
+	S += "LocalConnection='" + LocalConnection->ToString() + "'";
+	S += ",";
+	S += "ServerConnection='" + ServerConnection->ToString() + "'";
+	S += ",";
+	S += "UseServer='" + BoolToStr(UseServer) + "'";
 	S += ",";
 	S += "UserList->Count='" + IntToStr(UserList->Count) + "'";
 	S += ",";
@@ -227,27 +245,6 @@ void TSettings::DeleteConfigFile(String ConfigFileName) {
 }
 
 // ---------------------------------------------------------------------------
-void TSettings::LoadDatabases(String ConfigFileName) {
-	TIniFile * IniFile = new TIniFile(ConfigFileName);
-
-	String Section = "Local";
-
-	try {
-		Connection->Host = IniFile->ReadString(Section, "host",
-		Connection->Host);
-		Connection->Port = IniFile->ReadString(Section, "port",
-			Connection->Port);
-		Connection->User = IniFile->ReadString(Section, "user",
-			Connection->User);
-		Connection->Password =
-			Decrypt(IniFile->ReadString(Section, "pass", ""));
-	}
-	__finally {
-		delete IniFile;
-	}
-}
-
-// ---------------------------------------------------------------------------
 void TSettings::LoadUsers(String ConfigFileName) {
 	TIniFile * IniFile = new TIniFile(ConfigFileName);
 
@@ -281,6 +278,55 @@ void TSettings::LoadUsers(String ConfigFileName) {
 
 			UserList->Add(User);
 		}
+	}
+	__finally {
+		delete IniFile;
+	}
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::LoadSettings(String ConfigFileName) {
+	TIniFile * IniFile = new TIniFile(ConfigFileName);
+
+	String Section;
+
+	try {
+		Section = "Main";
+		UseServer = IniFile->ReadBool(Section, "UseServer", UseServer);
+		LoadTrainCount = IniFile->ReadInteger(Section, "LoadTrainCount",
+			LoadTrainCount);
+	}
+	__finally {
+		delete IniFile;
+	}
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::LoadDatabases(String ConfigFileName) {
+	TIniFile * IniFile = new TIniFile(ConfigFileName);
+
+	String Section;
+
+	try {
+		Section = "Local";
+		LocalConnection->Host = IniFile->ReadString(Section, "host",
+			LocalConnection->Host);
+		LocalConnection->Port = IniFile->ReadString(Section, "port",
+			LocalConnection->Port);
+		LocalConnection->User = IniFile->ReadString(Section, "user",
+			LocalConnection->User);
+		LocalConnection->Password =
+			Decrypt(IniFile->ReadString(Section, "pass", ""));
+
+		Section = "Server";
+		ServerConnection->Host = IniFile->ReadString(Section, "host",
+			ServerConnection->Host);
+		ServerConnection->Port = IniFile->ReadString(Section, "port",
+			ServerConnection->Port);
+		ServerConnection->User = IniFile->ReadString(Section, "user",
+			ServerConnection->User);
+		ServerConnection->Password =
+			Decrypt(IniFile->ReadString(Section, "pass", ""));
 	}
 	__finally {
 		delete IniFile;
@@ -381,11 +427,14 @@ bool TSettings::Load() {
 	String ConfigFileName;
 
 	try {
-		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_DATABASES);
-		LoadDatabases(ConfigFileName);
-
 		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_USERS);
 		LoadUsers(ConfigFileName);
+
+		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_SETTINGS);
+		LoadSettings(ConfigFileName);
+
+		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_DATABASES);
+		LoadDatabases(ConfigFileName);
 
 		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_VANTYPES);
 		LoadVanTypes(ConfigFileName);
@@ -415,22 +464,6 @@ bool TSettings::Load() {
 }
 
 // ---------------------------------------------------------------------------
-void TSettings::SaveDatabases(String ConfigFileName) {
-	TIniFile * IniFile = new TIniFile(ConfigFileName);
-	try {
-		String Section = "Local";
-
-		IniFile->WriteString(Section, "host", Connection->Host);
-		IniFile->WriteString(Section, "port", Connection->Port);
-		IniFile->WriteString(Section, "user", Connection->User);
-		IniFile->WriteString(Section, "pass", Encrypt(Connection->Password));
-	}
-	__finally {
-		delete IniFile;
-	}
-}
-
-// ---------------------------------------------------------------------------
 void TSettings::SaveUsers(String ConfigFileName) {
 	DeleteConfigFile(ConfigFileName);
 
@@ -454,6 +487,47 @@ void TSettings::SaveUsers(String ConfigFileName) {
 
 			IniFile->WriteBool(Section, "IsAdmin", UserList->Items[i]->IsAdmin);
 		}
+	}
+	__finally {
+		delete IniFile;
+	}
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::SaveSettings(String ConfigFileName) {
+	TIniFile * IniFile = new TIniFile(ConfigFileName);
+
+	String Section;
+
+	try {
+		Section = "Main";
+		IniFile->WriteBool(Section, "UseServer", UseServer);
+		IniFile->WriteInteger(Section, "LoadTrainCount", LoadTrainCount);
+	}
+	__finally {
+		delete IniFile;
+	}
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::SaveDatabases(String ConfigFileName) {
+	TIniFile * IniFile = new TIniFile(ConfigFileName);
+
+	String Section;
+	try {
+		Section = "Local";
+		IniFile->WriteString(Section, "host", LocalConnection->Host);
+		IniFile->WriteString(Section, "port", LocalConnection->Port);
+		IniFile->WriteString(Section, "user", LocalConnection->User);
+		IniFile->WriteString(Section, "pass",
+			Encrypt(LocalConnection->Password));
+
+		Section = "Server";
+		IniFile->WriteString(Section, "host", ServerConnection->Host);
+		IniFile->WriteString(Section, "port", ServerConnection->Port);
+		IniFile->WriteString(Section, "user", ServerConnection->User);
+		IniFile->WriteString(Section, "pass",
+			Encrypt(ServerConnection->Password));
 	}
 	__finally {
 		delete IniFile;
@@ -549,11 +623,14 @@ bool TSettings::Save() {
 	String Section;
 
 	try {
-		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_DATABASES);
-		SaveDatabases(ConfigFileName);
-
 		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_USERS);
 		SaveUsers(ConfigFileName);
+
+		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_SETTINGS);
+		SaveSettings(ConfigFileName);
+
+		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_DATABASES);
+		SaveDatabases(ConfigFileName);
 
 		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_VANTYPES);
 		SaveVanTypes(ConfigFileName);

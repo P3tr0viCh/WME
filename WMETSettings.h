@@ -22,7 +22,10 @@ private:
 
 	TColor FColorReadOnly;
 
-	TConnectionInfo * FConnection;
+	bool FUseServer;
+
+	TConnectionInfo * FLocalConnection;
+	TConnectionInfo * FServerConnection;
 
 	TUserList * FUserList;
 
@@ -50,8 +53,9 @@ private:
 	void SaveVanCatalog(String ConfigFileName, String Name,
 		TVanCatalogList * VanCatalogList);
 
-	void LoadDatabases(String ConfigFileName);
 	void LoadUsers(String ConfigFileName);
+	void LoadSettings(String ConfigFileName);
+	void LoadDatabases(String ConfigFileName);
 	void LoadVanTypes(String ConfigFileName);
 	void LoadCargoTypes(String ConfigFileName);
 	void LoadDepartStations(String ConfigFileName);
@@ -59,8 +63,9 @@ private:
 	void LoadInvoiceRecipients(String ConfigFileName);
 	void LoadInvoiceSuppliers(String ConfigFileName);
 
-	void SaveDatabases(String ConfigFileName);
 	void SaveUsers(String ConfigFileName);
+	void SaveSettings(String ConfigFileName);
+	void SaveDatabases(String ConfigFileName);
 	void SaveVanTypes(String ConfigFileName);
 	void SaveCargoTypes(String ConfigFileName);
 	void SaveDepartStations(String ConfigFileName);
@@ -81,7 +86,10 @@ public:
 
 	__property TColor ColorReadOnly = {read = FColorReadOnly};
 
-	__property TConnectionInfo * Connection = {read = FConnection};
+	__property bool UseServer = {read = FUseServer, write = FUseServer};
+
+	__property TConnectionInfo * LocalConnection = {read = FLocalConnection};
+	__property TConnectionInfo * ServerConnection = {read = FServerConnection};
 
 	__property TUserList * UserList = {read = FUserList};
 

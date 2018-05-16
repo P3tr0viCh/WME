@@ -781,8 +781,8 @@ bool TfrmTrain::SaveVans() {
 
 	ShowWaitCursor();
 
-	TDBSaveTrain * DBSaveTrain = new TDBSaveTrain(Main->Settings->Connection,
-		TempTrain);
+	TDBSaveTrain * DBSaveTrain =
+		new TDBSaveTrain(Main->Settings->LocalConnection, TempTrain);
 	try {
 		Result = DBSaveTrain->Execute();
 

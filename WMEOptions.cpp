@@ -190,7 +190,7 @@ void __fastcall TfrmOptions::FormCreate(TObject *Sender) {
 
 	TFileIni * FileIni = TFileIni::GetNewInstance();
 	try {
-		FileIni->ReadFormPosition(this);
+		FileIni->ReadFormBounds(this);
 	}
 	__finally {
 		delete FileIni;
@@ -201,7 +201,7 @@ void __fastcall TfrmOptions::FormCreate(TObject *Sender) {
 void __fastcall TfrmOptions::FormDestroy(TObject *Sender) {
 	TFileIni * FileIni = TFileIni::GetNewInstance();
 	try {
-		FileIni->WriteFormPosition(this);
+		FileIni->WriteFormBounds(this);
 	}
 	__finally {
 		delete FileIni;
@@ -286,17 +286,27 @@ void TfrmOptions::UpdateFormVanCatalog(TStringGrid * Grid,
 
 // ---------------------------------------------------------------------------
 void TfrmOptions::UpdateForm() {
-	// Database
-	eDBHost->Text = Settings->Connection->Host;
-	eDBPort->Text = Settings->Connection->Port;
-	eDBUser->Text = Settings->Connection->User;
-	eDBPass->Text = Settings->Connection->Password;
-
 	// Users
 	for (int i = 0; i < Settings->UserList->Count; i++) {
 		SetUser(-1, Settings->UserList->Items[i]);
 	}
 	sgUsers->Row = 1;
+
+	// Settings
+	cboxServerDBConnection->Checked = Settings->UseServer;
+	// TODO
+	// XXX = Settings->LoadTrainCount;
+
+	// Databases
+	eLocalDBHost->Text = Settings->LocalConnection->Host;
+	eLocalDBPort->Text = Settings->LocalConnection->Port;
+	eLocalDBUser->Text = Settings->LocalConnection->User;
+	eLocalDBPass->Text = Settings->LocalConnection->Password;
+
+	eServerDBHost->Text = Settings->ServerConnection->Host;
+	eServerDBPort->Text = Settings->ServerConnection->Port;
+	eServerDBUser->Text = Settings->ServerConnection->User;
+	eServerDBPass->Text = Settings->ServerConnection->Password;
 
 	// VanTypes
 	for (int i = 0; i < Settings->VanTypeList->Count; i++) {
@@ -332,12 +342,6 @@ void TfrmOptions::UpdateSettingsVanCatalog(TStringGrid * Grid,
 
 // ---------------------------------------------------------------------------
 void TfrmOptions::UpdateSettings() {
-	// Database
-	Settings->Connection->Host = eDBHost->Text;
-	Settings->Connection->Port = eDBPort->Text;
-	Settings->Connection->User = eDBUser->Text;
-	Settings->Connection->Password = eDBPass->Text;
-
 	// Users
 	Settings->UserList->Clear();
 
@@ -357,6 +361,15 @@ void TfrmOptions::UpdateSettings() {
 			Settings->UserList->Add(User);
 		}
 	}
+
+	// Settings
+	Settings->UseServer = cboxServerDBConnection->Checked;
+	// TODO:
+	// Settings->LoadTrainCount = XXX;
+
+	// Databases
+	Settings->LocalConnection->Assign(GetConnection(ctLocal));
+	Settings->ServerConnection->Assign(GetConnection(ctServer));
 
 	// VanTypes
 	Settings->VanTypeList->Clear();
@@ -386,26 +399,36 @@ void TfrmOptions::UpdateSettings() {
 }
 
 // ---------------------------------------------------------------------------
-TConnectionInfo * TfrmOptions::GetConnection() {
+TConnectionInfo * TfrmOptions::GetConnection(TConnectionType Type) {
 	TConnectionInfo * Connection = new TConnectionInfo();
 
-	Connection->Host = eDBHost->Text;
-	Connection->Port = eDBPort->Text;
-	Connection->User = eDBUser->Text;
-	Connection->Password = eDBPass->Text;
+	switch (Type) {
+	case ctServer:
+		Connection->Host = eServerDBHost->Text;
+		Connection->Port = eServerDBPort->Text;
+		Connection->User = eServerDBUser->Text;
+		Connection->Password = eServerDBPass->Text;
+		break;
+	case ctLocal:
+	default:
+		Connection->Host = eLocalDBHost->Text;
+		Connection->Port = eLocalDBPort->Text;
+		Connection->User = eLocalDBUser->Text;
+		Connection->Password = eLocalDBPass->Text;
+	}
 
 	return Connection;
 }
 
 // ---------------------------------------------------------------------------
-void TfrmOptions::DatabaseAction(int Action) {
+void TfrmOptions::DatabaseAction(TDBAction Action) {
 	switch (Action) {
-	case DB_ACTION_CREATE:
+	case dbaLocalCreate:
 		if (!MsgBoxYesNo(IDS_QUESTION_DB_CREATE)) {
 			return;
 		}
 		break;
-	case DB_ACTION_DROP:
+	case dbaLocalDrop:
 		if (!MsgBoxYesNo(IDS_QUESTION_DB_DROP)) {
 			return;
 		}
@@ -416,34 +439,46 @@ void TfrmOptions::DatabaseAction(int Action) {
 
 	String MySqlVersion;
 
-	int ActionResultOK[3] = {
-		IDS_MSG_MYSQL_CONNECTION_OK, IDS_MSG_MYSQL_DB_CREATE_OK,
-		IDS_MSG_MYSQL_DB_DROP_OK};
-	int ActionResultFail[3] = {
-		IDS_ERROR_MYSQL_CONNECTION, IDS_ERROR_MYSQL_DB_CREATE,
-		IDS_ERROR_MYSQL_DB_DROP};
+	int ActionResultOK[4] = {
+		IDS_MSG_LOCAL_CONNECTION_OK, IDS_MSG_LOCAL_DB_CREATE_OK,
+		IDS_MSG_LOCAL_DB_DROP_OK, IDS_MSG_SERVER_CONNECTION_OK};
+	int ActionResultFail[4] = {
+		IDS_ERROR_LOCAL_CONNECTION, IDS_ERROR_LOCAL_DB_CREATE,
+		IDS_ERROR_LOCAL_DB_DROP, IDS_ERROR_SERVER_CONNECTION};
+
+	TConnectionInfo * Connection;
+	switch (Action) {
+	case dbaLocalCheck:
+	case dbaLocalCreate:
+	case dbaLocalDrop:
+		Connection = GetConnection(ctLocal);
+		break;
+	case dbaServerCheck:
+		Connection = GetConnection(ctServer);
+		break;
+	default:
+		throw EActionError("DatabaseAction: unknown Action");
+	}
 
 	ShowWaitCursor();
-	TConnectionInfo * Connection = GetConnection();
 
 	TDatabaseOperation * DatabaseOperation;
 
 	try {
 		switch (Action) {
-		case DB_ACTION_CHECK:
+		case dbaLocalCheck:
+		case dbaServerCheck:
 			DatabaseOperation = new TDBCheck(Connection);
 
 			break;
-		case DB_ACTION_CREATE:
+		case dbaLocalCreate:
 			DatabaseOperation = new TDBCreate(Connection);
 
 			break;
-		case DB_ACTION_DROP:
+		case dbaLocalDrop:
 			DatabaseOperation = new TDBDrop(Connection);
 
 			break;
-		default:
-			throw EActionError("DatabaseAction: unknown Action");
 		}
 
 		Result = DatabaseOperation->Execute();
@@ -464,28 +499,34 @@ void TfrmOptions::DatabaseAction(int Action) {
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmOptions::btnDBConnectionCheckClick(TObject *Sender) {
-	DatabaseAction(DB_ACTION_CHECK);
+void __fastcall TfrmOptions::btnLocalDBConnectionCheckClick(TObject *Sender) {
+	DatabaseAction(dbaLocalCheck);
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmOptions::btnDBCreateClick(TObject *Sender) {
-	DatabaseAction(DB_ACTION_CREATE);
+void __fastcall TfrmOptions::btnLocalDBCreateClick(TObject *Sender) {
+	DatabaseAction(dbaLocalCreate);
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmOptions::btnDBDeleteClick(TObject *Sender) {
-	DatabaseAction(DB_ACTION_DROP);
+void __fastcall TfrmOptions::btnLocalDBDeleteClick(TObject *Sender) {
+	DatabaseAction(dbaLocalDrop);
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmOptions::btnDBConnectionDefaultClick(TObject * Sender) {
-	Settings->Connection->SetDefault();
+void __fastcall TfrmOptions::btnServerDBConnectionCheckClick(TObject *Sender) {
+	DatabaseAction(dbaServerCheck);
+}
 
-	eDBHost->Text = Settings->Connection->Host;
-	eDBPort->Text = Settings->Connection->Port;
-	eDBUser->Text = Settings->Connection->User;
-	eDBPass->Text = Settings->Connection->Password;
+// ---------------------------------------------------------------------------
+void __fastcall TfrmOptions::btnLocalDBConnectionDefaultClick(TObject * Sender)
+{
+	Settings->LocalConnection->SetDefault();
+
+	eLocalDBHost->Text = Settings->LocalConnection->Host;
+	eLocalDBPort->Text = Settings->LocalConnection->Port;
+	eLocalDBUser->Text = Settings->LocalConnection->User;
+	eLocalDBPass->Text = Settings->LocalConnection->Password;
 }
 
 // ---------------------------------------------------------------------------
@@ -901,7 +942,7 @@ void __fastcall TfrmOptions::sgUsersFixedCellClick(TObject *Sender, int ACol,
 		return;
 	}
 
-	TStringGrid *SG = GetStringGrid(Sender);
+	TStringGrid * SG = GetStringGrid(Sender);
 
 	if (StringGridIsEmpty(SG)) {
 		return;
@@ -943,4 +984,5 @@ void __fastcall TfrmOptions::sgUsersDrawCell(TObject *Sender, int ACol,
 	StringGridDrawCell((TStringGrid*)Sender, ACol, ARow, Rect, State, NUSet,
 		UsersColumns.LeftAlign, NUSet, NUColor, NUColor, true);
 }
+
 // ---------------------------------------------------------------------------

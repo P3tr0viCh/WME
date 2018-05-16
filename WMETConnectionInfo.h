@@ -19,8 +19,8 @@ private:
 public:
 	__fastcall TConnectionInfo();
 
-	bool __fastcall Equals(TObject* Obj);
-	void __fastcall Assign(TConnectionInfo* Source);
+	bool __fastcall Equals(TObject * Obj);
+	void __fastcall Assign(TConnectionInfo * Source);
 	String __fastcall ToString();
 
 	void SetDefault();

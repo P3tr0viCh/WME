@@ -22,17 +22,17 @@ class TfrmOptions : public TForm {
 __published:
 	TPanel *PanelMain;
 	TPageControl *PageControl;
-	TTabSheet *tsDatabase;
-	TLabel *lblDBConnection;
-	TBevel *bvlDB;
-	TLabeledEdit *eDBUser;
-	TLabeledEdit *eDBPass;
-	TButton *btnDBConnectionCheck;
-	TLabeledEdit *eDBHost;
-	TLabeledEdit *eDBPort;
-	TButton *btnDBConnectionDefault;
-	TButton *btnDBCreate;
-	TButton *btnDBDelete;
+	TTabSheet *tsLocalDatabase;
+	TLabel *lblLocalConnection;
+	TBevel *bvlLocalDB;
+	TLabeledEdit *eLocalDBUser;
+	TLabeledEdit *eLocalDBPass;
+	TButton *btnLocalDBConnectionCheck;
+	TLabeledEdit *eLocalDBHost;
+	TLabeledEdit *eLocalDBPort;
+	TButton *btnLocalDBConnectionDefault;
+	TButton *btnLocalDBCreate;
+	TButton *btnLocalDBDelete;
 	TTabSheet *tsUsers;
 	TStringGrid *sgUsers;
 	TButton *btnUsersAdd;
@@ -71,11 +71,18 @@ __published:
 	TButton *btnInvoiceSuppliersAdd;
 	TButton *btnInvoiceSuppliersChange;
 	TButton *btnInvoiceSuppliersDelete;
+	TTabSheet *tsServerDatabase;
+	TLabeledEdit *eServerDBHost;
+	TLabeledEdit *eServerDBPort;
+	TLabeledEdit *eServerDBUser;
+	TLabeledEdit *eServerDBPass;
+	TButton *btnServerDBConnectionCheck;
+	TCheckBox *cboxServerDBConnection;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
-	void __fastcall btnDBConnectionCheckClick(TObject *Sender);
-	void __fastcall btnDBConnectionDefaultClick(TObject *Sender);
+	void __fastcall btnLocalDBConnectionCheckClick(TObject *Sender);
+	void __fastcall btnLocalDBConnectionDefaultClick(TObject *Sender);
 	void __fastcall FormCloseQuery(TObject *Sender, bool &CanClose);
 	void __fastcall btnOkClick(TObject *Sender);
 	void __fastcall btnUsersAddClick(TObject *Sender);
@@ -83,14 +90,15 @@ __published:
 	void __fastcall btnUsersDeleteClick(TObject *Sender);
 	void __fastcall sgUsersDblClick(TObject *Sender);
 	void __fastcall sgUsersFixedCellClick(TObject *Sender, int ACol, int ARow);
-	void __fastcall btnDBCreateClick(TObject *Sender);
-	void __fastcall btnDBDeleteClick(TObject *Sender);
+	void __fastcall btnLocalDBCreateClick(TObject *Sender);
+	void __fastcall btnLocalDBDeleteClick(TObject *Sender);
 	void __fastcall sgVanCatalogDrawCell(TObject *Sender, int ACol, int ARow,
 		TRect &Rect, TGridDrawState State);
 	void __fastcall sgVanTypesDrawCell(TObject *Sender, int ACol, int ARow,
 		TRect &Rect, TGridDrawState State);
 	void __fastcall sgUsersDrawCell(TObject *Sender, int ACol, int ARow,
 		TRect &Rect, TGridDrawState State);
+	void __fastcall btnServerDBConnectionCheckClick(TObject *Sender);
 
 private:
 	TIntegerSet NUSet;
@@ -127,13 +135,17 @@ private:
 
 	bool IsUserAdmin(int Index);
 
-	TConnectionInfo * GetConnection();
+	enum TConnectionType {
+		ctLocal, ctServer
+	};
 
-	static const int DB_ACTION_CHECK = 0;
-	static const int DB_ACTION_CREATE = 1;
-	static const int DB_ACTION_DROP = 2;
+	TConnectionInfo * GetConnection(TConnectionType Type);
 
-	void DatabaseAction(int Action);
+	enum TDBAction {
+		dbaLocalCheck, dbaLocalCreate, dbaLocalDrop, dbaServerCheck
+	};
+
+	void DatabaseAction(TDBAction Action);
 
 	TStringGrid * GetStringGrid(TObject * Sender);
 

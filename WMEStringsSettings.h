@@ -11,6 +11,7 @@
 #define IDS_SETTINGS_CONFIG_PURPOSE_STATIONS    6005
 #define IDS_SETTINGS_CONFIG_INVOICE_SUPPLIERS   6006
 #define IDS_SETTINGS_CONFIG_INVOICE_RECIPIENTS  6007
+#define IDS_SETTINGS_CONFIG_SETTINGS  			6008
 
 // ---------------------------------------------------------------------------
 #endif
