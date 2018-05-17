@@ -20,6 +20,8 @@ private:
 	int FUnixTime;
 	TDateTime FDateTime;
 
+	TWeightType FWeightType;
+
 	int FCarrying;
 	int FBrutto;
 	int FTare;
@@ -52,6 +54,9 @@ public:
 
 	__property int UnixTime = {read = FUnixTime, write = FUnixTime};
 	__property TDateTime DateTime = {read = FDateTime, write = FDateTime};
+
+	__property TWeightType WeightType = {read = FWeightType, write = FWeightType
+	};
 
 	__property int Carrying = {read = FCarrying, write = FCarrying};
 	__property int Brutto = {read = FBrutto, write = FBrutto};

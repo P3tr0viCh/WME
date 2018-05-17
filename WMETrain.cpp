@@ -29,40 +29,42 @@ class TVansColumns {
 public:
 	static const NUM = 0;
 	static const DATETIME = 1;
-	static const VANNUM = 2;
-	static const VANTYPE = 3;
-	static const CARRYING = 4;
-	static const BRUTTO = 5;
-	static const TARE = 6;
-	static const TARE_T = 7;
-	static const TARE_D = 8;
-	static const TARE_S = 9;
-	static const TARE_INDEX = 10;
-	static const NETTO = 11;
-	static const OVERLOAD = 12;
-	static const CARGOTYPE = 13;
-	static const DEPART_STATION = 14;
-	static const PURPOSE_STATION = 15;
-	static const INVOICE_NUM = 16;
-	static const INVOICE_SUPPLIER = 17;
-	static const INVOICE_RECIPIENT = 18;
+	static const WEIGHTTYPE = 2;
+	static const VANNUM = 3;
+	static const VANTYPE = 4;
+	static const CARRYING = 5;
+	static const BRUTTO = 6;
+	static const TARE = 7;
+	static const TARE_T = 8;
+	static const TARE_D = 9;
+	static const TARE_S = 10;
+	static const TARE_INDEX = 11;
+	static const NETTO = 12;
+	static const OVERLOAD = 13;
+	static const CARGOTYPE = 14;
+	static const DEPART_STATION = 15;
+	static const PURPOSE_STATION = 16;
+	static const INVOICE_NUM = 17;
+	static const INVOICE_SUPPLIER = 18;
+	static const INVOICE_RECIPIENT = 19;
 
-	static const TARE_INDEX_AS_INT = 19;
+	static const WEIGHTTYPE_AS_INT = 20;
+	static const TARE_INDEX_AS_INT = 21;
 
-	static const VISIBLE_COUNT = 19;
+	static const VISIBLE_COUNT = 21;
 
-	static const COUNT = 20;
+	static const COUNT = 22;
 
 	TVansColumns() {
 		ReadOnly = TIntegerSet() << NUM << TARE << TARE_D << TARE_S << NETTO <<
 			OVERLOAD;
-		ComboBox = TIntegerSet() << VANTYPE << TARE_INDEX << CARGOTYPE <<
-			DEPART_STATION << PURPOSE_STATION << INVOICE_SUPPLIER <<
-			INVOICE_RECIPIENT;
-		LeftAlign =
-			TIntegerSet() << DATETIME << VANNUM << VANTYPE << TARE_INDEX <<
-			CARGOTYPE << DEPART_STATION << PURPOSE_STATION << INVOICE_NUM <<
+		ComboBox = TIntegerSet() << WEIGHTTYPE << VANTYPE << TARE_INDEX <<
+			CARGOTYPE << DEPART_STATION << PURPOSE_STATION <<
 			INVOICE_SUPPLIER << INVOICE_RECIPIENT;
+		LeftAlign =
+			TIntegerSet() << DATETIME << WEIGHTTYPE << VANNUM << VANTYPE <<
+			TARE_INDEX << CARGOTYPE << DEPART_STATION << PURPOSE_STATION <<
+			INVOICE_NUM << INVOICE_SUPPLIER << INVOICE_RECIPIENT;
 	}
 
 	TIntegerSet ReadOnly;
@@ -130,13 +132,14 @@ void __fastcall TfrmTrain::FormCreate(TObject *Sender) {
 	CreateVansColumns();
 	CreateTrainColumns();
 
+	WeightTypeList = new TVanCatalogList();
+	WeightTypeList->Add(new TVanCatalog(wtBrutto, IDS_TXT_WEIGHT_TYPE_BRUTTO));
+	WeightTypeList->Add(new TVanCatalog(wtTare, IDS_TXT_WEIGHT_TYPE_TARE));
+
 	TareIndexList = new TVanCatalogList();
-	TareIndexList->Add(new TVanCatalog(VAN_TARE_INDEX_T,
-		IDS_GRID_HEADER_TARE_T));
-	TareIndexList->Add(new TVanCatalog(VAN_TARE_INDEX_D,
-		IDS_GRID_HEADER_TARE_D));
-	TareIndexList->Add(new TVanCatalog(VAN_TARE_INDEX_T,
-		IDS_GRID_HEADER_TARE_S));
+	TareIndexList->Add(new TVanCatalog(tiTrafaret, IDS_TXT_TARE_TRAFARET));
+	TareIndexList->Add(new TVanCatalog(tiDynamic, IDS_TXT_TARE_DYNAMIC));
+	TareIndexList->Add(new TVanCatalog(tiStatic, IDS_TXT_TARE_STATIC));
 
 	sgVans->DefaultRowHeight = ComboBox->Height;
 	sgTrain->DefaultRowHeight = sgVans->DefaultRowHeight;
@@ -168,6 +171,8 @@ void __fastcall TfrmTrain::FormDestroy(TObject *Sender) {
 
 	TareIndexList->Free();
 
+	WeightTypeList->Free();
+
 	WriteToLogForm(false, ClassName());
 }
 
@@ -178,21 +183,30 @@ void TfrmTrain::CreateVansColumns() {
 	StringGridSetHeader(sgVans, VansColumns.NUM, IDS_GRID_HEADER_NUM, 50);
 	StringGridSetHeader(sgVans, VansColumns.DATETIME,
 		IDS_GRID_HEADER_DATETIME, 160);
+
+	StringGridSetHeader(sgVans, VansColumns.WEIGHTTYPE,
+		IDS_GRID_HEADER_WEIGHTTYPE, 90);
+
 	StringGridSetHeader(sgVans, VansColumns.VANNUM, IDS_GRID_HEADER_VANNUM, 80);
 	StringGridSetHeader(sgVans, VansColumns.VANTYPE,
 		IDS_GRID_HEADER_VANTYPE, 120);
+
 	StringGridSetHeader(sgVans, VansColumns.CARRYING,
 		IDS_GRID_HEADER_CARRYING, 50);
 	StringGridSetHeader(sgVans, VansColumns.BRUTTO, IDS_GRID_HEADER_BRUTTO, 60);
 	StringGridSetHeader(sgVans, VansColumns.TARE, IDS_GRID_HEADER_TARE, 60);
-	StringGridSetHeader(sgVans, VansColumns.TARE_T, IDS_GRID_HEADER_TARE_T, 60);
-	StringGridSetHeader(sgVans, VansColumns.TARE_D, IDS_GRID_HEADER_TARE_D, 60);
-	StringGridSetHeader(sgVans, VansColumns.TARE_S, IDS_GRID_HEADER_TARE_S, 60);
+	StringGridSetHeader(sgVans, VansColumns.TARE_T,
+		IDS_GRID_HEADER_TARE_TRAFARET, 60);
+	StringGridSetHeader(sgVans, VansColumns.TARE_D,
+		IDS_GRID_HEADER_TARE_DYNAMIC, 60);
+	StringGridSetHeader(sgVans, VansColumns.TARE_S,
+		IDS_GRID_HEADER_TARE_STATIC, 60);
 	StringGridSetHeader(sgVans, VansColumns.TARE_INDEX,
 		IDS_GRID_HEADER_TARE_INDEX, 80);
 	StringGridSetHeader(sgVans, VansColumns.NETTO, IDS_GRID_HEADER_NETTO, 60);
 	StringGridSetHeader(sgVans, VansColumns.OVERLOAD,
 		IDS_GRID_HEADER_OVERLOAD, 80);
+
 	StringGridSetHeader(sgVans, VansColumns.CARGOTYPE,
 		IDS_GRID_HEADER_CARGOTYPE, 120);
 	StringGridSetHeader(sgVans, VansColumns.DEPART_STATION,
@@ -248,13 +262,13 @@ void TfrmTrain::CalcFields(int ARow) {
 	int TareCol;
 
 	switch (TareIndex) {
-	case VAN_TARE_INDEX_D:
+	case tiDynamic:
 		TareCol = VansColumns.TARE_D;
 		break;
-	case VAN_TARE_INDEX_S:
+	case tiStatic:
 		TareCol = VansColumns.TARE_S;
 		break;
-	case VAN_TARE_INDEX_T:
+	case tiTrafaret:
 	default:
 		TareCol = VansColumns.TARE_T;
 	}
@@ -327,7 +341,13 @@ void __fastcall TfrmTrain::tbtnAddClick(TObject *Sender) {
 
 	sgVans->Cells[VansColumns.DATETIME][Row] = DateTimeToStr(Now());
 
-	int TareIndex = VAN_TARE_INDEX_T;
+	// TODO: enum mb != 0,1...
+	int WeightType = DEFAULT_WEIGHTTYPE;
+	sgVans->Cells[VansColumns.WEIGHTTYPE_AS_INT][Row] = IntToStr(WeightType);
+	sgVans->Cells[VansColumns.WEIGHTTYPE][Row] =
+		WeightTypeList->Items[WeightType]->Name;
+
+	int TareIndex = DEFAULT_TARE_INDEX;
 	sgVans->Cells[VansColumns.TARE_INDEX_AS_INT][Row] = IntToStr(TareIndex);
 	sgVans->Cells[VansColumns.TARE_INDEX][Row] =
 		TareIndexList->Items[TareIndex]->Name;
@@ -402,6 +422,9 @@ void TfrmTrain::UpdateVanComboBox(TVanCatalogList *VanCatalogList) {
 // ---------------------------------------------------------------------------
 bool TfrmTrain::ShowVanComboBox(int Col) {
 	switch (Col) {
+	case VansColumns.WEIGHTTYPE:
+		UpdateVanComboBox(WeightTypeList);
+		break;
 	case VansColumns.VANTYPE:
 		UpdateVanComboBox((TVanCatalogList *)Main->Settings->VanTypeList);
 		break;
@@ -433,10 +456,12 @@ bool TfrmTrain::ShowVanComboBox(int Col) {
 		sgVans->Top + Rect.Top + sgVans->GridLineWidth + 1,
 		sgVans->ColWidths[sgVans->Col], sgVans->DefaultRowHeight);
 
-	if (Col == VansColumns.TARE_INDEX) {
+	switch (Col) {
+	case VansColumns.WEIGHTTYPE:
+	case VansColumns.TARE_INDEX:
 		ComboBox->Style = csDropDownList;
-	}
-	else {
+		break;
+	default:
 		ComboBox->Style = csDropDown;
 	}
 
@@ -471,16 +496,26 @@ void __fastcall TfrmTrain::sgVansKeyDown(TObject *Sender, WORD &Key,
 
 	if (Shift == (TShiftState() << ssAlt)) {
 		switch (Key) {
+			// TODO: merge
 		case VK_UP:
 			if (sgVans->Row > 1) {
 				sgVans->Cells[sgVans->Col][sgVans->Row - 1] =
 					sgVans->Cells[sgVans->Col][sgVans->Row];
 
-				if (sgVans->Col == VansColumns.TARE_INDEX) {
+				switch (sgVans->Col) {
+				case VansColumns.WEIGHTTYPE:
+					sgVans->Cells[VansColumns.WEIGHTTYPE_AS_INT][sgVans->Row -
+						1] = sgVans->Cells[VansColumns.WEIGHTTYPE_AS_INT]
+						[sgVans->Row];
+					break;
+				case VansColumns.TARE_INDEX:
 					sgVans->Cells[VansColumns.TARE_INDEX_AS_INT][sgVans->Row -
 						1] = sgVans->Cells[VansColumns.TARE_INDEX_AS_INT]
 						[sgVans->Row];
+					break;
 				}
+
+				Changed = true;
 			}
 			break;
 		case VK_DOWN:
@@ -488,11 +523,20 @@ void __fastcall TfrmTrain::sgVansKeyDown(TObject *Sender, WORD &Key,
 				sgVans->Cells[sgVans->Col][sgVans->Row + 1] =
 					sgVans->Cells[sgVans->Col][sgVans->Row];
 
-				if (sgVans->Col == VansColumns.TARE_INDEX) {
+				switch (sgVans->Col) {
+				case VansColumns.WEIGHTTYPE:
+					sgVans->Cells[VansColumns.WEIGHTTYPE_AS_INT][sgVans->Row +
+						1] = sgVans->Cells[VansColumns.WEIGHTTYPE_AS_INT]
+						[sgVans->Row];
+					break;
+				case VansColumns.TARE_INDEX:
 					sgVans->Cells[VansColumns.TARE_INDEX_AS_INT][sgVans->Row +
 						1] = sgVans->Cells[VansColumns.TARE_INDEX_AS_INT]
 						[sgVans->Row];
+					break;
 				}
+
+				Changed = true;
 			}
 			break;
 		}
@@ -606,6 +650,9 @@ int TfrmTrain::GetVanCatalogCode(int CatalogIdent, String Name) {
 	TVanCatalogList * VanCatalogList;
 
 	switch (CatalogIdent) {
+	case VansColumns.WEIGHTTYPE:
+		VanCatalogList = WeightTypeList;
+		break;
 	case VansColumns.VANTYPE:
 		VanCatalogList = (TVanCatalogList*)Main->Settings->VanTypeList;
 		break;
@@ -667,6 +714,9 @@ TVanList * TfrmTrain::GetVanList() {
 
 		Van->DateTime = sgVans->Cells[VansColumns.DATETIME][i];
 
+		Van->WeightType =
+			StrToInt(sgVans->Cells[VansColumns.WEIGHTTYPE_AS_INT][i]);
+
 		Van->VanNum = sgVans->Cells[VansColumns.VANNUM][i];
 
 		Van->VanType->Assign(GetVanType(sgVans->Cells[VansColumns.VANTYPE][i]));
@@ -726,14 +776,38 @@ TTrain * TfrmTrain::GetTrain(int TrainNum) {
 	Train->DateTime = Train->VanList->Items[0]->DateTime;
 	Train->UnixTime = DateTimeToWTime(Train->DateTime);
 
+	int WeightTypeBrutto = 0;
+	int WeightTypeTare = 0;
+
 	int Carrying = 0;
 	int Brutto = 0;
 	int Tare = 0;
 
 	for (int i = 0; i < Train->VanList->Count; i++) {
+		switch (Train->VanList->Items[i]->WeightType) {
+		case wtBrutto:
+			WeightTypeBrutto++;
+			break;
+		case wtTare:
+			WeightTypeTare++;
+			break;
+		}
+
 		Carrying += Train->VanList->Items[i]->Carrying;
 		Brutto += Train->VanList->Items[i]->Brutto;
 		Tare += Train->VanList->Items[i]->Tare;
+	}
+
+	if (WeightTypeBrutto > 0 && WeightTypeTare > 0) {
+		Train->WeightType = wtMixed;
+	}
+	else {
+		if (WeightTypeBrutto > 0) {
+			Train->WeightType = wtBrutto;
+		}
+		else {
+			Train->WeightType = wtTare;
+		}
 	}
 
 	Train->Carrying = Carrying;
@@ -814,6 +888,11 @@ int TfrmTrain::SetVan(int Index, TVan * Van) {
 	sgVans->Cells[VansColumns.NUM][Index] = IntToStr(Van->Num);
 	sgVans->Cells[VansColumns.DATETIME][Index] = DateTimeToStr(Van->DateTime);
 
+	sgVans->Cells[VansColumns.WEIGHTTYPE_AS_INT][Index] =
+		IntToStr(Van->WeightType);
+	sgVans->Cells[VansColumns.WEIGHTTYPE][Index] =
+		Main->GetWeightTypeAsText(Van->WeightType);
+
 	sgVans->Cells[VansColumns.VANNUM][Index] = Van->VanNum;
 
 	sgVans->Cells[VansColumns.VANTYPE][Index] = Van->VanType->Name;
@@ -827,7 +906,8 @@ int TfrmTrain::SetVan(int Index, TVan * Van) {
 
 	sgVans->Cells[VansColumns.TARE_INDEX_AS_INT][Index] =
 		IntToStr(Van->TareIndex);
-	sgVans->Cells[VansColumns.TARE_INDEX][Index] = Van->TareIndexAsText;
+	sgVans->Cells[VansColumns.TARE_INDEX][Index] =
+		Main->GetTareIndexAsText(Van->TareIndex);
 
 	sgVans->Cells[VansColumns.NETTO][Index] = IntToStr(Van->Netto);
 	sgVans->Cells[VansColumns.OVERLOAD][Index] = IntToStr(Van->Overload);
@@ -955,12 +1035,20 @@ void __fastcall TfrmTrain::ComboBoxExit(TObject *Sender) {
 	if (sgVans->Cells[sgVans->Col][sgVans->Row] != ComboBox->Text) {
 		sgVans->Cells[sgVans->Col][sgVans->Row] = ComboBox->Text;
 
-		if (sgVans->Col == VansColumns.TARE_INDEX) {
+		switch (sgVans->Col) {
+			// TODO: enums
+		case VansColumns.WEIGHTTYPE:
+			sgVans->Cells[VansColumns.WEIGHTTYPE_AS_INT][sgVans->Row] =
+				IntToStr(ComboBox->ItemIndex);
+			break;
+		case VansColumns.TARE_INDEX:
 			sgVans->Cells[VansColumns.TARE_INDEX_AS_INT][sgVans->Row] =
 				IntToStr(ComboBox->ItemIndex);
 
 			CalcFields(sgVans->Row);
 			UpdateTrain();
+
+			break;
 		}
 
 		Changed = true;
@@ -975,11 +1063,17 @@ void __fastcall TfrmTrain::ComboBoxEnter(TObject *Sender) {
 		return;
 	}
 
-	if (sgVans->Col == VansColumns.TARE_INDEX) {
+	switch (sgVans->Col) {
+		// TODO : enums
+	case VansColumns.WEIGHTTYPE:
+		ComboBox->ItemIndex =
+			StrToInt(sgVans->Cells[VansColumns.WEIGHTTYPE_AS_INT][sgVans->Row]);
+		break;
+	case VansColumns.TARE_INDEX:
 		ComboBox->ItemIndex =
 			StrToInt(sgVans->Cells[VansColumns.TARE_INDEX_AS_INT][sgVans->Row]);
-	}
-	else {
+		break;
+	default:
 		ComboBox->Text = sgVans->Cells[sgVans->Col][sgVans->Row];
 	}
 }
@@ -988,12 +1082,18 @@ void __fastcall TfrmTrain::ComboBoxEnter(TObject *Sender) {
 void __fastcall TfrmTrain::ComboBoxKeyDown(TObject *Sender, WORD &Key,
 	TShiftState Shift) {
 	if (Key == VK_ESCAPE) {
-		if (sgVans->Col == VansColumns.TARE_INDEX) {
+		switch (sgVans->Col) {
+		case VansColumns.WEIGHTTYPE:
+			ComboBox->ItemIndex =
+				StrToInt(sgVans->Cells[VansColumns.WEIGHTTYPE_AS_INT]
+				[sgVans->Row]);
+			break;
+		case VansColumns.TARE_INDEX:
 			ComboBox->ItemIndex =
 				StrToInt(sgVans->Cells[VansColumns.TARE_INDEX_AS_INT]
 				[sgVans->Row]);
-		}
-		else {
+			break;
+		default:
 			ComboBox->Text = sgVans->Cells[sgVans->Col][sgVans->Row];
 		}
 

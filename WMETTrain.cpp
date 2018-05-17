@@ -35,6 +35,8 @@ void TTrain::Init() {
 
 	FUnixTime = 0;
 	FDateTime = NULL;
+
+	FWeightType = DEFAULT_WEIGHTTYPE;
 }
 
 // ---------------------------------------------------------------------------
@@ -57,10 +59,10 @@ bool __fastcall TTrain::Equals(TObject * Obj) {
 	TTrain * Train = (TTrain*) Obj;
 
 	if (TrainNum != Train->TrainNum || UnixTime != Train->UnixTime ||
-		DateTime != Train->DateTime || Carrying != Train->Carrying ||
-		Brutto != Train->Brutto || Tare != Train->Tare ||
-		Netto != Train->Netto || Overload != Train->Overload ||
-		VanCount != Train->VanCount) {
+		DateTime != Train->DateTime || WeightType != Train->WeightType ||
+		Carrying != Train->Carrying || Brutto != Train->Brutto ||
+		Tare != Train->Tare || Netto != Train->Netto ||
+		Overload != Train->Overload || VanCount != Train->VanCount) {
 		return false;
 	}
 
@@ -81,6 +83,8 @@ void __fastcall TTrain::Assign(TTrain * Source) {
 
 	UnixTime = Source->UnixTime;
 	DateTime = Source->DateTime;
+
+	WeightType = Source->WeightType;
 
 	Carrying = Source->Carrying;
 	Brutto = Source->Brutto;
@@ -103,6 +107,8 @@ String __fastcall TTrain::ToString() {
 	S += "TrainNum='" + IntToStr(TrainNum) + "'";
 	S += ",";
 	S += "DateTime='" + DateTimeToStr(DateTime) + "'";
+	S += ",";
+	S += "WeightType='" + IntToStr(WeightType) + "'";
 	S += ",";
 	S += "Carrying='" + IntToStr(Carrying) + "'";
 	S += ",";

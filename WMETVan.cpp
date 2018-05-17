@@ -2,6 +2,7 @@
 
 #pragma hdrstop
 
+#include "WMEStrings.h"
 #include "WMEStringsGridHeader.h"
 
 #include "WMETVan.h"
@@ -30,7 +31,9 @@ void TVan::Init() {
 
 	FDateTime = NULL;
 
-	FTareIndex = VAN_TARE_INDEX_S;
+	FWeightType = DEFAULT_WEIGHTTYPE;
+
+	FTareIndex = DEFAULT_TARE_INDEX;
 }
 
 // ---------------------------------------------------------------------------
@@ -92,7 +95,7 @@ void TVan::SetTareTrft(int Value) {
 
 	FTareTrft = Value;
 
-	if (TareIndex != VAN_TARE_INDEX_T) {
+	if (TareIndex != tiTrafaret) {
 		return;
 	}
 
@@ -109,7 +112,7 @@ void TVan::SetTareDyn(int Value) {
 
 	FTareDyn = Value;
 
-	if (TareIndex != VAN_TARE_INDEX_D) {
+	if (TareIndex != tiDynamic) {
 		return;
 	}
 
@@ -126,7 +129,7 @@ void TVan::SetTareSta(int Value) {
 
 	FTareSta = Value;
 
-	if (TareIndex != VAN_TARE_INDEX_S) {
+	if (TareIndex != tiStatic) {
 		return;
 	}
 
@@ -136,26 +139,23 @@ void TVan::SetTareSta(int Value) {
 }
 
 // ---------------------------------------------------------------------------
-void TVan::SetTareIndex(int Value) {
+void TVan::SetTareIndex(TTareIndex Value) {
 	if (FTareIndex == Value) {
 		return;
 	}
 
 	FTareIndex = Value;
 
-	switch (TareIndex) {
-	case VAN_TARE_INDEX_D:
+	switch (Value) {
+	case tiDynamic:
 		FTare = FTareDyn;
-		FTareIndexAsText = LoadStr(IDS_GRID_HEADER_TARE_D);
 		break;
-	case VAN_TARE_INDEX_S:
+	case tiStatic:
 		FTare = FTareSta;
-		FTareIndexAsText = LoadStr(IDS_GRID_HEADER_TARE_S);
 		break;
-	case VAN_TARE_INDEX_T:
+	case tiTrafaret:
 	default:
 		FTare = FTareTrft;
-		FTareIndexAsText = LoadStr(IDS_GRID_HEADER_TARE_T);
 	}
 
 	UpdateValues();
@@ -175,7 +175,8 @@ bool __fastcall TVan::Equals(TObject * Obj) {
 
 	TVan * Van = (TVan*) Obj;
 
-	if (Num != Van->Num || DateTime != Van->DateTime || VanNum != Van->VanNum ||
+	if (Num != Van->Num || DateTime != Van->DateTime ||
+		WeightType != Van->WeightType || VanNum != Van->VanNum ||
 		VanType != Van->VanType || Carrying != Van->Carrying ||
 		Brutto != Van->Brutto || TareTrft != Van->TareTrft ||
 		TareDyn != Van->TareDyn || TareSta != Van->TareSta ||
@@ -199,6 +200,8 @@ bool __fastcall TVan::Equals(TObject * Obj) {
 void __fastcall TVan::Assign(TVan * Source) {
 	Num = Source->Num;
 	DateTime = Source->DateTime;
+
+	WeightType = Source->WeightType;
 
 	VanNum = Source->VanNum;
 
@@ -232,6 +235,8 @@ String __fastcall TVan::ToString() {
 	S += "Num=" + IntToStr(Num);
 	S += ",";
 	S += "DateTime='" + DateTimeToStr(DateTime) + "'";
+	S += ",";
+	S += "WeightType='" + IntToStr(WeightType) + "'";
 	S += ",";
 	S += "VanNum='" + VanNum + "'";
 	S += ",";

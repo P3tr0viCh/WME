@@ -12,9 +12,15 @@
 #include "WMETVanCatalog.h"
 #include "WMETVanType.h"
 
-const VAN_TARE_INDEX_T = 0;
-const VAN_TARE_INDEX_D = 1;
-const VAN_TARE_INDEX_S = 2;
+enum TWeightType {
+	wtBrutto = 0, wtTare = 1, wtMixed = 2
+};
+const DEFAULT_WEIGHTTYPE = wtBrutto;
+
+enum TTareIndex {
+	tiTrafaret = 0, tiDynamic = 1, tiStatic = 2
+};
+const DEFAULT_TARE_INDEX = tiTrafaret;
 
 // ---------------------------------------------------------------------------
 class TVan : public TObject {
@@ -22,6 +28,8 @@ private:
 	int FNum;
 
 	TDateTime FDateTime;
+
+	TWeightType FWeightType;
 
 	String FVanNum;
 
@@ -34,8 +42,7 @@ private:
 	int FTareDyn;
 	int FTareSta;
 
-	int FTareIndex;
-	String FTareIndexAsText;
+	TTareIndex FTareIndex;
 
 	int FNetto;
 	int FOverload;
@@ -59,7 +66,7 @@ private:
 	void SetTareTrft(int Value);
 	void SetTareDyn(int Value);
 	void SetTareSta(int Value);
-	void SetTareIndex(int Value);
+	void SetTareIndex(TTareIndex Value);
 
 	void SetUser(TUser * Value);
 
@@ -75,6 +82,9 @@ public:
 
 	__property TDateTime DateTime = {read = FDateTime, write = FDateTime};
 
+	__property TWeightType WeightType = {read = FWeightType, write = FWeightType
+	};
+
 	__property String VanNum = {read = FVanNum, write = FVanNum};
 
 	__property TVanType * VanType = {read = FVanType};
@@ -86,8 +96,7 @@ public:
 	__property int TareDyn = {read = FTareDyn, write = SetTareDyn};
 	__property int TareSta = {read = FTareSta, write = SetTareSta};
 
-	__property int TareIndex = {read = FTareIndex, write = SetTareIndex};
-	__property String TareIndexAsText = {read = FTareIndexAsText};
+	__property TTareIndex TareIndex = {read = FTareIndex, write = SetTareIndex};
 
 	__property int Netto = {read = FNetto};
 	__property int Overload = {read = FOverload};
@@ -98,7 +107,9 @@ public:
 
 	__property TVanCatalog * DepartStation = {read = FDepartStation};
 	__property TVanCatalog * PurposeStation = {read = FPurposeStation};
+
 	__property String InvoiceNum = {read = FInvoiceNum, write = FInvoiceNum};
+
 	__property TVanCatalog * InvoiceSupplier = {read = FInvoiceSupplier};
 	__property TVanCatalog * InvoiceRecipient = {read = FInvoiceRecipient};
 };

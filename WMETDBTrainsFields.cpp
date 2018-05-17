@@ -8,10 +8,10 @@
 #pragma package(smart_init)
 
 const TDBTrainsFieldName TDBTrainsFields::FIELDS[TDBTrainsFields::FIELDS_COUNT]
-	= {fnTrainsTrnum, fnTrainsWTime, fnTrainsDatetime, fnTrainsCarrying,
-	fnTrainsBrutto, fnTrainsTare, fnTrainsNetto, fnTrainsOverload,
-	fnTrainsVanCount, fnTrainsOperator, fnTrainsOperatorTabNum,
-	fnTrainsOperatorShiftNum};
+	= {fnTrainsTrnum, fnTrainsWTime, fnTrainsDatetime, fnTrainsWeightType,
+	fnTrainsCarrying, fnTrainsBrutto, fnTrainsTare, fnTrainsNetto,
+	fnTrainsOverload, fnTrainsVanCount, fnTrainsOperator,
+	fnTrainsOperatorTabNum, fnTrainsOperatorShiftNum};
 
 // ---------------------------------------------------------------------------
 String TDBTrainsFields::GetFieldName(TDBTrainsFieldName Name) {
@@ -24,6 +24,9 @@ String TDBTrainsFields::GetFieldName(TDBTrainsFieldName Name) {
 
 	case fnTrainsDatetime:
 		return "bdatetime";
+
+	case fnTrainsWeightType:
+		return "weighttype";
 
 	case fnTrainsCarrying:
 		return "carrying";
@@ -61,6 +64,9 @@ TFieldType TDBTrainsFields::GetFieldType(TDBTrainsFieldName Name) {
 
 	case fnTrainsDatetime:
 		return ftString;
+
+	case fnTrainsWeightType:
+		return ftInteger;
 
 	case fnTrainsCarrying:
 	case fnTrainsBrutto:

@@ -31,20 +31,21 @@ class TListTrainsColumns {
 public:
 	static const NUM = 0;
 	static const DATETIME = 1;
-	static const CARRYING = 2;
-	static const BRUTTO = 3;
-	static const TARE = 4;
-	static const NETTO = 5;
-	static const OVERLOAD = 6;
-	static const VANCOUNT = 7;
-	static const OPERATOR = 8;
+	static const WEIGHTTYPE = 2;
+	static const CARRYING = 3;
+	static const BRUTTO = 4;
+	static const TARE = 5;
+	static const NETTO = 6;
+	static const OVERLOAD = 7;
+	static const VANCOUNT = 8;
+	static const OPERATOR = 9;
 
-	static const VISIBLE_COUNT = 9;
+	static const VISIBLE_COUNT = 10;
 
-	static const COUNT = 9;
+	static const COUNT = 10;
 
 	TListTrainsColumns() {
-		LeftAlign = TIntegerSet() << DATETIME << OPERATOR;
+		LeftAlign = TIntegerSet() << DATETIME << WEIGHTTYPE << OPERATOR;
 	}
 
 	TIntegerSet LeftAlign;
@@ -57,32 +58,33 @@ class TListVansColumns {
 public:
 	static const NUM = 0;
 	static const DATETIME = 1;
-	static const VANNUM = 2;
-	static const VANTYPE = 3;
-	static const CARRYING = 4;
-	static const BRUTTO = 5;
-	static const TARE = 6;
-	static const TARE_T = 7;
-	static const TARE_D = 8;
-	static const TARE_S = 9;
-	static const TARE_INDEX = 10;
-	static const NETTO = 11;
-	static const OVERLOAD = 12;
-	static const CARGOTYPE = 13;
-	static const DEPART_STATION = 14;
-	static const PURPOSE_STATION = 15;
-	static const INVOICE_NUM = 16;
-	static const INVOICE_SUPPLIER = 17;
-	static const INVOICE_RECIPIENT = 18;
+	static const WEIGHTTYPE = 2;
+	static const VANNUM = 3;
+	static const VANTYPE = 4;
+	static const CARRYING = 5;
+	static const BRUTTO = 6;
+	static const TARE = 7;
+	static const TARE_T = 8;
+	static const TARE_D = 9;
+	static const TARE_S = 10;
+	static const TARE_INDEX = 11;
+	static const NETTO = 12;
+	static const OVERLOAD = 13;
+	static const CARGOTYPE = 14;
+	static const DEPART_STATION = 15;
+	static const PURPOSE_STATION = 16;
+	static const INVOICE_NUM = 17;
+	static const INVOICE_SUPPLIER = 18;
+	static const INVOICE_RECIPIENT = 19;
 
-	static const VISIBLE_COUNT = 19;
+	static const VISIBLE_COUNT = 20;
 
-	static const COUNT = 19;
+	static const COUNT = 20;
 
 	TListVansColumns() {
 		LeftAlign =
-			TIntegerSet() << DATETIME << VANNUM << VANTYPE << CARGOTYPE <<
-			DEPART_STATION << PURPOSE_STATION << INVOICE_NUM <<
+			TIntegerSet() << DATETIME << WEIGHTTYPE << VANNUM << VANTYPE <<
+			CARGOTYPE << DEPART_STATION << PURPOSE_STATION << INVOICE_NUM <<
 			INVOICE_SUPPLIER << INVOICE_RECIPIENT;
 	}
 
@@ -101,16 +103,6 @@ __fastcall TfrmTrainList::TfrmTrainList(TComponent* Owner) : TForm(Owner) {
 void TfrmTrainList::Show() {
 	TfrmTrainList * frmTrainList = new TfrmTrainList(Application);
 	try {
-		// if (frmTrainList->LoadTrains()) {
-		//
-		// if (!frmTrainList->TrainList->IsEmpty()) {
-		// if (frmTrainList->LoadTrain(0)) {
-		// frmTrainList->SelectedRow = 1;
-		// }
-		// }
-		//
-		// frmTrainList->ShowModal();
-		// }
 		frmTrainList->Page = 0;
 
 		frmTrainList->ShowModal();
@@ -169,6 +161,10 @@ void TfrmTrainList::CreateTrainsColumns() {
 	StringGridSetHeader(sgTrains, TrainsColumns.NUM, IDS_GRID_HEADER_NUM, 50);
 	StringGridSetHeader(sgTrains, TrainsColumns.DATETIME,
 		IDS_GRID_HEADER_DATETIME, 160);
+
+	StringGridSetHeader(sgTrains, TrainsColumns.WEIGHTTYPE,
+		IDS_GRID_HEADER_WEIGHTTYPE, 100);
+
 	StringGridSetHeader(sgTrains, TrainsColumns.CARRYING,
 		IDS_GRID_HEADER_CARRYING, 90);
 	StringGridSetHeader(sgTrains, TrainsColumns.BRUTTO,
@@ -178,6 +174,7 @@ void TfrmTrainList::CreateTrainsColumns() {
 		IDS_GRID_HEADER_NETTO, 90);
 	StringGridSetHeader(sgTrains, TrainsColumns.OVERLOAD,
 		IDS_GRID_HEADER_OVERLOAD, 90);
+
 	StringGridSetHeader(sgTrains, TrainsColumns.VANCOUNT,
 		IDS_GRID_HEADER_VANCOUNT, 120);
 	StringGridSetHeader(sgTrains, TrainsColumns.OPERATOR,
@@ -191,21 +188,30 @@ void TfrmTrainList::CreateVansColumns() {
 	StringGridSetHeader(sgVans, VansColumns.NUM, IDS_GRID_HEADER_NUM, 50);
 	StringGridSetHeader(sgVans, VansColumns.DATETIME,
 		IDS_GRID_HEADER_DATETIME, 160);
+
+	StringGridSetHeader(sgVans, VansColumns.WEIGHTTYPE,
+		IDS_GRID_HEADER_WEIGHTTYPE, 90);
+
 	StringGridSetHeader(sgVans, VansColumns.VANNUM, IDS_GRID_HEADER_VANNUM, 80);
 	StringGridSetHeader(sgVans, VansColumns.VANTYPE,
 		IDS_GRID_HEADER_VANTYPE, 120);
+
 	StringGridSetHeader(sgVans, VansColumns.CARRYING,
 		IDS_GRID_HEADER_CARRYING, 50);
 	StringGridSetHeader(sgVans, VansColumns.BRUTTO, IDS_GRID_HEADER_BRUTTO, 60);
 	StringGridSetHeader(sgVans, VansColumns.TARE, IDS_GRID_HEADER_TARE, 60);
-	StringGridSetHeader(sgVans, VansColumns.TARE_T, IDS_GRID_HEADER_TARE_T, 60);
-	StringGridSetHeader(sgVans, VansColumns.TARE_D, IDS_GRID_HEADER_TARE_D, 60);
-	StringGridSetHeader(sgVans, VansColumns.TARE_S, IDS_GRID_HEADER_TARE_S, 60);
+	StringGridSetHeader(sgVans, VansColumns.TARE_T,
+		IDS_GRID_HEADER_TARE_TRAFARET, 60);
+	StringGridSetHeader(sgVans, VansColumns.TARE_D,
+		IDS_GRID_HEADER_TARE_DYNAMIC, 60);
+	StringGridSetHeader(sgVans, VansColumns.TARE_S,
+		IDS_GRID_HEADER_TARE_STATIC, 60);
 	StringGridSetHeader(sgVans, VansColumns.TARE_INDEX,
 		IDS_GRID_HEADER_TARE_INDEX, 60);
 	StringGridSetHeader(sgVans, VansColumns.NETTO, IDS_GRID_HEADER_NETTO, 60);
 	StringGridSetHeader(sgVans, VansColumns.OVERLOAD,
 		IDS_GRID_HEADER_OVERLOAD, 80);
+
 	StringGridSetHeader(sgVans, VansColumns.CARGOTYPE,
 		IDS_GRID_HEADER_CARGOTYPE, 120);
 	StringGridSetHeader(sgVans, VansColumns.DEPART_STATION,
@@ -376,6 +382,9 @@ int TfrmTrainList::SetTrain(int Index, TTrain * Train) {
 	sgTrains->Cells[TrainsColumns.DATETIME][Index] =
 		DateTimeToStr(Train->DateTime);
 
+	sgTrains->Cells[TrainsColumns.WEIGHTTYPE][Index] =
+		Main->GetWeightTypeAsText(Train->WeightType);
+
 	sgTrains->Cells[TrainsColumns.CARRYING][Index] = IntToStr(Train->Carrying);
 	sgTrains->Cells[TrainsColumns.BRUTTO][Index] = IntToStr(Train->Brutto);
 	sgTrains->Cells[TrainsColumns.TARE][Index] = IntToStr(Train->Tare);
@@ -401,6 +410,9 @@ int TfrmTrainList::SetVan(int Index, TVan * Van) {
 	sgVans->Cells[VansColumns.NUM][Index] = IntToStr(Van->Num);
 	sgVans->Cells[VansColumns.DATETIME][Index] = DateTimeToStr(Van->DateTime);
 
+	sgVans->Cells[VansColumns.WEIGHTTYPE][Index] =
+		Main->GetWeightTypeAsText(Van->WeightType);
+
 	sgVans->Cells[VansColumns.VANNUM][Index] = Van->VanNum;
 
 	sgVans->Cells[VansColumns.VANTYPE][Index] = Van->VanType->Name;
@@ -412,7 +424,8 @@ int TfrmTrainList::SetVan(int Index, TVan * Van) {
 	sgVans->Cells[VansColumns.TARE_S][Index] = IntToStr(Van->TareSta);
 	sgVans->Cells[VansColumns.TARE_D][Index] = IntToStr(Van->TareDyn);
 
-	sgVans->Cells[VansColumns.TARE_INDEX][Index] = Van->TareIndexAsText;
+	sgVans->Cells[VansColumns.TARE_INDEX][Index] =
+		Main->GetTareIndexAsText(Van->TareIndex);
 
 	sgVans->Cells[VansColumns.NETTO][Index] = IntToStr(Van->Netto);
 	sgVans->Cells[VansColumns.OVERLOAD][Index] = IntToStr(Van->Overload);

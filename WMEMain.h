@@ -10,9 +10,11 @@
 #include <Vcl.ComCtrls.hpp>
 #include <Data.DB.hpp>
 #include <Data.Win.ADODB.hpp>
+#include <Vcl.AppEvnts.hpp>
 
 #include "WMETSettings.h"
-#include <Vcl.AppEvnts.hpp>
+
+#include "WMETVan.h"
 
 // ---------------------------------------------------------------------------
 class TMain : public TForm {
@@ -42,10 +44,18 @@ private:
 	TUser * FUser;
 	TSettings * FSettings;
 
+	String WeightTypeAsText[sizeof(TWeightType)];
+	String TareIndexAsText[sizeof(TTareIndex)];
+
 public:
 	__fastcall TMain(TComponent* Owner);
 
 	void ChangeUser();
+
+	void InitStrings();
+
+	String GetWeightTypeAsText(TWeightType Value);
+	String GetTareIndexAsText(TTareIndex Value);
 
 	__property TUser * User = {read = FUser};
 

@@ -58,6 +58,8 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 
 	FSettings = new TSettings();
 
+	InitStrings();
+
 	Caption = Application->Title + " " + GetFileVer(Application->ExeName);
 	StatusBar->Panels->Items[0]->Text = LoadStr(IDS_COPYRIGHT_STATUS);
 
@@ -145,6 +147,47 @@ void __fastcall TMain::btnOperatorClick(TObject *Sender) {
 // ---------------------------------------------------------------------------
 void TMain::ChangeUser() {
 	btnOperator->Caption = User->Name;
+}
+
+// ---------------------------------------------------------------------------
+void TMain::InitStrings() {
+	WeightTypeAsText[0] = LoadStr(IDS_TXT_WEIGHT_TYPE_BRUTTO);
+	WeightTypeAsText[1] = LoadStr(IDS_TXT_WEIGHT_TYPE_TARE);
+	WeightTypeAsText[2] = LoadStr(IDS_TXT_WEIGHT_TYPE_MIXED);
+
+	TareIndexAsText[0] = LoadStr(IDS_TXT_TARE_DYNAMIC);
+	TareIndexAsText[1] = LoadStr(IDS_TXT_TARE_STATIC);
+	TareIndexAsText[2] = LoadStr(IDS_TXT_TARE_TRAFARET);
+};
+
+// ---------------------------------------------------------------------------
+String TMain::GetWeightTypeAsText(TWeightType Value) {
+	switch (Value) {
+	case wtBrutto:
+		return WeightTypeAsText[0];
+		break;
+	case wtTare:
+		return WeightTypeAsText[1];
+		break;
+	case wtMixed:
+	default:
+		return WeightTypeAsText[2];
+	}
+}
+
+// ---------------------------------------------------------------------------
+String TMain::GetTareIndexAsText(TTareIndex Value) {
+	switch (Value) {
+	case tiDynamic:
+		return TareIndexAsText[0];
+		break;
+	case tiStatic:
+		return TareIndexAsText[1];
+		break;
+	case tiTrafaret:
+	default:
+		return TareIndexAsText[2];
+	}
 }
 
 // ---------------------------------------------------------------------------

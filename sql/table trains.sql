@@ -1,9 +1,10 @@
 CREATE TABLE trains
 (
   trnum          INT(10) UNSIGNED                           NOT NULL,
-  scales         INT(10) DEFAULT '0'                        NOT NULL,
+  scales         INT(10) DEFAULT 0                          NOT NULL,
   wtime          INT(10) UNSIGNED DEFAULT 0                 NOT NULL,
-  bdatetime      DATETIME DEFAULT '0000-00-00 00:00:00'     NULL,
+  bdatetime      DATETIME DEFAULT '0000-00-00 00:00:00'     NOT NULL,
+  weighttype     SMALLINT(5) UNSIGNED DEFAULT 0             NULL,
   carrying       INT(10) UNSIGNED DEFAULT 0                 NULL,
   brutto         INT(10) UNSIGNED DEFAULT 0                 NULL,
   tare           INT(10) UNSIGNED DEFAULT 0                 NULL,

@@ -67,6 +67,18 @@ IDS_MSG_SERVER_CONNECTION_OK,
 
 IDS_TXT_ADMIN_DEFAULT_NAME,
         "Администратор"
+IDS_TXT_WEIGHT_TYPE_BRUTTO,
+        "Гружёный"
+IDS_TXT_WEIGHT_TYPE_TARE,
+        "Порожний"
+IDS_TXT_WEIGHT_TYPE_MIXED,
+        "Смешанный"
+IDS_TXT_TARE_TRAFARET,
+        "Тара Т"
+IDS_TXT_TARE_DYNAMIC,
+        "Тара Д"
+IDS_TXT_TARE_STATIC,
+        "Тара С"
 
 IDS_MYSQL_CONNECTION,
         "DRIVER={MySQL ODBC 3.51 Driver};SERVER=%s;PORT=%s;DATABASE=%s;USER=%s;PASSWORD=%s;OPTION=3;"

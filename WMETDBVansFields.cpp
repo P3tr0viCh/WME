@@ -8,14 +8,14 @@
 #pragma package(smart_init)
 
 const TDBVansFieldName TDBVansFields::FIELDS[TDBVansFields::FIELDS_COUNT] = {
-	fnVansTrnum, fnVansNum, fnVansWTime, fnVansDatetime, fnVansVanNum,
-	fnVansVanType, fnVansVanTypeCode, fnVansCarrying, fnVansBrutto, fnVansTare,
-	fnVansTareTrft, fnVansTareDyn, fnVansTareSta, fnVansTareIndex, fnVansNetto,
-	fnVansOverload, fnVansCargoType, fnVansCargoTypeCode, fnVansAxisCount,
-	fnVansOperator, fnVansOperatorTabNum, fnVansOperatorShiftNum,
-	fnVansDepartStation, fnVansDepartStationCode, fnVansPurposeStation,
-	fnVansPurposeStationCode, fnVansInvoiceNum, fnVansInvoiceSupplier,
-	fnVansInvoiceSupplierCode, fnVansInvoiceRecipient,
+	fnVansTrnum, fnVansNum, fnVansWTime, fnVansDatetime, fnVansWeightType,
+	fnVansVanNum, fnVansVanType, fnVansVanTypeCode, fnVansCarrying,
+	fnVansBrutto, fnVansTare, fnVansTareTrft, fnVansTareDyn, fnVansTareSta,
+	fnVansTareIndex, fnVansNetto, fnVansOverload, fnVansCargoType,
+	fnVansCargoTypeCode, fnVansAxisCount, fnVansOperator, fnVansOperatorTabNum,
+	fnVansOperatorShiftNum, fnVansDepartStation, fnVansDepartStationCode,
+	fnVansPurposeStation, fnVansPurposeStationCode, fnVansInvoiceNum,
+	fnVansInvoiceSupplier, fnVansInvoiceSupplierCode, fnVansInvoiceRecipient,
 	fnVansInvoiceRecipientCode};
 
 // ---------------------------------------------------------------------------
@@ -31,6 +31,9 @@ String TDBVansFields::GetFieldName(TDBVansFieldName Name) {
 		return "wtime";
 	case fnVansDatetime:
 		return "bdatetime";
+
+	case fnVansWeightType:
+		return "weighttype";
 
 	case fnVansVanNum:
 		return "vannum";
@@ -110,6 +113,9 @@ TFieldType TDBVansFields::GetFieldType(TDBVansFieldName Name) {
 		return ftInteger;
 	case fnVansDatetime:
 		return ftString;
+
+	case fnVansWeightType:
+		return ftInteger;
 
 	case fnVansVanNum:
 	case fnVansVanType:

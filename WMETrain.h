@@ -78,6 +78,8 @@ private:
 
 	String CellValue;
 
+	TVanCatalogList * WeightTypeList;
+
 	TVanCatalogList * TareIndexList;
 
 	void SetChanged(bool Value);

@@ -127,6 +127,9 @@ void TDBSaveTrain::Operation() {
 			SetVansParam(Query, fnVansDatetime, i,
 				DateTimeToSQLStr(Train->VanList->Items[i]->DateTime));
 
+			SetVansParam(Query, fnVansWeightType, i,
+				Train->VanList->Items[i]->WeightType);
+
 			SetVansParam(Query, fnVansVanNum, i,
 				Train->VanList->Items[i]->VanNum);
 
@@ -211,14 +214,19 @@ void TDBSaveTrain::Operation() {
 		Query->SQL->Add("(" + TrainsFields->GetValues(-1) + ")");
 
 		SetTrainParam(Query, fnTrainsTrnum, Train->TrainNum);
+
 		SetTrainParam(Query, fnTrainsWTime, Train->UnixTime);
 		SetTrainParam(Query, fnTrainsDatetime,
 			DateTimeToSQLStr(Train->DateTime));
+
+		SetTrainParam(Query, fnTrainsWeightType, Train->WeightType);
+
 		SetTrainParam(Query, fnTrainsCarrying, Train->Carrying);
 		SetTrainParam(Query, fnTrainsBrutto, Train->Brutto);
 		SetTrainParam(Query, fnTrainsTare, Train->Tare);
 		SetTrainParam(Query, fnTrainsNetto, Train->Netto);
 		SetTrainParam(Query, fnTrainsOverload, Train->Overload);
+
 		SetTrainParam(Query, fnTrainsVanCount, Train->VanCount);
 
 		SetTrainParam(Query, fnTrainsOperator, Train->User->Name);

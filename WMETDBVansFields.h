@@ -10,20 +10,20 @@
 #include "WMETDBTableFields.h"
 
 enum TDBVansFieldName {
-	fnVansTrnum, fnVansNum, fnVansWTime, fnVansDatetime, fnVansVanNum,
-	fnVansVanType, fnVansVanTypeCode, fnVansCarrying, fnVansBrutto, fnVansTare,
-	fnVansTareTrft, fnVansTareDyn, fnVansTareSta, fnVansTareIndex, fnVansNetto,
-	fnVansOverload, fnVansCargoType, fnVansCargoTypeCode, fnVansAxisCount,
-	fnVansOperator, fnVansOperatorTabNum, fnVansOperatorShiftNum,
-	fnVansDepartStation, fnVansDepartStationCode, fnVansPurposeStation,
-	fnVansPurposeStationCode, fnVansInvoiceNum, fnVansInvoiceSupplier,
-	fnVansInvoiceSupplierCode, fnVansInvoiceRecipient,
+	fnVansTrnum, fnVansNum, fnVansWTime, fnVansDatetime, fnVansWeightType,
+	fnVansVanNum, fnVansVanType, fnVansVanTypeCode, fnVansCarrying,
+	fnVansBrutto, fnVansTare, fnVansTareTrft, fnVansTareDyn, fnVansTareSta,
+	fnVansTareIndex, fnVansNetto, fnVansOverload, fnVansCargoType,
+	fnVansCargoTypeCode, fnVansAxisCount, fnVansOperator, fnVansOperatorTabNum,
+	fnVansOperatorShiftNum, fnVansDepartStation, fnVansDepartStationCode,
+	fnVansPurposeStation, fnVansPurposeStationCode, fnVansInvoiceNum,
+	fnVansInvoiceSupplier, fnVansInvoiceSupplierCode, fnVansInvoiceRecipient,
 	fnVansInvoiceRecipientCode
 };
 
 class TDBVansFields : public TDBTableFields<TDBVansFieldName> {
 public:
-	static const FIELDS_COUNT = 31;
+	static const FIELDS_COUNT = 32;
 
 	static const TDBVansFieldName FIELDS[FIELDS_COUNT];
 
