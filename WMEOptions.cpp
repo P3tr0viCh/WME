@@ -263,7 +263,7 @@ void TfrmOptions::SetReadOnly(TComponent *Parent, bool ReadOnly) {
 				(((TWinControl*)Parent)->Controls[i]);
 
 			if (Child->ClassNameIs("TButton") || Child->ClassNameIs
-				("TLabeledEdit")) {
+				("TLabeledEdit") || Child->ClassNameIs("TCheckBox")) {
 				Child->Enabled = !ReadOnly;
 			}
 			else {

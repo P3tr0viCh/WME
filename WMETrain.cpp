@@ -185,7 +185,7 @@ void TfrmTrain::CreateVansColumns() {
 		IDS_GRID_HEADER_DATETIME, 160);
 
 	StringGridSetHeader(sgVans, VansColumns.WEIGHTTYPE,
-		IDS_GRID_HEADER_WEIGHTTYPE, 90);
+		IDS_GRID_HEADER_WEIGHTTYPE, 110);
 
 	StringGridSetHeader(sgVans, VansColumns.VANNUM, IDS_GRID_HEADER_VANNUM, 80);
 	StringGridSetHeader(sgVans, VansColumns.VANTYPE,
@@ -496,44 +496,37 @@ void __fastcall TfrmTrain::sgVansKeyDown(TObject *Sender, WORD &Key,
 
 	if (Shift == (TShiftState() << ssAlt)) {
 		switch (Key) {
-			// TODO: merge
 		case VK_UP:
-			if (sgVans->Row > 1) {
-				sgVans->Cells[sgVans->Col][sgVans->Row - 1] =
+		case VK_DOWN:
+			bool Cond;
+			int Inc;
+
+			if (Key == VK_UP) {
+				Cond = sgVans->Row > 1;
+				Inc = -1;
+			}
+			else {
+				Cond = sgVans->Row < sgVans->RowCount - 1;
+				Inc = +1;
+			}
+
+			if (Cond) {
+				sgVans->Cells[sgVans->Col][sgVans->Row + Inc] =
 					sgVans->Cells[sgVans->Col][sgVans->Row];
 
+				int HiddenColumn = -1;
 				switch (sgVans->Col) {
 				case VansColumns.WEIGHTTYPE:
-					sgVans->Cells[VansColumns.WEIGHTTYPE_AS_INT][sgVans->Row -
-						1] = sgVans->Cells[VansColumns.WEIGHTTYPE_AS_INT]
-						[sgVans->Row];
+					HiddenColumn = VansColumns.WEIGHTTYPE_AS_INT;
 					break;
 				case VansColumns.TARE_INDEX:
-					sgVans->Cells[VansColumns.TARE_INDEX_AS_INT][sgVans->Row -
-						1] = sgVans->Cells[VansColumns.TARE_INDEX_AS_INT]
-						[sgVans->Row];
+					HiddenColumn = VansColumns.TARE_INDEX_AS_INT;
 					break;
 				}
 
-				Changed = true;
-			}
-			break;
-		case VK_DOWN:
-			if (sgVans->Row < sgVans->RowCount - 1) {
-				sgVans->Cells[sgVans->Col][sgVans->Row + 1] =
-					sgVans->Cells[sgVans->Col][sgVans->Row];
-
-				switch (sgVans->Col) {
-				case VansColumns.WEIGHTTYPE:
-					sgVans->Cells[VansColumns.WEIGHTTYPE_AS_INT][sgVans->Row +
-						1] = sgVans->Cells[VansColumns.WEIGHTTYPE_AS_INT]
-						[sgVans->Row];
-					break;
-				case VansColumns.TARE_INDEX:
-					sgVans->Cells[VansColumns.TARE_INDEX_AS_INT][sgVans->Row +
-						1] = sgVans->Cells[VansColumns.TARE_INDEX_AS_INT]
-						[sgVans->Row];
-					break;
+				if (HiddenColumn > 0) {
+					sgVans->Cells[HiddenColumn][sgVans->Row + Inc] =
+						sgVans->Cells[HiddenColumn][sgVans->Row];
 				}
 
 				Changed = true;
@@ -715,7 +708,8 @@ TVanList * TfrmTrain::GetVanList() {
 		Van->DateTime = sgVans->Cells[VansColumns.DATETIME][i];
 
 		Van->WeightType =
-			StrToInt(sgVans->Cells[VansColumns.WEIGHTTYPE_AS_INT][i]);
+			(TWeightType)StrToInt
+			(sgVans->Cells[VansColumns.WEIGHTTYPE_AS_INT][i]);
 
 		Van->VanNum = sgVans->Cells[VansColumns.VANNUM][i];
 
@@ -729,7 +723,8 @@ TVanList * TfrmTrain::GetVanList() {
 		Van->TareSta = StrToInt(sgVans->Cells[VansColumns.TARE_S][i]);
 
 		Van->TareIndex =
-			StrToInt(sgVans->Cells[VansColumns.TARE_INDEX_AS_INT][i]);
+			(TTareIndex) StrToInt
+			(sgVans->Cells[VansColumns.TARE_INDEX_AS_INT][i]);
 
 		Van->CargoType->Name = sgVans->Cells[VansColumns.CARGOTYPE][i];
 		Van->CargoType->Code = GetVanCatalogCode(VansColumns.CARGOTYPE,

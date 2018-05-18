@@ -69,6 +69,8 @@ private:
 
 	void SetPage(int Value);
 
+	void UpdateStatusBar();
+
 public:
 	__fastcall TfrmTrainList(TComponent* Owner);
 

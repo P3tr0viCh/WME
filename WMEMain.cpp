@@ -74,7 +74,12 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 		delete FileIni;
 	}
 
-	Settings->Load();
+	if (!Settings->Load()) {
+		MsgBoxErr(IDS_ERROR_LOAD_SETTINGS);
+
+		Application->Terminate();
+		return;
+	}
 
 #ifndef FORCELOGON
 	if (TfrmLogin::Show(Settings->UserList, User)) {
@@ -165,10 +170,8 @@ String TMain::GetWeightTypeAsText(TWeightType Value) {
 	switch (Value) {
 	case wtBrutto:
 		return WeightTypeAsText[0];
-		break;
 	case wtTare:
 		return WeightTypeAsText[1];
-		break;
 	case wtMixed:
 	default:
 		return WeightTypeAsText[2];
@@ -180,10 +183,8 @@ String TMain::GetTareIndexAsText(TTareIndex Value) {
 	switch (Value) {
 	case tiDynamic:
 		return TareIndexAsText[0];
-		break;
 	case tiStatic:
 		return TareIndexAsText[1];
-		break;
 	case tiTrafaret:
 	default:
 		return TareIndexAsText[2];

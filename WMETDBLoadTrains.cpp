@@ -83,9 +83,8 @@ void TDBLoadTrains::Operation() {
 				Query->FieldByName(TrainsFields->GetFieldName(fnTrainsDatetime))
 				->AsDateTime;
 
-			Train->WeightType =
-				Query->FieldByName(TrainsFields->GetFieldName(fnTrainsWeightType))
-				->AsInteger;
+			Train->WeightType = (TWeightType) Query->FieldByName
+				(TrainsFields->GetFieldName(fnTrainsWeightType))->AsInteger;
 
 			Train->Carrying =
 				Query->FieldByName(TrainsFields->GetFieldName(fnTrainsCarrying))

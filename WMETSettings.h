@@ -43,6 +43,8 @@ private:
 	bool CheckConfigDir();
 	String GetConfigFileName(NativeUInt ConfigName);
 
+	String CRC(String Text);
+
 	String Encrypt(String Text);
 	String Decrypt(String Text);
 
@@ -53,7 +55,9 @@ private:
 	void SaveVanCatalog(String ConfigFileName, String Name,
 		TVanCatalogList * VanCatalogList);
 
-	void LoadUsers(String ConfigFileName);
+	String GetUsersCRC();
+
+	bool LoadUsers(String ConfigFileName);
 	void LoadSettings(String ConfigFileName);
 	void LoadDatabases(String ConfigFileName);
 	void LoadVanTypes(String ConfigFileName);

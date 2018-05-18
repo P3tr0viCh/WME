@@ -4,6 +4,7 @@
 #pragma hdrstop
 
 #include <UtilsLog.h>
+#include <UtilsStr.h>
 #include <UtilsMisc.h>
 #include <UtilsFileIni.h>
 
@@ -316,6 +317,8 @@ bool TfrmTrainList::LoadTrain(int Index) {
 void TfrmTrainList::SetPage(int Value) {
 	FPage = Value;
 
+	UpdateStatusBar();
+
 	StringGridClear(sgTrains);
 	StringGridClear(sgVans);
 
@@ -506,4 +509,11 @@ void __fastcall TfrmTrainList::tbtnPrevPageClick(TObject *Sender) {
 void __fastcall TfrmTrainList::tbtnNextPageClick(TObject *Sender) {
 	Page += 1;
 }
+
+// ---------------------------------------------------------------------------
+void TfrmTrainList::UpdateStatusBar() {
+	StatusBar->Panels->Items[0]->Text =
+		Format(IDS_TXT_STATUSBAR_PAGE, IntToStr(Page + 1));
+}
+
 // ---------------------------------------------------------------------------

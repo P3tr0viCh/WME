@@ -36,6 +36,8 @@ IDS_ERROR_NEED_INT,
         "Необходимо указать число"
 IDS_ERROR_TEXT_EMPTY,
         "Строковое значение не указано"
+IDS_ERROR_LOAD_SETTINGS,
+        "Во время чтения настроек произошла критическая ошибка.\n\nДальнейшая работа невозможна"
 
 IDS_ERROR_LOCAL_CONNECTION,
         "Не удалось подключиться к локальной базе данных"
@@ -79,6 +81,8 @@ IDS_TXT_TARE_DYNAMIC,
         "Тара Д"
 IDS_TXT_TARE_STATIC,
         "Тара С"
+IDS_TXT_STATUSBAR_PAGE,
+        "Страница %s"
 
 IDS_MYSQL_CONNECTION,
         "DRIVER={MySQL ODBC 3.51 Driver};SERVER=%s;PORT=%s;DATABASE=%s;USER=%s;PASSWORD=%s;OPTION=3;"
@@ -115,6 +119,12 @@ IDS_LOG_DELETE_FILE_FAIL,
         "unable to delete file"
 IDS_LOG_EXCEPTION,
         "exception: %s"
+IDS_LOG_CRC_EMPTY,
+        "CRC empty"
+IDS_LOG_CRC_WRONG,
+        "CRC wrong"
+IDS_LOG_EMPTY_USERLIST,
+        "empty userlist > reset settings to default"
 
 IDS_LOG_MYSQL_CONNECT,
         "try database connect: %s@%s:%s"

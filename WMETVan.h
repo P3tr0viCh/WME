@@ -15,12 +15,12 @@
 enum TWeightType {
 	wtBrutto = 0, wtTare = 1, wtMixed = 2
 };
-const DEFAULT_WEIGHTTYPE = wtBrutto;
+const TWeightType DEFAULT_WEIGHTTYPE = wtBrutto;
 
 enum TTareIndex {
 	tiTrafaret = 0, tiDynamic = 1, tiStatic = 2
 };
-const DEFAULT_TARE_INDEX = tiTrafaret;
+const TTareIndex DEFAULT_TARE_INDEX = tiTrafaret;
 
 // ---------------------------------------------------------------------------
 class TVan : public TObject {

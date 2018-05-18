@@ -141,6 +141,9 @@ object frmTrainList: TfrmTrainList
     Top = 399
     Width = 683
     Height = 20
-    Panels = <>
+    Panels = <
+      item
+        Width = 50
+      end>
   end
 end

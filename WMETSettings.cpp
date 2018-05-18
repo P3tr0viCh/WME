@@ -210,6 +210,16 @@ String TSettings::GetConfigFileName(NativeUInt ConfigName) {
 }
 
 // ---------------------------------------------------------------------------
+String TSettings::CRC(String Text) {
+	try {
+		return HashSHA256(Text);
+	}
+	catch (...) {
+		return "";
+	}
+}
+
+// ---------------------------------------------------------------------------
 String TSettings::Encrypt(String Text) {
 	if (IsEmpty(Text)) {
 		return "";
@@ -238,6 +248,17 @@ String TSettings::Decrypt(String Text) {
 }
 
 // ---------------------------------------------------------------------------
+String TSettings::GetUsersCRC() {
+	String Result;
+
+	for (int i = 0; i < UserList->Count; i++) {
+		Result = Result + UserList->Items[i]->Name;
+	}
+
+	return CRC(Result);
+}
+
+// ---------------------------------------------------------------------------
 void TSettings::DeleteConfigFile(String ConfigFileName) {
 	if (FileExists(ConfigFileName) && !DeleteFile(ConfigFileName)) {
 		throw Exception(IDS_LOG_DELETE_FILE_FAIL);
@@ -245,7 +266,11 @@ void TSettings::DeleteConfigFile(String ConfigFileName) {
 }
 
 // ---------------------------------------------------------------------------
-void TSettings::LoadUsers(String ConfigFileName) {
+bool TSettings::LoadUsers(String ConfigFileName) {
+	if (!FileExists(ConfigFileName)) {
+		return false;
+	}
+
 	TIniFile * IniFile = new TIniFile(ConfigFileName);
 
 	TUser * User;
@@ -271,17 +296,29 @@ void TSettings::LoadUsers(String ConfigFileName) {
 		}
 
 		if (UserList->IsEmpty()) {
-			User = new TUser();
+			return false;
+		}
 
-			User->Name = LoadStr(IDS_TXT_ADMIN_DEFAULT_NAME);
-			User->IsAdmin = true;
+		String CRC = IniFile->ReadString(LoadStr(IDS_SETTINGS_CRC_SECTION),
+			LoadStr(IDS_SETTINGS_CRC_IDENT), "");
 
-			UserList->Add(User);
+		if (IsEmpty(CRC)) {
+			throw new EEncodingError(IDS_LOG_CRC_EMPTY);
+		}
+
+		CRC = Decrypt(CRC);
+
+		String UsersCRC = GetUsersCRC();
+
+		if (!SameStr(CRC, UsersCRC)) {
+			throw new EEncodingError(IDS_LOG_CRC_WRONG);
 		}
 	}
 	__finally {
 		delete IniFile;
 	}
+
+	return true;
 }
 
 // ---------------------------------------------------------------------------
@@ -428,7 +465,18 @@ bool TSettings::Load() {
 
 	try {
 		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_USERS);
-		LoadUsers(ConfigFileName);
+		if (!LoadUsers(ConfigFileName)) {
+			TUser * User = new TUser();
+
+			User->Name = LoadStr(IDS_TXT_ADMIN_DEFAULT_NAME);
+			User->IsAdmin = true;
+
+			UserList->Add(User);
+
+			WriteToLog(IDS_LOG_EMPTY_USERLIST);
+
+			return true;
+		}
 
 		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_SETTINGS);
 		LoadSettings(ConfigFileName);
@@ -471,8 +519,11 @@ void TSettings::SaveUsers(String ConfigFileName) {
 
 	String Section;
 
-	TIniFile * IniFile = new TIniFile(ConfigFileName);
+	TFileIni * IniFile = new TFileIni(ConfigFileName);
 	try {
+		IniFile->WriteString(LoadStr(IDS_SETTINGS_CRC_SECTION),
+			LoadStr(IDS_SETTINGS_CRC_IDENT), Encrypt(GetUsersCRC()));
+
 		IniFile->WriteInteger("Users", "Count", UserList->Count);
 
 		for (int i = 0; i < UserList->Count; i++) {

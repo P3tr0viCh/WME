@@ -47,6 +47,7 @@ object frmOptions: TfrmOptions
       ExplicitHeight = 390
       object tsLocalDatabase: TTabSheet
         Caption = #1041#1072#1079#1072' '#1076#1072#1085#1085#1099#1093
+        ExplicitLeft = 0
         ExplicitTop = 58
         ExplicitWidth = 598
         ExplicitHeight = 328
@@ -157,6 +158,7 @@ object frmOptions: TfrmOptions
       object tsServerDatabase: TTabSheet
         Caption = #1057#1077#1088#1074#1077#1088
         ImageIndex = 8
+        ExplicitLeft = 0
         ExplicitTop = 58
         ExplicitWidth = 598
         ExplicitHeight = 328
@@ -223,6 +225,7 @@ object frmOptions: TfrmOptions
       object tsUsers: TTabSheet
         Caption = #1055#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1080
         ImageIndex = 1
+        ExplicitLeft = 0
         ExplicitTop = 58
         ExplicitWidth = 598
         ExplicitHeight = 328
@@ -282,6 +285,7 @@ object frmOptions: TfrmOptions
       object tsVanTypes: TTabSheet
         Caption = #1056#1086#1076' '#1074#1072#1075#1086#1085#1072
         ImageIndex = 2
+        ExplicitLeft = 0
         ExplicitTop = 58
         ExplicitWidth = 598
         ExplicitHeight = 328
@@ -337,6 +341,7 @@ object frmOptions: TfrmOptions
       object tsCargoTypes: TTabSheet
         Caption = #1056#1086#1076' '#1075#1088#1091#1079#1072
         ImageIndex = 3
+        ExplicitLeft = 0
         ExplicitTop = 58
         ExplicitWidth = 598
         ExplicitHeight = 328
@@ -392,6 +397,7 @@ object frmOptions: TfrmOptions
       object tsDepartStations: TTabSheet
         Caption = #1057#1090#1072#1085#1094#1080#1103' '#1086#1090#1087#1088#1072#1074#1083#1077#1085#1080#1103
         ImageIndex = 4
+        ExplicitLeft = 0
         ExplicitTop = 58
         ExplicitWidth = 598
         ExplicitHeight = 328
@@ -447,6 +453,7 @@ object frmOptions: TfrmOptions
       object tsPurposeStations: TTabSheet
         Caption = #1057#1090#1072#1085#1094#1080#1103' '#1085#1072#1079#1085#1072#1095#1077#1085#1080#1103
         ImageIndex = 5
+        ExplicitLeft = 0
         ExplicitTop = 58
         ExplicitWidth = 598
         ExplicitHeight = 328
@@ -502,6 +509,7 @@ object frmOptions: TfrmOptions
       object tsInvoiceSuppliers: TTabSheet
         Caption = #1043#1088#1091#1079#1086#1086#1090#1087#1088#1072#1074#1080#1090#1077#1083#1100
         ImageIndex = 6
+        ExplicitLeft = 0
         ExplicitTop = 58
         ExplicitWidth = 598
         ExplicitHeight = 328
@@ -557,6 +565,7 @@ object frmOptions: TfrmOptions
       object tsInvoiceRecipients: TTabSheet
         Caption = #1043#1088#1091#1079#1086#1087#1086#1083#1091#1095#1072#1090#1077#1083#1100
         ImageIndex = 7
+        ExplicitLeft = 0
         ExplicitTop = 58
         ExplicitWidth = 598
         ExplicitHeight = 328

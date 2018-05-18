@@ -95,9 +95,8 @@ void TDBLoadTrain::Operation() {
 				Query->FieldByName(VansFields->GetFieldName(fnVansDatetime))
 				->AsDateTime;
 
-			Van->WeightType =
-				Query->FieldByName(VansFields->GetFieldName(fnVansWeightType))
-				->AsInteger;
+			Van->WeightType = (TWeightType) Query->FieldByName
+				(VansFields->GetFieldName(fnVansWeightType))->AsInteger;
 
 			Van->VanNum =
 				Query->FieldByName(VansFields->GetFieldName(fnVansVanNum))
@@ -131,9 +130,8 @@ void TDBLoadTrain::Operation() {
 			Van->TareSta =
 				Query->FieldByName(VansFields->GetFieldName(fnVansTareSta))
 				->AsInteger;
-			Van->TareIndex =
-				Query->FieldByName(VansFields->GetFieldName(fnVansTareIndex))
-				->AsInteger;
+			Van->TareIndex = (TTareIndex) Query->FieldByName
+				(VansFields->GetFieldName(fnVansTareIndex))->AsInteger;
 
 			Van->CargoType->Name =
 				Query->FieldByName(VansFields->GetFieldName(fnVansCargoType))
