@@ -18,16 +18,19 @@ object frmTrain: TfrmTrain
   TextHeight = 21
   object StatusBar: TStatusBar
     Left = 0
-    Top = 342
+    Top = 338
     Width = 609
-    Height = 20
+    Height = 24
     Panels = <>
+    ParentFont = True
+    UseSystemFont = False
+    ExplicitTop = 38
   end
   object PanelMain: TPanel
     Left = 0
     Top = 0
     Width = 609
-    Height = 342
+    Height = 338
     Align = alClient
     BevelOuter = bvNone
     Padding.Left = 8
@@ -35,6 +38,7 @@ object frmTrain: TfrmTrain
     Padding.Right = 8
     Padding.Bottom = 8
     TabOrder = 1
+    ExplicitHeight = 342
     object ToolBar: TToolBar
       Left = 8
       Top = 8
@@ -68,22 +72,37 @@ object frmTrain: TfrmTrain
         ImageIndex = 1
         Style = tbsSeparator
       end
-      object tbtnSave: TToolButton
+      object tbtnService: TToolButton
         Left = 170
+        Top = 0
+        Caption = #1057#1077#1088#1074#1080#1089
+        ImageIndex = 1
+        OnClick = tbtnServiceClick
+      end
+      object tbtnSeparator02: TToolButton
+        Left = 253
+        Top = 0
+        Width = 4
+        Caption = 'tbtnSeparator02'
+        ImageIndex = 1
+        Style = tbsSeparator
+      end
+      object tbtnSave: TToolButton
+        Left = 257
         Top = 0
         Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
         ImageIndex = 1
         OnClick = tbtnSaveClick
       end
-      object tbtnSeparator02: TToolButton
-        Left = 253
+      object tbtnSeparator03: TToolButton
+        Left = 340
         Top = 0
         Width = 4
         ImageIndex = 1
         Style = tbsSeparator
       end
       object tbtnClose: TToolButton
-        Left = 257
+        Left = 344
         Top = 0
         Caption = #1047#1072#1082#1088#1099#1090#1100
         ImageIndex = 0
@@ -94,7 +113,7 @@ object frmTrain: TfrmTrain
       Left = 8
       Top = 45
       Width = 593
-      Height = 201
+      Height = 197
       Align = alClient
       ColCount = 2
       DefaultDrawing = False
@@ -109,7 +128,7 @@ object frmTrain: TfrmTrain
       OnKeyDown = sgVansKeyDown
       OnSelectCell = sgVansSelectCell
       OnSetEditText = sgVansSetEditText
-      ExplicitTop = 47
+      ExplicitHeight = 201
     end
     object PanelTop: TPanel
       Left = 8
@@ -122,7 +141,7 @@ object frmTrain: TfrmTrain
     end
     object sgTrain: TStringGrid
       Left = 8
-      Top = 254
+      Top = 250
       Width = 593
       Height = 80
       Align = alBottom
@@ -134,15 +153,17 @@ object frmTrain: TfrmTrain
       ScrollBars = ssHorizontal
       TabOrder = 4
       OnDrawCell = sgTrainDrawCell
+      ExplicitTop = 254
     end
     object PanelBottom: TPanel
       Left = 8
-      Top = 246
+      Top = 242
       Width = 593
       Height = 8
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 3
+      ExplicitTop = 246
     end
     object ComboBox: TComboBox
       Left = 296

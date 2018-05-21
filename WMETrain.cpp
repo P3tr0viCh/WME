@@ -1117,4 +1117,10 @@ void __fastcall TfrmTrain::ToolBarMouseActivate(TObject *Sender,
 	TMouseActivate &MouseActivate) {
 	ComboBox->Visible = false;
 }
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmTrain::tbtnServiceClick(TObject *Sender) {
+	MsgBox();
+}
+
 // ---------------------------------------------------------------------------

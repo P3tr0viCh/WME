@@ -19,7 +19,7 @@ object frmTrainList: TfrmTrainList
     Left = 0
     Top = 0
     Width = 683
-    Height = 399
+    Height = 395
     Align = alClient
     BevelOuter = bvNone
     Padding.Left = 8
@@ -27,6 +27,7 @@ object frmTrainList: TfrmTrainList
     Padding.Right = 8
     Padding.Bottom = 8
     TabOrder = 0
+    ExplicitHeight = 399
     object Splitter: TSplitter
       Left = 8
       Top = 205
@@ -68,7 +69,7 @@ object frmTrainList: TfrmTrainList
       Left = 8
       Top = 213
       Width = 667
-      Height = 178
+      Height = 174
       Align = alClient
       ColCount = 2
       Constraints.MinHeight = 100
@@ -79,6 +80,7 @@ object frmTrainList: TfrmTrainList
       OnDblClick = sgTrainsDblClick
       OnDrawCell = sgVansDrawCell
       OnFixedCellClick = sgTrainsFixedCellClick
+      ExplicitHeight = 178
     end
     object ToolBar: TToolBar
       Left = 8
@@ -138,12 +140,15 @@ object frmTrainList: TfrmTrainList
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 399
+    Top = 395
     Width = 683
-    Height = 20
+    Height = 24
     Panels = <
       item
         Width = 50
       end>
+    ParentFont = True
+    UseSystemFont = False
+    ExplicitTop = 399
   end
 end

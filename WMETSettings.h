@@ -56,6 +56,11 @@ private:
 		TVanCatalogList * VanCatalogList);
 
 	String GetUsersCRC();
+	String GetSettingsCRC();
+	String GetDatabasesCRC();
+
+	void WriteCRC(TIniFile * IniFile, String Text);
+	void CheckCRC(TIniFile * IniFile, String Text);
 
 	bool LoadUsers(String ConfigFileName);
 	void LoadSettings(String ConfigFileName);
@@ -67,15 +72,15 @@ private:
 	void LoadInvoiceRecipients(String ConfigFileName);
 	void LoadInvoiceSuppliers(String ConfigFileName);
 
-	void SaveUsers(String ConfigFileName);
-	void SaveSettings(String ConfigFileName);
-	void SaveDatabases(String ConfigFileName);
-	void SaveVanTypes(String ConfigFileName);
-	void SaveCargoTypes(String ConfigFileName);
-	void SaveDepartStations(String ConfigFileName);
-	void SavePurposeStations(String ConfigFileName);
-	void SaveInvoiceRecipients(String ConfigFileName);
-	void SaveInvoiceSuppliers(String ConfigFileName);
+	void SaveUsers();
+	void SaveSettings();
+	void SaveDatabases();
+	void SaveVanTypes();
+	void SaveCargoTypes();
+	void SaveDepartStations();
+	void SavePurposeStations();
+	void SaveInvoiceRecipients();
+	void SaveInvoiceSuppliers();
 
 public:
 	__fastcall TSettings();
@@ -87,6 +92,8 @@ public:
 
 	bool Load();
 	bool Save();
+
+	__property String ConfigDir = {read = FConfigDir};
 
 	__property TColor ColorReadOnly = {read = FColorReadOnly};
 

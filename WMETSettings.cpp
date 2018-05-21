@@ -12,6 +12,8 @@
 
 #include "WMEEncKey.h"
 
+#include "WMEDebug.h"
+
 #include "WMEStrings.h"
 #include "WMEStringsSettings.h"
 
@@ -194,8 +196,8 @@ String TSettings::GetConfigDir() {
 
 // ---------------------------------------------------------------------------
 bool TSettings::CheckConfigDir() {
-	if (!DirectoryExists(FConfigDir)) {
-		if (!CreateDir(FConfigDir)) {
+	if (!DirectoryExists(ConfigDir)) {
+		if (!CreateDir(ConfigDir)) {
 			WriteToLog(Format(IDS_LOG_CREATE_DIR_FAIL, FConfigDir));
 			return false;
 		}
@@ -252,10 +254,63 @@ String TSettings::GetUsersCRC() {
 	String Result;
 
 	for (int i = 0; i < UserList->Count; i++) {
-		Result = Result + UserList->Items[i]->Name;
+		Result = Result + UserList->Items[i]->Name + UserList->Items[i]->Pass +
+			UserList->Items[i]->TabNum + UserList->Items[i]->ShiftNum +
+			(UserList->Items[i]->IsAdmin ? "1" : "0");
 	}
 
-	return CRC(Result);
+	return Result;
+}
+
+// ---------------------------------------------------------------------------
+String TSettings::GetSettingsCRC() {
+	String Result;
+
+	Result = IntToStr(ColorReadOnly) + (UseServer ? "1" : "0") +
+		IntToStr(LoadTrainCount);
+
+	return Result;
+}
+
+// ---------------------------------------------------------------------------
+String TSettings::GetDatabasesCRC() {
+	String Result;
+
+	Result = LocalConnection->Host + LocalConnection->Port +
+		LocalConnection->Database + LocalConnection->User +
+		LocalConnection->Password;
+
+	Result = Result + ServerConnection->Host + ServerConnection->Port +
+		ServerConnection->Database + ServerConnection->User +
+		ServerConnection->Password;
+
+	return Result;
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::WriteCRC(TIniFile * IniFile, String Text) {
+	IniFile->WriteString(LoadStr(IDS_SETTINGS_CRC_SECTION),
+		LoadStr(IDS_SETTINGS_CRC_IDENT), Encrypt(CRC(Text)));
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::CheckCRC(TIniFile * IniFile, String Text) {
+#ifdef DISABLE_CHECK_CRC
+	return;
+#endif
+
+	String SCRC = IniFile->ReadString(LoadStr(IDS_SETTINGS_CRC_SECTION),
+		LoadStr(IDS_SETTINGS_CRC_IDENT), "");
+
+	if (IsEmpty(SCRC)) {
+		throw new EEncodingError(IDS_LOG_CRC_EMPTY);
+	}
+
+	SCRC = Decrypt(SCRC);
+
+	if (!SameStr(SCRC, CRC(Text))) {
+		throw new EEncodingError(IDS_LOG_CRC_WRONG);
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -299,20 +354,7 @@ bool TSettings::LoadUsers(String ConfigFileName) {
 			return false;
 		}
 
-		String CRC = IniFile->ReadString(LoadStr(IDS_SETTINGS_CRC_SECTION),
-			LoadStr(IDS_SETTINGS_CRC_IDENT), "");
-
-		if (IsEmpty(CRC)) {
-			throw new EEncodingError(IDS_LOG_CRC_EMPTY);
-		}
-
-		CRC = Decrypt(CRC);
-
-		String UsersCRC = GetUsersCRC();
-
-		if (!SameStr(CRC, UsersCRC)) {
-			throw new EEncodingError(IDS_LOG_CRC_WRONG);
-		}
+		CheckCRC(IniFile, GetUsersCRC());
 	}
 	__finally {
 		delete IniFile;
@@ -332,6 +374,8 @@ void TSettings::LoadSettings(String ConfigFileName) {
 		UseServer = IniFile->ReadBool(Section, "UseServer", UseServer);
 		LoadTrainCount = IniFile->ReadInteger(Section, "LoadTrainCount",
 			LoadTrainCount);
+
+		CheckCRC(IniFile, GetSettingsCRC());
 	}
 	__finally {
 		delete IniFile;
@@ -364,6 +408,8 @@ void TSettings::LoadDatabases(String ConfigFileName) {
 			ServerConnection->User);
 		ServerConnection->Password =
 			Decrypt(IniFile->ReadString(Section, "pass", ""));
+
+		CheckCRC(IniFile, GetDatabasesCRC());
 	}
 	__finally {
 		delete IniFile;
@@ -512,155 +558,209 @@ bool TSettings::Load() {
 }
 
 // ---------------------------------------------------------------------------
-void TSettings::SaveUsers(String ConfigFileName) {
-	DeleteConfigFile(ConfigFileName);
+void TSettings::SaveUsers() {
+	String ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_USERS);
 
-	UserList->Sort(UserListSort);
-
-	String Section;
-
-	TFileIni * IniFile = new TFileIni(ConfigFileName);
 	try {
-		IniFile->WriteString(LoadStr(IDS_SETTINGS_CRC_SECTION),
-			LoadStr(IDS_SETTINGS_CRC_IDENT), Encrypt(GetUsersCRC()));
+		DeleteConfigFile(ConfigFileName);
 
-		IniFile->WriteInteger("Users", "Count", UserList->Count);
+		UserList->Sort(UserListSort);
 
-		for (int i = 0; i < UserList->Count; i++) {
-			Section = "User_" + IntToStr(i);
+		String Section;
 
-			IniFile->WriteString(Section, "Name", UserList->Items[i]->Name);
-			IniFile->WriteString(Section, "Pass",
-				Encrypt(UserList->Items[i]->Pass));
-			IniFile->WriteString(Section, "TabNum", UserList->Items[i]->TabNum);
-			IniFile->WriteString(Section, "ShiftNum",
-				UserList->Items[i]->ShiftNum);
+		TFileIni * IniFile = new TFileIni(ConfigFileName);
+		try {
+			WriteCRC(IniFile, GetUsersCRC());
 
-			IniFile->WriteBool(Section, "IsAdmin", UserList->Items[i]->IsAdmin);
+			IniFile->WriteInteger("Users", "Count", UserList->Count);
+
+			for (int i = 0; i < UserList->Count; i++) {
+				Section = "User_" + IntToStr(i);
+
+				IniFile->WriteString(Section, "Name", UserList->Items[i]->Name);
+				IniFile->WriteString(Section, "Pass",
+					Encrypt(UserList->Items[i]->Pass));
+				IniFile->WriteString(Section, "TabNum",
+					UserList->Items[i]->TabNum);
+				IniFile->WriteString(Section, "ShiftNum",
+					UserList->Items[i]->ShiftNum);
+
+				IniFile->WriteBool(Section, "IsAdmin",
+					UserList->Items[i]->IsAdmin);
+			}
+		}
+		__finally {
+			delete IniFile;
 		}
 	}
-	__finally {
-		delete IniFile;
+	catch (Exception * E) {
+		throw new Exception(Format(IDS_LOG_WRITE_FILE_FAIL,
+			ARRAYOFCONST((ConfigFileName, E->Message))));
 	}
 }
 
 // ---------------------------------------------------------------------------
-void TSettings::SaveSettings(String ConfigFileName) {
-	TIniFile * IniFile = new TIniFile(ConfigFileName);
-
-	String Section;
+void TSettings::SaveSettings() {
+	String ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_SETTINGS);
 
 	try {
-		Section = "Main";
-		IniFile->WriteBool(Section, "UseServer", UseServer);
-		IniFile->WriteInteger(Section, "LoadTrainCount", LoadTrainCount);
-	}
-	__finally {
-		delete IniFile;
-	}
-}
+		DeleteConfigFile(ConfigFileName);
 
-// ---------------------------------------------------------------------------
-void TSettings::SaveDatabases(String ConfigFileName) {
-	TIniFile * IniFile = new TIniFile(ConfigFileName);
+		TIniFile * IniFile = new TIniFile(ConfigFileName);
 
-	String Section;
-	try {
-		Section = "Local";
-		IniFile->WriteString(Section, "host", LocalConnection->Host);
-		IniFile->WriteString(Section, "port", LocalConnection->Port);
-		IniFile->WriteString(Section, "user", LocalConnection->User);
-		IniFile->WriteString(Section, "pass",
-			Encrypt(LocalConnection->Password));
+		String Section;
 
-		Section = "Server";
-		IniFile->WriteString(Section, "host", ServerConnection->Host);
-		IniFile->WriteString(Section, "port", ServerConnection->Port);
-		IniFile->WriteString(Section, "user", ServerConnection->User);
-		IniFile->WriteString(Section, "pass",
-			Encrypt(ServerConnection->Password));
-	}
-	__finally {
-		delete IniFile;
-	}
-}
+		try {
+			WriteCRC(IniFile, GetSettingsCRC());
 
-// ---------------------------------------------------------------------------
-void TSettings::SaveVanTypes(String ConfigFileName) {
-	DeleteConfigFile(ConfigFileName);
-
-	VanTypeList->Sort(VanTypeListSort);
-
-	String Section;
-
-	TIniFile * IniFile = new TIniFile(ConfigFileName);
-	try {
-		IniFile->WriteInteger("VanTypes", "Count", VanTypeList->Count);
-
-		for (int i = 0; i < VanTypeList->Count; i++) {
-			Section = "VanType_" + IntToStr(i);
-
-			IniFile->WriteInteger(Section, "Code", VanTypeList->Items[i]->Code);
-			IniFile->WriteString(Section, "Name", VanTypeList->Items[i]->Name);
-			IniFile->WriteInteger(Section, "AxisCount",
-				VanTypeList->Items[i]->AxisCount);
+			Section = "Main";
+			IniFile->WriteBool(Section, "UseServer", UseServer);
+			IniFile->WriteInteger(Section, "LoadTrainCount", LoadTrainCount);
+		}
+		__finally {
+			delete IniFile;
 		}
 	}
-	__finally {
-		delete IniFile;
+	catch (Exception * E) {
+		throw new Exception(Format(IDS_LOG_WRITE_FILE_FAIL,
+			ARRAYOFCONST((ConfigFileName, E->Message))));
+	}
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::SaveDatabases() {
+	String ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_DATABASES);
+
+	try {
+		DeleteConfigFile(ConfigFileName);
+
+		TIniFile * IniFile = new TIniFile(ConfigFileName);
+
+		String Section;
+		try {
+			WriteCRC(IniFile, GetDatabasesCRC());
+
+			Section = "Local";
+			IniFile->WriteString(Section, "host", LocalConnection->Host);
+			IniFile->WriteString(Section, "port", LocalConnection->Port);
+			IniFile->WriteString(Section, "user", LocalConnection->User);
+			IniFile->WriteString(Section, "pass",
+				Encrypt(LocalConnection->Password));
+
+			Section = "Server";
+			IniFile->WriteString(Section, "host", ServerConnection->Host);
+			IniFile->WriteString(Section, "port", ServerConnection->Port);
+			IniFile->WriteString(Section, "user", ServerConnection->User);
+			IniFile->WriteString(Section, "pass",
+				Encrypt(ServerConnection->Password));
+		}
+		__finally {
+			delete IniFile;
+		}
+	}
+	catch (Exception * E) {
+		throw new Exception(Format(IDS_LOG_WRITE_FILE_FAIL,
+			ARRAYOFCONST((ConfigFileName, E->Message))));
+	}
+}
+
+// ---------------------------------------------------------------------------
+void TSettings::SaveVanTypes() {
+	String ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_VANTYPES);
+
+	try {
+		DeleteConfigFile(ConfigFileName);
+
+		VanTypeList->Sort(VanTypeListSort);
+
+		String Section;
+
+		TIniFile * IniFile = new TIniFile(ConfigFileName);
+		try {
+			IniFile->WriteInteger("VanTypes", "Count", VanTypeList->Count);
+
+			for (int i = 0; i < VanTypeList->Count; i++) {
+				Section = "VanType_" + IntToStr(i);
+
+				IniFile->WriteInteger(Section, "Code",
+					VanTypeList->Items[i]->Code);
+				IniFile->WriteString(Section, "Name",
+					VanTypeList->Items[i]->Name);
+				IniFile->WriteInteger(Section, "AxisCount",
+					VanTypeList->Items[i]->AxisCount);
+			}
+		}
+		__finally {
+			delete IniFile;
+		}
+	}
+	catch (Exception * E) {
+		throw new Exception(Format(IDS_LOG_WRITE_FILE_FAIL,
+			ARRAYOFCONST((ConfigFileName, E->Message))));
 	}
 }
 
 // ---------------------------------------------------------------------------
 void TSettings::SaveVanCatalog(String ConfigFileName, String Name,
 	TVanCatalogList * VanCatalogList) {
-	DeleteConfigFile(ConfigFileName);
-
-	VanCatalogList->Sort(VanCatalogListSort);
-
-	String Section;
-
-	TIniFile * IniFile = new TIniFile(ConfigFileName);
 	try {
-		IniFile->WriteInteger(Name + "s", "Count", VanCatalogList->Count);
+		DeleteConfigFile(ConfigFileName);
 
-		for (int i = 0; i < VanCatalogList->Count; i++) {
-			Section = Name + "_" + IntToStr(i);
+		VanCatalogList->Sort(VanCatalogListSort);
 
-			IniFile->WriteInteger(Section, "Code",
-				VanCatalogList->Items[i]->Code);
-			IniFile->WriteString(Section, "Name",
-				VanCatalogList->Items[i]->Name);
+		String Section;
+
+		TIniFile * IniFile = new TIniFile(ConfigFileName);
+		try {
+			IniFile->WriteInteger(Name + "s", "Count", VanCatalogList->Count);
+
+			for (int i = 0; i < VanCatalogList->Count; i++) {
+				Section = Name + "_" + IntToStr(i);
+
+				IniFile->WriteInteger(Section, "Code",
+					VanCatalogList->Items[i]->Code);
+				IniFile->WriteString(Section, "Name",
+					VanCatalogList->Items[i]->Name);
+			}
+		}
+		__finally {
+			delete IniFile;
 		}
 	}
-	__finally {
-		delete IniFile;
+	catch (Exception * E) {
+		throw new Exception(Format(IDS_LOG_WRITE_FILE_FAIL,
+			ARRAYOFCONST((ConfigFileName, E->Message))));
 	}
 }
 
 // ---------------------------------------------------------------------------
-void TSettings::SaveCargoTypes(String ConfigFileName) {
-	SaveVanCatalog(ConfigFileName, "CargoType", CargoTypeList);
+void TSettings::SaveCargoTypes() {
+	SaveVanCatalog(GetConfigFileName(IDS_SETTINGS_CONFIG_CARGOTYPES),
+		"CargoType", CargoTypeList);
 }
 
 // ---------------------------------------------------------------------------
-void TSettings::SaveDepartStations(String ConfigFileName) {
-	SaveVanCatalog(ConfigFileName, "DepartStation", DepartStationList);
+void TSettings::SaveDepartStations() {
+	SaveVanCatalog(GetConfigFileName(IDS_SETTINGS_CONFIG_DEPART_STATIONS),
+		"DepartStation", DepartStationList);
 }
 
 // ---------------------------------------------------------------------------
-void TSettings::SavePurposeStations(String ConfigFileName) {
-	SaveVanCatalog(ConfigFileName, "PurposeStation", PurposeStationList);
+void TSettings::SavePurposeStations() {
+	SaveVanCatalog(GetConfigFileName(IDS_SETTINGS_CONFIG_PURPOSE_STATIONS),
+		"PurposeStation", PurposeStationList);
 }
 
 // ---------------------------------------------------------------------------
-void TSettings::SaveInvoiceRecipients(String ConfigFileName) {
-	SaveVanCatalog(ConfigFileName, "InvoiceRecipient", InvoiceRecipientList);
+void TSettings::SaveInvoiceRecipients() {
+	SaveVanCatalog(GetConfigFileName(IDS_SETTINGS_CONFIG_INVOICE_SUPPLIERS),
+		"InvoiceRecipient", InvoiceRecipientList);
 }
 
 // ---------------------------------------------------------------------------
-void TSettings::SaveInvoiceSuppliers(String ConfigFileName) {
-	SaveVanCatalog(ConfigFileName, "InvoiceSupplier", InvoiceSupplierList);
+void TSettings::SaveInvoiceSuppliers() {
+	SaveVanCatalog(GetConfigFileName(IDS_SETTINGS_CONFIG_INVOICE_RECIPIENTS),
+		"InvoiceSupplier", InvoiceSupplierList);
 }
 
 // ---------------------------------------------------------------------------
@@ -669,40 +769,23 @@ bool TSettings::Save() {
 		return false;
 	}
 
-	String ConfigFileName;
-
-	String Section;
-
 	try {
-		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_USERS);
-		SaveUsers(ConfigFileName);
+		SaveUsers();
 
-		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_SETTINGS);
-		SaveSettings(ConfigFileName);
+		SaveSettings();
 
-		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_DATABASES);
-		SaveDatabases(ConfigFileName);
+		SaveDatabases();
 
-		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_VANTYPES);
-		SaveVanTypes(ConfigFileName);
+		SaveVanTypes();
 
-		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_CARGOTYPES);
-		SaveCargoTypes(ConfigFileName);
-		ConfigFileName = GetConfigFileName(IDS_SETTINGS_CONFIG_DEPART_STATIONS);
-		SaveDepartStations(ConfigFileName);
-		ConfigFileName =
-			GetConfigFileName(IDS_SETTINGS_CONFIG_PURPOSE_STATIONS);
-		SavePurposeStations(ConfigFileName);
-		ConfigFileName =
-			GetConfigFileName(IDS_SETTINGS_CONFIG_INVOICE_SUPPLIERS);
-		SaveInvoiceRecipients(ConfigFileName);
-		ConfigFileName =
-			GetConfigFileName(IDS_SETTINGS_CONFIG_INVOICE_RECIPIENTS);
-		SaveInvoiceSuppliers(ConfigFileName);
+		SaveCargoTypes();
+		SaveDepartStations();
+		SavePurposeStations();
+		SaveInvoiceRecipients();
+		SaveInvoiceSuppliers();
 	}
 	catch (Exception * E) {
-		WriteToLog(Format(IDS_LOG_WRITE_FILE_FAIL,
-			ARRAYOFCONST((ConfigFileName, E->Message))));
+		WriteToLog(E->Message);
 
 		return false;
 	}

@@ -33,8 +33,10 @@ __published:
 	TToolButton *tbtnSeparator01;
 	TPanel *PanelBottom;
 	TToolButton *tbtnSave;
-	TToolButton *tbtnSeparator02;
+	TToolButton *tbtnSeparator03;
 	TComboBox *ComboBox;
+	TToolButton *tbtnService;
+	TToolButton *tbtnSeparator02;
 
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormDestroy(TObject *Sender);
@@ -67,6 +69,7 @@ __published:
 	void __fastcall ToolBarMouseActivate(TObject *Sender, TMouseButton Button,
 		TShiftState Shift, int X, int Y, int HitTest,
 		TMouseActivate &MouseActivate);
+	void __fastcall tbtnServiceClick(TObject *Sender);
 
 private:
 	bool FChanged;

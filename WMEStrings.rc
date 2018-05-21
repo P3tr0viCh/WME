@@ -21,7 +21,7 @@ IDS_QUESTION_TRAIN_CHANGED,
 IDS_ERROR_UNKNOWN,
         "Неизвестная ошибка"
 IDS_ERROR_SETTINGS_SAVE,
-        "Не удалось сохранить настройки.\n\nПроверьте разрешение на запись для каталога \"%s\" в папке программы."
+        "Не удалось сохранить настройки"
 IDS_ERROR_NEED_USERNAME,
         "Необходимо указать ФИО пользователя"
 IDS_ERROR_SELECT_USERNAME,
