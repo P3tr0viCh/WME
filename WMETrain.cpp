@@ -17,6 +17,7 @@
 #include "WMETDBSaveTrain.h"
 
 #include "WMEMain.h"
+#include "WMEService.h"
 
 #include "WMETrain.h"
 
@@ -141,8 +142,8 @@ void __fastcall TfrmTrain::FormCreate(TObject *Sender) {
 	TareIndexList->Add(new TVanCatalog(tiDynamic, IDS_TXT_TARE_DYNAMIC));
 	TareIndexList->Add(new TVanCatalog(tiStatic, IDS_TXT_TARE_STATIC));
 
-	sgVans->DefaultRowHeight = ComboBox->Height;
-	sgTrain->DefaultRowHeight = sgVans->DefaultRowHeight;
+	sgVans->DefaultRowHeight = Main->DefaultRowHeight; // >> ComboBox->Height;
+	sgTrain->DefaultRowHeight = Main->DefaultRowHeight;
 	sgTrain->Height = (sgTrain->GridHeight + 2);
 
 	TFileIni * FileIni = TFileIni::GetNewInstance();
@@ -246,6 +247,10 @@ void __fastcall TfrmTrain::tbtnCloseClick(TObject *Sender) {
 
 // ---------------------------------------------------------------------------
 void TfrmTrain::CalcFields(int ARow) {
+	if (StringGridIsEmpty(sgVans)) {
+		return;
+	}
+
 	if (ARow == -1) {
 		for (int i = 1; i < sgVans->RowCount; i++) {
 			CalcFields(i);
@@ -356,6 +361,7 @@ void __fastcall TfrmTrain::tbtnAddClick(TObject *Sender) {
 
 	StringGridUpdateOrderNum(sgVans);
 
+	CalcFields();
 	UpdateTrain();
 
 	Changed = true;
@@ -581,6 +587,8 @@ void TfrmTrain::SetChanged(bool Value) {
 void TfrmTrain::UpdateButtons() {
 	tbtnDelete->Enabled = !StringGridIsEmpty(sgVans);
 
+	tbtnService->Enabled = tbtnDelete->Enabled;
+
 	if (!tbtnDelete->Enabled) {
 		sgVans->Options = sgVans->Options >> goEditing;
 	}
@@ -632,6 +640,61 @@ bool TfrmTrain::CheckValues(int ARow) {
 	}
 	if (!CheckIntValue(sgVans->Cells[VansColumns.TARE_T][ARow])) {
 		StringGridSelectCell(sgVans, VansColumns.TARE_T, ARow);
+		return false;
+	}
+
+	return true;
+}
+
+// ---------------------------------------------------------------------------
+bool TfrmTrain::CheckVanNums() {
+	String VanNum1;
+	String VanNum2;
+
+	for (int i = 1; i < sgVans->RowCount; i++) {
+		VanNum1 = sgVans->Cells[VansColumns.VANNUM][i];
+
+		if (IsEmpty(VanNum1)) {
+			continue;
+		}
+
+		for (int j = i + 1; j < sgVans->RowCount; j++) {
+			VanNum2 = sgVans->Cells[VansColumns.VANNUM][j];
+
+			if (IsEmpty(VanNum2)) {
+				continue;
+			}
+
+			if (AnsiSameStr(VanNum1, VanNum2)) {
+				StringGridSelectCell(sgVans, VansColumns.VANNUM, j);
+
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+// ---------------------------------------------------------------------------
+bool TfrmTrain::CheckVanList() {
+	if (StringGridIsEmpty(sgVans)) {
+		MsgBoxErr(IDS_ERROR_NOTHING_SAVE);
+		WriteToLog(IDS_LOG_NOTHING_SAVE);
+		return false;
+	}
+
+	UpdateValues();
+
+	if (!CheckValues()) {
+		MsgBoxErr(IDS_ERROR_BAD_VALUES);
+		WriteToLog(IDS_LOG_BAD_VALUES);
+		return false;
+	}
+
+	if (!CheckVanNums()) {
+		MsgBoxErr(IDS_ERROR_BAD_VANNUMS);
+		WriteToLog(IDS_LOG_BAD_VANNUMS);
 		return false;
 	}
 
@@ -698,6 +761,10 @@ TVanType * TfrmTrain::GetVanType(String Name) {
 TVanList * TfrmTrain::GetVanList() {
 	TVanList * VanList = new TVanList();
 
+	if (StringGridIsEmpty(sgVans)) {
+		return VanList;
+	}
+
 	TVan * Van;
 
 	for (int i = 1; i < sgVans->RowCount; i++) {
@@ -705,7 +772,7 @@ TVanList * TfrmTrain::GetVanList() {
 
 		Van->Num = i;
 
-		Van->DateTime = sgVans->Cells[VansColumns.DATETIME][i];
+		Van->DateTime = StrToDateTime(sgVans->Cells[VansColumns.DATETIME][i]);
 
 		Van->WeightType =
 			(TWeightType)StrToInt
@@ -832,19 +899,7 @@ TTrain * TfrmTrain::GetTrain(int TrainNum) {
 
 // ---------------------------------------------------------------------------
 bool TfrmTrain::SaveVans() {
-	if (StringGridIsEmpty(sgVans)) {
-		MsgBoxErr(IDS_ERROR_NOTHING_SAVE);
-		return false;
-	}
-
-	UpdateValues();
-
-	if (!CheckValues()) {
-		MsgBoxErr(IDS_ERROR_BAD_VALUES);
-		return false;
-	}
-
-	bool Result;
+	bool Result = false;
 
 	TTrain * TempTrain = GetTrain(Train->TrainNum);
 
@@ -933,6 +988,10 @@ void TfrmTrain::UpdateVans(TTrain * Train) {
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmTrain::tbtnSaveClick(TObject *Sender) {
+	if (!CheckVanList()) {
+		return;
+	}
+
 	if (SaveVans()) {
 		Changed = false;
 	}
@@ -1120,7 +1179,11 @@ void __fastcall TfrmTrain::ToolBarMouseActivate(TObject *Sender,
 
 // ---------------------------------------------------------------------------
 void __fastcall TfrmTrain::tbtnServiceClick(TObject *Sender) {
-	MsgBox();
+	if (!CheckVanList()) {
+		return;
+	}
+
+	TfrmService::Show(GetVanList());
 }
 
 // ---------------------------------------------------------------------------

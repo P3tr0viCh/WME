@@ -45,9 +45,6 @@ __published:
 	void __fastcall tbtnNextPageClick(TObject *Sender);
 
 private:
-	TIntegerSet NUSet;
-	TColor NUColor;
-
 	int FPage;
 
 	int SelectedRow;
@@ -63,6 +60,8 @@ private:
 	void UpdateTrains();
 	void UpdateVans(int Index);
 	void UpdateTrain(int Index);
+
+	void UpdateButtons();
 
 	int SetTrain(int Index, TTrain * Train);
 	int SetVan(int Index, TVan * Van);

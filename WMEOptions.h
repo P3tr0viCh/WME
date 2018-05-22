@@ -101,9 +101,6 @@ __published:
 	void __fastcall btnServerDBConnectionCheckClick(TObject *Sender);
 
 private:
-	TIntegerSet NUSet;
-	TColor NUColor;
-
 	TSettings * Settings;
 
 	bool IsReadOnly;

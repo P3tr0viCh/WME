@@ -275,6 +275,12 @@
             <BuildOrder>1</BuildOrder>
             <PCH>true</PCH>
         </PCHCompile>
+        <CppCompile Include="WMEService.cpp">
+            <Form>frmService</Form>
+            <FormType>dfm</FormType>
+            <DependentOn>WMEService.h</DependentOn>
+            <BuildOrder>56</BuildOrder>
+        </CppCompile>
         <None Include="WMEStrings.h">
             <BuildOrder>19</BuildOrder>
         </None>
@@ -384,6 +390,7 @@
         <FormResources Include="WMEOptionsUser.dfm"/>
         <FormResources Include="WMEOptions.dfm"/>
         <FormResources Include="WMEMain.dfm"/>
+        <FormResources Include="WMEService.dfm"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

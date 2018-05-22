@@ -60,6 +60,8 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 
 	InitStrings();
 
+	DefaultRowHeight = Canvas->TextHeight("ComboBox") + 8;
+
 	Caption = Application->Title + " " + GetFileVer(Application->ExeName);
 	StatusBar->Panels->Items[0]->Text = LoadStr(IDS_COPYRIGHT_STATUS);
 

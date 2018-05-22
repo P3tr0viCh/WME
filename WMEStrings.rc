@@ -49,6 +49,8 @@ IDS_ERROR_NOTHING_SAVE,
         "В составе отсутствуют вагоны"
 IDS_ERROR_BAD_VALUES,
         "Значение одного или нескольких полей неверное"
+IDS_ERROR_BAD_VANNUMS,
+        "Повторяющиеся номера вагонов"
 IDS_ERROR_TRAINS_LOAD,
         "Во время загрузки списка поездов произошла ошибка"
 IDS_ERROR_TRAIN_SAVE,
@@ -125,6 +127,12 @@ IDS_LOG_CRC_WRONG,
         "CRC wrong"
 IDS_LOG_EMPTY_USERLIST,
         "empty userlist > reset settings to default"
+IDS_LOG_NOTHING_SAVE,
+        "train: empty list"
+IDS_LOG_BAD_VALUES,
+        "train: bad values"
+IDS_LOG_BAD_VANNUMS,
+        "train: bad vannums"
 
 IDS_LOG_MYSQL_CONNECT,
         "try database connect: %s@%s:%s"

@@ -8,6 +8,10 @@
 #include <Vcl.Grids.hpp>
 
 // ---------------------------------------------------------------------------
+const TIntegerSet NUSet;
+const TColor NUColor = -1;
+
+// ---------------------------------------------------------------------------
 bool StringGridIsEmpty(TStringGrid * Grid);
 void StringGridClear(TStringGrid * Grid);
 void StringGridSelectCell(TStringGrid * Grid, int ACol, int ARow);

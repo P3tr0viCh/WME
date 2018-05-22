@@ -24,7 +24,6 @@ object frmTrain: TfrmTrain
     Panels = <>
     ParentFont = True
     UseSystemFont = False
-    ExplicitTop = 38
   end
   object PanelMain: TPanel
     Left = 0
@@ -38,7 +37,6 @@ object frmTrain: TfrmTrain
     Padding.Right = 8
     Padding.Bottom = 8
     TabOrder = 1
-    ExplicitHeight = 342
     object ToolBar: TToolBar
       Left = 8
       Top = 8
@@ -128,7 +126,6 @@ object frmTrain: TfrmTrain
       OnKeyDown = sgVansKeyDown
       OnSelectCell = sgVansSelectCell
       OnSetEditText = sgVansSetEditText
-      ExplicitHeight = 201
     end
     object PanelTop: TPanel
       Left = 8
@@ -153,7 +150,6 @@ object frmTrain: TfrmTrain
       ScrollBars = ssHorizontal
       TabOrder = 4
       OnDrawCell = sgTrainDrawCell
-      ExplicitTop = 254
     end
     object PanelBottom: TPanel
       Left = 8
@@ -163,7 +159,6 @@ object frmTrain: TfrmTrain
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 3
-      ExplicitTop = 246
     end
     object ComboBox: TComboBox
       Left = 296

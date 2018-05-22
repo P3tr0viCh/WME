@@ -27,7 +27,6 @@ object frmTrainList: TfrmTrainList
     Padding.Right = 8
     Padding.Bottom = 8
     TabOrder = 0
-    ExplicitHeight = 399
     object Splitter: TSplitter
       Left = 8
       Top = 205
@@ -80,7 +79,6 @@ object frmTrainList: TfrmTrainList
       OnDblClick = sgTrainsDblClick
       OnDrawCell = sgVansDrawCell
       OnFixedCellClick = sgTrainsFixedCellClick
-      ExplicitHeight = 178
     end
     object ToolBar: TToolBar
       Left = 8
@@ -149,6 +147,5 @@ object frmTrainList: TfrmTrainList
       end>
     ParentFont = True
     UseSystemFont = False
-    ExplicitTop = 399
   end
 end

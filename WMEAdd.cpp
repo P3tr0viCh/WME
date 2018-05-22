@@ -152,8 +152,7 @@ void StringGridDrawCell(TStringGrid * Grid, int ACol, int ARow, TRect Rect,
 
 // ---------------------------------------------------------------------------
 void StringGridMouseToCell(TStringGrid * Grid, int &ACol, int &ARow) {
-	TPoint P = Mouse->CursorPos;
-	P = Grid->ScreenToClient(P);
+	TPoint P = Grid->ScreenToClient(Mouse->CursorPos);
 
 	Grid->MouseToCell(P.X, P.Y, ACol, ARow);
 }

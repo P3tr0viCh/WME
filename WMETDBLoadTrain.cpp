@@ -62,8 +62,6 @@ void TDBLoadTrain::Operation() {
 	try {
 		Query->Connection = Connection;
 
-		WriteToLog(VansFields->GetParamValue(fnVansTrnum));
-
 		Query->SQL->Add("SELECT");
 		Query->SQL->Add(VansFields->GetFields());
 		Query->SQL->Add("FROM vans");

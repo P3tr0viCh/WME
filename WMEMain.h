@@ -19,7 +19,6 @@
 // ---------------------------------------------------------------------------
 class TMain : public TForm {
 __published:
-
 	TButton *btnAbout;
 	TButton *btnClose;
 	TButton *btnOptions;
@@ -49,6 +48,8 @@ private:
 
 public:
 	__fastcall TMain(TComponent* Owner);
+
+	int DefaultRowHeight;
 
 	void ChangeUser();
 

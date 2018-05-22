@@ -76,9 +76,6 @@ private:
 
 	TTrain * Train;
 
-	TIntegerSet NUSet;
-	TColor NUColor;
-
 	String CellValue;
 
 	TVanCatalogList * WeightTypeList;
@@ -102,6 +99,8 @@ private:
 
 	void CheckValue(int ACol, int ARow, int MaxLength);
 	bool CheckValues(int ARow = -1);
+	bool CheckVanNums();
+	bool CheckVanList();
 
 	int GetVanCatalogCode(int CatalogIdent, String Name);
 

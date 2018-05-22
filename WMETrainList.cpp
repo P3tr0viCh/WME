@@ -126,6 +126,9 @@ void __fastcall TfrmTrainList::FormCreate(TObject *Sender) {
 	CreateTrainsColumns();
 	CreateVansColumns();
 
+	sgVans->DefaultRowHeight = Main->DefaultRowHeight;
+	sgTrains->DefaultRowHeight = Main->DefaultRowHeight;
+
 	TFileIni * FileIni = TFileIni::GetNewInstance();
 	try {
 		FileIni->ReadFormBounds(this);
@@ -136,6 +139,8 @@ void __fastcall TfrmTrainList::FormCreate(TObject *Sender) {
 	__finally {
 		delete FileIni;
 	}
+
+	UpdateButtons();
 }
 
 // ---------------------------------------------------------------------------
@@ -322,26 +327,11 @@ void TfrmTrainList::SetPage(int Value) {
 	StringGridClear(sgTrains);
 	StringGridClear(sgVans);
 
-	tbtnPrevPage->Enabled = Page > 0;
-
-	if (LoadTrains()) {
-		tbtnNextPage->Enabled =
-			TrainList->Count == Main->Settings->LoadTrainCount;
-
-		if (!TrainList->IsEmpty()) {
-			if (LoadTrain(0)) {
-				SelectedRow = 1;
-
-				return;
-			}
-		}
-		else {
-			return;
-		}
+	if (LoadTrains() && !TrainList->IsEmpty() && LoadTrain(0)) {
+		SelectedRow = 1;
 	}
 
-	tbtnPrevPage->Enabled = false;
-	tbtnNextPage->Enabled = false;
+	UpdateButtons();
 }
 
 // ---------------------------------------------------------------------------
@@ -368,6 +358,24 @@ void TfrmTrainList::UpdateVans(int Index) {
 void TfrmTrainList::UpdateTrain(int Index) {
 	SetTrain(Index + 1, TrainList->Items[Index]);
 	UpdateVans(Index);
+}
+
+// ---------------------------------------------------------------------------
+void TfrmTrainList::UpdateButtons() {
+	tbtnPrevPage->Enabled = Page > 0;
+
+	if (SelectedRow > 0 && !StringGridIsEmpty(sgTrains)) {
+		tbtnOpen->Enabled = true;
+
+		tbtnNextPage->Enabled =
+			TrainList->Count == Main->Settings->LoadTrainCount;
+	}
+	else {
+		tbtnOpen->Enabled = false;
+
+		tbtnNextPage->Enabled = false;
+	}
+
 }
 
 // ---------------------------------------------------------------------------
@@ -451,6 +459,8 @@ int TfrmTrainList::SetVan(int Index, TVan * Van) {
 // ---------------------------------------------------------------------------l.----
 void __fastcall TfrmTrainList::sgTrainsSelectCell(TObject *Sender, int ACol,
 	int ARow, bool &CanSelect) {
+	UpdateButtons();
+
 	if (StringGridIsEmpty(sgTrains)) {
 		return;
 	}
