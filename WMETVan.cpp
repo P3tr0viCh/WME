@@ -29,7 +29,7 @@ void TVan::Init() {
 
 	FNum = 0;
 
-	FDateTime = NULL;
+	FDateTime = DEFAULT_DATETIME;
 
 	FWeightType = DEFAULT_WEIGHTTYPE;
 

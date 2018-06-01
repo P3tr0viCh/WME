@@ -43,6 +43,7 @@ __published:
 	void __fastcall sgTrainsFixedCellClick(TObject *Sender, int ACol, int ARow);
 	void __fastcall tbtnPrevPageClick(TObject *Sender);
 	void __fastcall tbtnNextPageClick(TObject *Sender);
+	void __fastcall FormShow(TObject *Sender);
 
 private:
 	int FPage;

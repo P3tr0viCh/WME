@@ -116,11 +116,12 @@ object frmTrain: TfrmTrain
       ColCount = 2
       DefaultDrawing = False
       RowCount = 2
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goTabs]
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goTabs, goFixedColClick]
       TabOrder = 2
       OnDblClick = sgVansDblClick
       OnDrawCell = sgVansDrawCell
       OnExit = sgVansExit
+      OnFixedCellClick = sgVansFixedCellClick
       OnGetEditMask = sgVansGetEditMask
       OnGetEditText = sgVansGetEditText
       OnKeyDown = sgVansKeyDown

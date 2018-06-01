@@ -12,6 +12,8 @@
 #include "WMETVanCatalog.h"
 #include "WMETVanType.h"
 
+const TDateTime DEFAULT_DATETIME = 0;
+
 enum TWeightType {
 	wtBrutto = 0, wtTare = 1, wtMixed = 2
 };

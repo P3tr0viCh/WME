@@ -85,7 +85,7 @@ void StringGridSetHeader(TStringGrid * Grid, int ACol, NativeUInt ColNameIdent,
 void StringGridDrawCell(TStringGrid * Grid, int ACol, int ARow, TRect Rect,
 	TGridDrawState State, TIntegerSet ColsReadOnly, TIntegerSet ColsLeftAlign,
 	TIntegerSet ColsCustomColor, TColor ReadOnlyColor, TColor CustomColor,
-	bool DrawFocusedOnInactive) {
+	bool DrawFocusedOnInactive, bool ReadOnlyRow) {
 	Grid->Canvas->Font = Grid->Font;
 
 	if (State.Contains(gdFixed)) {
@@ -106,7 +106,7 @@ void StringGridDrawCell(TStringGrid * Grid, int ACol, int ARow, TRect Rect,
 				Grid->Canvas->Brush->Color = CustomColor;
 			}
 			else {
-				if (ColsReadOnly.Contains(ACol)) {
+				if (ColsReadOnly.Contains(ACol) || ReadOnlyRow) {
 					Grid->Canvas->Brush->Color = ReadOnlyColor;
 				}
 				else {
@@ -155,6 +155,19 @@ void StringGridMouseToCell(TStringGrid * Grid, int &ACol, int &ARow) {
 	TPoint P = Grid->ScreenToClient(Mouse->CursorPos);
 
 	Grid->MouseToCell(P.X, P.Y, ACol, ARow);
+}
+
+// ---------------------------------------------------------------------------
+void StringGridSelectRowAfterFixedCellClick(TStringGrid * Grid, int ARow) {
+	if (ARow < 1) {
+		return;
+	}
+
+	if (StringGridIsEmpty(Grid)) {
+		return;
+	}
+
+	Grid->Row = ARow;
 }
 
 // ---------------------------------------------------------------------------

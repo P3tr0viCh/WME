@@ -70,6 +70,7 @@ __published:
 		TShiftState Shift, int X, int Y, int HitTest,
 		TMouseActivate &MouseActivate);
 	void __fastcall tbtnServiceClick(TObject *Sender);
+	void __fastcall sgVansFixedCellClick(TObject *Sender, int ACol, int ARow);
 
 private:
 	bool FChanged;

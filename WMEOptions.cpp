@@ -938,17 +938,7 @@ void __fastcall TfrmOptions::sgUsersDblClick(TObject *Sender) {
 // ---------------------------------------------------------------------------
 void __fastcall TfrmOptions::sgUsersFixedCellClick(TObject *Sender, int ACol,
 	int ARow) {
-	if (ARow < 1) {
-		return;
-	}
-
-	TStringGrid * SG = GetStringGrid(Sender);
-
-	if (StringGridIsEmpty(SG)) {
-		return;
-	}
-
-	SG->Row = ARow;
+	StringGridSelectRowAfterFixedCellClick((TStringGrid*)Sender, ARow);
 }
 
 // ---------------------------------------------------------------------------

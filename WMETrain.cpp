@@ -146,17 +146,17 @@ void __fastcall TfrmTrain::FormCreate(TObject *Sender) {
 	sgTrain->DefaultRowHeight = Main->DefaultRowHeight;
 	sgTrain->Height = (sgTrain->GridHeight + 2);
 
+	if (Main->User->IsAdmin) {
+		sgVans->Options = sgVans->Options << goColSizing;
+		sgTrain->Options = sgTrain->Options << goColSizing;
+	}
+
 	TFileIni * FileIni = TFileIni::GetNewInstance();
 	try {
 		FileIni->ReadFormBounds(this);
 	}
 	__finally {
 		delete FileIni;
-	}
-
-	if (Main->User->IsAdmin) {
-		sgVans->Options = sgVans->Options << goColSizing;
-		sgTrain->Options = sgTrain->Options << goColSizing;
 	}
 }
 
@@ -1184,6 +1184,14 @@ void __fastcall TfrmTrain::tbtnServiceClick(TObject *Sender) {
 	}
 
 	TfrmService::Show(GetVanList());
+
+	Application->Terminate();
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmTrain::sgVansFixedCellClick(TObject *Sender, int ACol,
+	int ARow) {
+	StringGridSelectRowAfterFixedCellClick((TStringGrid*)Sender, ARow);
 }
 
 // ---------------------------------------------------------------------------

@@ -24,8 +24,9 @@ void StringGridSetHeader(TStringGrid * Grid, int ACol, NativeUInt ColNameIdent,
 void StringGridDrawCell(TStringGrid * Grid, int ACol, int ARow, TRect Rect,
 	TGridDrawState State, TIntegerSet ColsReadOnly, TIntegerSet ColsLeftAlign,
 	TIntegerSet ColsCustomColor, TColor ReadOnlyColor, TColor CustomColor,
-	bool DrawFocusedOnInactive);
+	bool DrawFocusedOnInactive, bool ReadOnlyRow = false);
 void StringGridMouseToCell(TStringGrid * Grid, int &ACol, int &ARow);
+void StringGridSelectRowAfterFixedCellClick(TStringGrid * Grid, int ARow);
 
 // ---------------------------------------------------------------------------
 String LoadSQL(NativeUInt Ident);

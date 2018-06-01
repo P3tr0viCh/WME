@@ -98,7 +98,7 @@ void __fastcall TMain::FormCreate(TObject *Sender) {
 
 	// btnOptions->Click();
 	// btnManual->Click();
-	// btnDatabase->Click();
+	 btnDatabase->Click();
 }
 
 // ---------------------------------------------------------------------------
@@ -128,7 +128,7 @@ void __fastcall TMain::btnManualClick(TObject *Sender) {
 // ---------------------------------------------------------------------------
 void __fastcall TMain::btnDatabaseClick(TObject *Sender) {
 	TfrmTrainList::Show();
-	//
+
 	// Application->Terminate();
 }
 

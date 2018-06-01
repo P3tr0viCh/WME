@@ -13,6 +13,7 @@ object frmTrainList: TfrmTrainList
   OldCreateOrder = False
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 21
   object PanelMain: TPanel
@@ -48,7 +49,7 @@ object frmTrainList: TfrmTrainList
       Constraints.MinHeight = 100
       DefaultDrawing = False
       RowCount = 2
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goFixedColClick]
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goFixedColClick]
       TabOrder = 1
       OnDblClick = sgTrainsDblClick
       OnDrawCell = sgTrainsDrawCell
@@ -74,7 +75,7 @@ object frmTrainList: TfrmTrainList
       Constraints.MinHeight = 100
       DefaultDrawing = False
       RowCount = 2
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goFixedColClick]
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goFixedColClick]
       TabOrder = 2
       OnDblClick = sgTrainsDblClick
       OnDrawCell = sgVansDrawCell

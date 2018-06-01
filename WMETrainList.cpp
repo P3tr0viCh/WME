@@ -129,6 +129,11 @@ void __fastcall TfrmTrainList::FormCreate(TObject *Sender) {
 	sgVans->DefaultRowHeight = Main->DefaultRowHeight;
 	sgTrains->DefaultRowHeight = Main->DefaultRowHeight;
 
+	if (Main->User->IsAdmin) {
+		sgVans->Options = sgVans->Options << goColSizing;
+		sgTrains->Options = sgTrains->Options << goColSizing;
+	}
+
 	TFileIni * FileIni = TFileIni::GetNewInstance();
 	try {
 		FileIni->ReadFormBounds(this);
@@ -499,24 +504,16 @@ void __fastcall TfrmTrainList::tbtnOpenClick(TObject *Sender) {
 // ---------------------------------------------------------------------------
 void __fastcall TfrmTrainList::sgTrainsFixedCellClick(TObject *Sender, int ACol,
 	int ARow) {
-	if (ARow < 1) {
-		return;
-	}
-
-	if (StringGridIsEmpty((TStringGrid*)Sender)) {
-		return;
-	}
-
-	((TStringGrid*)Sender)->Row = ARow;
+	StringGridSelectRowAfterFixedCellClick((TStringGrid*)Sender, ARow);
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmTrainList::tbtnPrevPageClick(TObject *Sender) {
+void __fastcall TfrmTrainList::tbtnPrevPageClick(TObject * Sender) {
 	Page -= 1;
 }
 
 // ---------------------------------------------------------------------------
-void __fastcall TfrmTrainList::tbtnNextPageClick(TObject *Sender) {
+void __fastcall TfrmTrainList::tbtnNextPageClick(TObject * Sender) {
 	Page += 1;
 }
 
@@ -524,6 +521,11 @@ void __fastcall TfrmTrainList::tbtnNextPageClick(TObject *Sender) {
 void TfrmTrainList::UpdateStatusBar() {
 	StatusBar->Panels->Items[0]->Text =
 		Format(IDS_TXT_STATUSBAR_PAGE, IntToStr(Page + 1));
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TfrmTrainList::FormShow(TObject * Sender) {
+	tbtnOpen->Click();
 }
 
 // ---------------------------------------------------------------------------

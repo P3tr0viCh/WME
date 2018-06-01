@@ -31,8 +31,6 @@ object frmOptions: TfrmOptions
     Align = alClient
     BevelOuter = bvLowered
     TabOrder = 0
-    ExplicitWidth = 608
-    ExplicitHeight = 392
     object PageControl: TPageControl
       Left = 1
       Top = 1
@@ -43,14 +41,8 @@ object frmOptions: TfrmOptions
       MultiLine = True
       TabOrder = 0
       StyleElements = [seFont, seClient]
-      ExplicitWidth = 606
-      ExplicitHeight = 390
       object tsLocalDatabase: TTabSheet
         Caption = #1041#1072#1079#1072' '#1076#1072#1085#1085#1099#1093
-        ExplicitLeft = 0
-        ExplicitTop = 58
-        ExplicitWidth = 598
-        ExplicitHeight = 328
         DesignSize = (
           596
           330)
@@ -158,10 +150,6 @@ object frmOptions: TfrmOptions
       object tsServerDatabase: TTabSheet
         Caption = #1057#1077#1088#1074#1077#1088
         ImageIndex = 8
-        ExplicitLeft = 0
-        ExplicitTop = 58
-        ExplicitWidth = 598
-        ExplicitHeight = 328
         object eServerDBHost: TLabeledEdit
           Left = 16
           Top = 74
@@ -225,10 +213,6 @@ object frmOptions: TfrmOptions
       object tsUsers: TTabSheet
         Caption = #1055#1086#1083#1100#1079#1086#1074#1072#1090#1077#1083#1080
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 58
-        ExplicitWidth = 598
-        ExplicitHeight = 328
         DesignSize = (
           596
           330)
@@ -246,7 +230,6 @@ object frmOptions: TfrmOptions
           OnDblClick = sgUsersDblClick
           OnDrawCell = sgUsersDrawCell
           OnFixedCellClick = sgUsersFixedCellClick
-          ExplicitHeight = 250
         end
         object btnUsersAdd: TButton
           Left = 16
@@ -257,7 +240,6 @@ object frmOptions: TfrmOptions
           Caption = #1044#1086#1073#1072#1074#1080#1090#1100
           TabOrder = 1
           OnClick = btnUsersAddClick
-          ExplicitTop = 282
         end
         object btnUsersChange: TButton
           Left = 128
@@ -268,7 +250,6 @@ object frmOptions: TfrmOptions
           Caption = #1048#1079#1084#1077#1085#1080#1090#1100
           TabOrder = 2
           OnClick = btnUsersChangeClick
-          ExplicitTop = 282
         end
         object btnUsersDelete: TButton
           Left = 240
@@ -279,16 +260,11 @@ object frmOptions: TfrmOptions
           Caption = #1059#1076#1072#1083#1080#1090#1100
           TabOrder = 3
           OnClick = btnUsersDeleteClick
-          ExplicitTop = 282
         end
       end
       object tsVanTypes: TTabSheet
         Caption = #1056#1086#1076' '#1074#1072#1075#1086#1085#1072
         ImageIndex = 2
-        ExplicitLeft = 0
-        ExplicitTop = 58
-        ExplicitWidth = 598
-        ExplicitHeight = 328
         DesignSize = (
           596
           330)
@@ -341,10 +317,6 @@ object frmOptions: TfrmOptions
       object tsCargoTypes: TTabSheet
         Caption = #1056#1086#1076' '#1075#1088#1091#1079#1072
         ImageIndex = 3
-        ExplicitLeft = 0
-        ExplicitTop = 58
-        ExplicitWidth = 598
-        ExplicitHeight = 328
         DesignSize = (
           596
           330)
@@ -397,10 +369,6 @@ object frmOptions: TfrmOptions
       object tsDepartStations: TTabSheet
         Caption = #1057#1090#1072#1085#1094#1080#1103' '#1086#1090#1087#1088#1072#1074#1083#1077#1085#1080#1103
         ImageIndex = 4
-        ExplicitLeft = 0
-        ExplicitTop = 58
-        ExplicitWidth = 598
-        ExplicitHeight = 328
         DesignSize = (
           596
           330)
@@ -453,10 +421,6 @@ object frmOptions: TfrmOptions
       object tsPurposeStations: TTabSheet
         Caption = #1057#1090#1072#1085#1094#1080#1103' '#1085#1072#1079#1085#1072#1095#1077#1085#1080#1103
         ImageIndex = 5
-        ExplicitLeft = 0
-        ExplicitTop = 58
-        ExplicitWidth = 598
-        ExplicitHeight = 328
         DesignSize = (
           596
           330)
@@ -509,10 +473,6 @@ object frmOptions: TfrmOptions
       object tsInvoiceSuppliers: TTabSheet
         Caption = #1043#1088#1091#1079#1086#1086#1090#1087#1088#1072#1074#1080#1090#1077#1083#1100
         ImageIndex = 6
-        ExplicitLeft = 0
-        ExplicitTop = 58
-        ExplicitWidth = 598
-        ExplicitHeight = 328
         DesignSize = (
           596
           330)
@@ -565,10 +525,6 @@ object frmOptions: TfrmOptions
       object tsInvoiceRecipients: TTabSheet
         Caption = #1043#1088#1091#1079#1086#1087#1086#1083#1091#1095#1072#1090#1077#1083#1100
         ImageIndex = 7
-        ExplicitLeft = 0
-        ExplicitTop = 58
-        ExplicitWidth = 598
-        ExplicitHeight = 328
         DesignSize = (
           596
           330)
@@ -628,8 +584,6 @@ object frmOptions: TfrmOptions
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 408
-    ExplicitWidth = 608
     DesignSize = (
       606
       48)
@@ -644,7 +598,6 @@ object frmOptions: TfrmOptions
       ModalResult = 1
       TabOrder = 0
       OnClick = btnOkClick
-      ExplicitLeft = 400
     end
     object btnCancel: TButton
       Left = 510
@@ -656,7 +609,6 @@ object frmOptions: TfrmOptions
       Caption = #1054#1090#1084#1077#1085#1072
       ModalResult = 2
       TabOrder = 1
-      ExplicitLeft = 512
     end
   end
 end
